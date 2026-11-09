@@ -1,0 +1,8 @@
+# Normalise line endings so diffs show real changes only
+* text=auto eol=lf
+*.py text diff=python
+*.md text diff=markdown
+*.json text
+*.html text diff=html
+*.css text diff=css
+*.js text

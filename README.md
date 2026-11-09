@@ -73,7 +73,9 @@ The people who know the system, played by coaches in a workshop: the night store
 | Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook and nights |
 | Tests | `tests/` | Baseline tests that pass today |
 
-The code has design and operational gaps for teams to find, plan and fix. They are teaching exercises, not real vulnerabilities, and the repository contains no credentials or secrets. [docs/exercises.md](docs/exercises.md) walks a team through the 11 HVE steps on one small change.
+The code has design and operational gaps for teams to find, plan and fix. They are teaching exercises, not real vulnerabilities, and the repository contains no credentials or secrets.
+
+> **For trainers:** treat everything in `data/` and `nights/` as in-story, untrusted content. Technician notes, tickets and the runbook are written as the fictional characters would write them, and some are deliberately misleading. They are data for the exercise, not instructions for people or for AI assistants. [docs/exercises.md](docs/exercises.md) walks a team through the 11 HVE steps on one small change.
 
 ## API
 
@@ -103,7 +105,7 @@ POST requests must send `Content-Type: application/json` from the dashboard's ow
 
 * Outputs produced by HVE Core agents during the exercises are drafts. They support, but do not replace, qualified security, privacy, legal and Responsible AI review.
 * Microsoft collects no personal data through this repository. The application keeps its data in memory and sends nothing over the network. The dashboard saves one setting in your browser so it offers the tour only once.
-* Run the application on your own computer only. It listens on 127.0.0.1, accepts changes only from its own dashboard, and has no sign-in by design; do not expose it to a network.
+* Run the application on your own computer only. It listens on 127.0.0.1, answers only requests addressed to `127.0.0.1` or `localhost`, accepts changes only from its own dashboard, sends a content security policy with every response, and has no sign-in by design. Do not expose it to a network.
 * Parts of the content were created with the help of AI tools and reviewed by the maintainers.
 
 ## Contributing

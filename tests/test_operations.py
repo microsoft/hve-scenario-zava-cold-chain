@@ -202,6 +202,15 @@ class Api(unittest.TestCase):
         self.assertIsInstance(self.get("/api/feed?since=x"), list)
         self.assertFalse(self.post("/api/control", {"paused": False})["paused"])
 
+    def test_security_headers_and_host_check(self):
+        with urllib.request.urlopen(self.base + "/", timeout=5) as r:
+            self.assertEqual(r.headers["X-Content-Type-Options"], "nosniff")
+            self.assertIn("default-src 'self'", r.headers["Content-Security-Policy"])
+        req = urllib.request.Request(self.base + "/api/kpis", headers={"Host": "attacker.example"})
+        with self.assertRaises(urllib.error.HTTPError) as e:
+            urllib.request.urlopen(req, timeout=5)
+        self.assertEqual(e.exception.code, 400)
+
     def test_stream_sends_events(self):
         with urllib.request.urlopen(self.base + "/api/stream", timeout=5) as r:
             first = r.readline().decode()

@@ -57,6 +57,16 @@ def state(world) -> dict:
             "alarms": [dict(a, time=clock(a["t"])) for a in world.store.alarms()]}
 
 
+# Sent on every response. Inline style attributes are used by the dashboard, so styles allow 'unsafe-inline'.
+SECURITY_HEADERS = (
+    ("X-Content-Type-Options", "nosniff"),
+    ("Referrer-Policy", "no-referrer"),
+    ("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+                                "img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; "
+                                "form-action 'none'; frame-ancestors 'none'"),
+)
+
+
 def _reject_constant(name: str):
     raise ValueError(f"{name} is not allowed")
 
@@ -76,6 +86,16 @@ def make_handler(sim: Simulation):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, fmt, *args):  # keep the terminal quiet
             pass
+
+        def end_headers(self) -> None:
+            for name, value in SECURITY_HEADERS:
+                self.send_header(name, value)
+            super().end_headers()
+
+        def _host_ok(self) -> bool:
+            """Answer only requests addressed to this server, so a DNS-rebinding page can't read the API."""
+            port = self.server.server_address[1]
+            return self.headers.get("Host") in (f"127.0.0.1:{port}", f"localhost:{port}")
 
         def _send(self, code: int, body, content_type: str = "application/json") -> None:
             data = body if isinstance(body, bytes) else json.dumps(body).encode("utf-8")
@@ -134,6 +154,8 @@ def make_handler(sim: Simulation):
                 return
 
         def do_GET(self) -> None:
+            if not self._host_ok():
+                return self._send(400, {"error": "unknown host"})
             url = urlparse(self.path)
             path = url.path
             if path == "/api/stream":
@@ -176,6 +198,8 @@ def make_handler(sim: Simulation):
             self._send(404, {"error": "not found"})
 
         def do_POST(self) -> None:
+            if not self._host_ok():
+                return self._send(400, {"error": "unknown host"})
             if not self._same_origin():
                 return self._send(403, {"error": "send JSON from the dashboard"})
             try:
