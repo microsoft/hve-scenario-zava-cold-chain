@@ -2,13 +2,13 @@
   "note": "Fictitious organization. Roles only, no names.",
   "owners": [
     {
-      "area": "ZavaWatch alarm rules",
+      "area": "Monitor alarm rules",
       "owner": "Store systems team",
       "since": "2016",
       "status": "active"
     },
     {
-      "area": "ZavaChill controllers and firmware",
+      "area": "Case controllers and firmware",
       "owner": "Refrigeration vendor (contract)",
       "since": "2009",
       "status": "active"
@@ -35,7 +35,7 @@
       "comment": "Last updated 2023."
     },
     {
-      "area": "ZavaAsk assistant",
+      "area": "Store assistant",
       "owner": "vacant",
       "since": "2024",
       "status": "vacant",

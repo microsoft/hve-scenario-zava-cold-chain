@@ -1,4 +1,4 @@
-/* ZavaWatch operations console for Zava Fresh. No build step and no libraries. Fictitious data from the local simulator. */
+/* Cold Chain Monitor console for Zava. No build step and no libraries. Fictitious data from the local simulator. */
 "use strict";
 
 const $ = id => document.getElementById(id);
@@ -13,13 +13,13 @@ const tip = (text, cls) => '<span class="tip ' + (cls || "") + '" data-tip="' + 
 const LEVEL = {cold: "In range", chill: "In range", warn: "Near limit", over: "Over limit"};
 const level = c => c.temp > c.limit ? "over" : c.temp > c.limit - 4 ? "warn" : c.kind === "freezer" ? "cold" : "chill";
 const CAT = {"Meat and poultry": "🍗", "Fish and seafood": "🐟", "Ice cream and desserts": "🍨", "Frozen vegetables": "🥦", "Dairy": "🥛"};
-const KINDS = ["alarm", "notify", "incident", "command", "access", "door", "action", "decision", "delivery", "staff", "zavaask"];
+const KINDS = ["alarm", "notify", "incident", "command", "access", "door", "action", "decision", "delivery", "staff", "assistant"];
 const KIND_HELP = {
-  alarm: "ZavaWatch raised, acknowledged or cleared an alarm", notify: "A notification sent to a person, and whether it was delivered",
+  alarm: "The monitor raised, acknowledged or cleared an alarm", notify: "A notification sent to a person, and whether it was delivered",
   incident: "A problem reported by staff", command: "A setpoint or defrost command sent to one or more cases",
   access: "A remote session on the vendor link", door: "A door sensor opened or closed", action: "A corrective action logged by staff",
   decision: "A food-safety decision", delivery: "A delivery and its receiving check", staff: "Staff on shift, rounds and arrivals",
-  zavaask: "A question answered by ZavaAsk",
+  assistant: "A question answered by the store assistant",
 };
 
 const app = {feed: [], kpis: null, route: "", view: null, rendered: 0, ready: false, chat: [],
@@ -145,7 +145,7 @@ function productsAtRisk(rows, max, shoppers) {
     + '<b class="risk">' + eur(r.value_eur) + "</b></div>").join("") + "</div>";
 }
 /* ---------- predicted customer impact ---------- */
-const AI_TIP = "In this scenario, Zava Fresh’s customer-impact model uses machine learning and AI. It estimates how many shoppers tomorrow may meet stock that is at risk tonight: buying it if it stays on sale, or finding an empty shelf once it is pulled. It is a forecast with a likely range, not a count. In this prototype the model is simulated by a simple stand-in, so the numbers are synthetic.";
+const AI_TIP = "In this scenario, Zava’s customer-impact model uses machine learning and AI. It estimates how many shoppers tomorrow may meet stock that is at risk tonight: buying it if it stays on sale, or finding an empty shelf once it is pulled. It is a forecast with a likely range, not a count. In this prototype the model is simulated by a simple stand-in, so the numbers are synthetic.";
 const num = n => Math.round(n).toLocaleString("en-IE");
 function impactShell() {
   return '<div class="impact" id="impact"><div><span class="ai"><span class="twinkle" aria-hidden="true">✦</span> Predicted</span> <span class="pill grey">Simulated</span><h2>Customers impacted tomorrow ' + tip(AI_TIP) + '</h2><b class="inum" id="im-n">–</b><span class="range" id="im-range"></span></div>'
@@ -169,7 +169,7 @@ const STATE = {unacknowledged: ["over", "Unacknowledged"], acknowledged: ["warn"
 function alarmCard(a, withAck) {
   const [cls, label] = STATE[a.state];
   const esc2 = (a.notifications.find(n => n.level > 1) || {}).time || a.acked || "";
-  const steps = [["raise", a.raised, "Raised by ZavaWatch (" + a.rule + "): " + a.message, 0, a.raised]];
+  const steps = [["raise", a.raised, "Raised by the monitor (" + a.rule + "): " + a.message, 0, a.raised]];
   a.notifications.forEach(n => steps.push([n.status === "delivered" ? "ok" : "bad", n.time, (n.level > 1 ? "Escalation · " : "") + n.channel + " to " + n.to + ": " + n.status, n.level > 1 ? 3 : 1, n.time]));
   if (a.escalated) steps.push(["warn", "", "Escalated: not acknowledged within 15 minutes", 2, esc2]);
   if (a.acked) steps.push(["ok", a.acked, "Acknowledged by " + a.acked_by, 4, a.acked]);
@@ -189,17 +189,17 @@ const views = {};
 views.overview = {
   title: "Chain overview",
   mount(el) {
-    el.innerHTML = '<h1>Chain overview</h1><p class="sub">Five Zava Fresh stores and 20 refrigerated display cases, live from the ZavaChill controllers. Hover <span class="info">i</span> for what each number means.</p>'
+    el.innerHTML = '<h1>Chain overview</h1><p class="sub">Five Zava stores and 20 refrigerated display cases, live from the case controllers. Hover <span class="info">i</span> for what each number means.</p>'
       + '<div class="kpis" id="kpis"></div>' + impactShell() + '<div class="split"><section><h2>Stores <a class="more" href="#/store/ZF-101">Open stores →</a></h2><div class="stores" id="stores"></div></section>'
       + '<aside class="stack"><div class="card"><h2>Products at risk ' + tip("Products in cases that are above their limit right now, grouped by product. The value is the shelf value at risk. The food-safety officer decides what is thrown away.", "r") + '<a class="more" href="#/food-safety">Food safety →</a></h2><div id="prisk"></div></div>'
       + '<div class="card"><h2>Latest events <a class="more" href="#/feed">Live feed →</a></h2><ul class="feed compact" id="latest"></ul></div></aside></div>';
     $("kpis").innerHTML = [
       ["k1", "Cases in range", "Display cases within their temperature limit: −12 °C for freezers, 8 °C for chillers."],
       ["k2", "Stock at risk", "Shelf value of the products in cases that are over their limit right now."],
-      ["k3", "Alarms tonight", "Alarms raised by ZavaWatch since 22:00, and how many nobody has acknowledged yet."],
+      ["k3", "Alarms tonight", "Alarms raised by the monitor since 22:00, and how many nobody has acknowledged yet."],
       ["k4", "Open incidents", "Problems opened by an alarm or reported by staff, and how many staff found before any alarm."],
       ["k5", "Open tickets", "Open and backlog tickets in the store systems tracker."],
-      ["k6", "Stores online", "Stores whose controllers are reporting to ZavaWatch."],
+      ["k6", "Stores online", "Stores whose controllers are reporting to the monitor."],
     ].map(([id, t, h]) => '<div class="kpi" id="' + id + '"><small><span>' + t + "</span>" + tip(h, id === "k6" || id === "k5" ? "r" : "") + "</small><b>–</b><em></em></div>").join("");
   },
   async update() {
@@ -228,7 +228,7 @@ views.overview = {
 views.feed = {
   title: "Live feed",
   mount(el) {
-    el.innerHTML = '<h1>Live feed</h1><p class="sub">Every event from the controllers, door sensors, the vendor link, notifications, staff and ZavaAsk, newest first. New events slide in as they happen.</p>'
+    el.innerHTML = '<h1>Live feed</h1><p class="sub">Every event from the controllers, door sensors, the vendor link, notifications, staff and the store assistant, newest first. New events slide in as they happen.</p>'
       + '<div class="filters" id="kinds"></div><div class="filters"><select class="f" id="fstore" style="width:auto"><option value="">All stores</option></select>'
       + '<button type="button" id="fserious" aria-pressed="false">Warnings and alerts only</button><span class="muted" id="fcount" style="margin-left:auto"></span></div>'
       + '<div class="card"><ul class="feed" id="feedlist"></ul></div>';
@@ -283,15 +283,15 @@ views.case = {
       + '<div class="grid g2"><div class="card"><h2>Products in this case</h2><div id="cprod"></div></div><div class="card"><h2>Technician notes</h2><div id="cnotes"></div></div></div>'
       + '<div class="card"><h2>Alarms for this case</h2><div id="calarms"></div></div>'
       + '<div class="card"><h2>Commands to this case</h2><div id="ccmd"></div></div></section>'
-      + '<aside class="stack"><div class="card"><h2>Food-safety decision ' + tip("Only the food-safety officer decides what is thrown away. ZavaAsk can draft, not decide.", "r") + '</h2><div id="cdec"></div></div>'
-      + '<div class="card"><h2>Ask ZavaAsk</h2><textarea class="f" id="q" rows="2">Is this case safe?</textarea><div style="margin-top:8px"><button class="btn" id="ask">Ask</button></div><div id="ans"></div></div>'
+      + '<aside class="stack"><div class="card"><h2>Food-safety decision ' + tip("Only the food-safety officer decides what is thrown away. The store assistant can draft, not decide.", "r") + '</h2><div id="cdec"></div></div>'
+      + '<div class="card"><h2>Ask the assistant</h2><textarea class="f" id="q" rows="2">Is this case safe?</textarea><div style="margin-top:8px"><button class="btn" id="ask">Ask</button></div><div id="ans"></div></div>'
       + '<div class="card" id="ctrl"><h2>Controls</h2><label class="muted" for="sp">Setpoint (°C)</label><div style="display:flex;gap:6px;margin:4px 0 12px"><input class="f" id="sp" type="number" step="0.5"><button class="btn ghost" id="spbtn">Set</button></div>'
       + '<label class="muted" for="dm">Defrost minutes (blank: no end time)</label><div style="display:flex;gap:6px;margin-top:4px"><input class="f" id="dm" type="number"><button class="btn ghost" id="dmbtn">Defrost</button></div></div></aside></div>';
     $("spbtn").onclick = () => post("/api/commands", {action: "setpoint", target: id, value: Number($("sp").value), actor: "dashboard"}).then(() => this.update());
     $("dmbtn").onclick = () => { const m = $("dm").value; post("/api/commands", Object.assign({action: "defrost", target: id, actor: "dashboard"}, m ? {minutes: Number(m)} : {})).then(() => this.update()); };
     $("ask").onclick = async () => {
       const r = await post("/api/ask", {case: id, question: $("q").value});
-      $("ans").innerHTML = r.error ? '<div class="answer">' + esc(r.error) + "</div>" : '<div class="answer">ZavaAsk: ' + esc(r.answer) + "</div><details><summary>What ZavaAsk read</summary><pre>" + esc(r.context) + "</pre></details>";
+      $("ans").innerHTML = r.error ? '<div class="answer">' + esc(r.error) + "</div>" : '<div class="answer">Assistant: ' + esc(r.answer) + "</div><details><summary>What the assistant read</summary><pre>" + esc(r.context) + "</pre></details>";
     };
     el.onclick = e => { const b = e.target.closest("[data-decide]"); if (b) post("/api/decisions", {case: id, decision: b.dataset.decide}).then(() => this.update()); };
   },
@@ -382,7 +382,7 @@ views.alarms = {
 views["food-safety"] = {
   title: "Food safety",
   mount(el) {
-    el.innerHTML = '<h1>Food safety</h1><p class="sub">Cases that went above their limit tonight, how long for, and what is in them. ZavaAsk drafts a discard list; the food-safety officer decides.</p>'
+    el.innerHTML = '<h1>Food safety</h1><p class="sub">Cases that went above their limit tonight, how long for, and what is in them. The store assistant drafts a discard list; the food-safety officer decides.</p>'
       + '<div class="kpis" style="grid-template-columns:repeat(4,1fr)" id="fk"></div>' + impactShell() + '<div class="split"><div class="card"><h2>Cases above the limit tonight</h2><div id="fcases"></div></div>'
       + '<div class="card"><h2>Products at risk</h2><div id="fprod"></div></div></div>';
     el.onclick = e => { const b = e.target.closest("[data-fcase]"); if (b) post("/api/decisions", {case: b.dataset.fcase, decision: b.dataset.d}).then(() => this.update()); };
@@ -392,19 +392,19 @@ views["food-safety"] = {
     impactFill(imp);
     const decided = f.cases.filter(c => c.decision);
     const discardVal = f.cases.filter(c => c.decision && c.decision.decision === "discard").reduce((n, c) => n + c.stock_eur, 0);
-    set($("fk"), [["Cases above limit tonight", f.cases.length, f.cases.length ? "over" : "ok"], ["ZavaAsk draft discard list", eur(f.discard_value_eur), f.discard_value_eur ? "warn" : "ok"],
+    set($("fk"), [["Cases above limit tonight", f.cases.length, f.cases.length ? "over" : "ok"], ["Assistant draft discard list", eur(f.discard_value_eur), f.discard_value_eur ? "warn" : "ok"],
       ["Decisions recorded", decided.length + " / " + f.cases.length, decided.length < f.cases.length ? "warn" : "ok"], ["Decided to discard", eur(discardVal), discardVal ? "over" : "ok"]]
       .map(([t, v, c]) => '<div class="kpi ' + c + '"><small><span>' + t + "</span></small><b>" + v + "</b></div>").join(""));
-    set($("fcases"), f.cases.length ? '<table class="t"><tr><th>Case</th><th>Above limit</th><th>Peak</th><th>Products</th><th>ZavaAsk says</th><th>Decision</th></tr>' + f.cases.map(c => '<tr><td><a href="#/case/' + esc(c.case) + '">' + esc(c.case) + '</a></td><td><b>' + dur(c.minutes_above_limit) + '</b></td><td class="mono">' + c.peak.toFixed(1) + "°</td><td>" + c.products.map(p => (CAT[p.category] || "") + " " + esc(p.name)).join("<br>") + '<br><small class="muted">' + eur(c.stock_eur) + "</small></td><td><i>“" + esc(c.zavaask) + "”</i></td><td>"
+    set($("fcases"), f.cases.length ? '<table class="t"><tr><th>Case</th><th>Above limit</th><th>Peak</th><th>Products</th><th>Assistant says</th><th>Decision</th></tr>' + f.cases.map(c => '<tr><td><a href="#/case/' + esc(c.case) + '">' + esc(c.case) + '</a></td><td><b>' + dur(c.minutes_above_limit) + '</b></td><td class="mono">' + c.peak.toFixed(1) + "°</td><td>" + c.products.map(p => (CAT[p.category] || "") + " " + esc(p.name)).join("<br>") + '<br><small class="muted">' + eur(c.stock_eur) + "</small></td><td><i>“" + esc(c.assistant) + "”</i></td><td>"
       + (c.decision ? '<span class="pill ' + (c.decision.decision === "discard" ? "over" : c.decision.decision === "keep" ? "ok" : "warn") + '">' + esc(c.decision.decision) + "</span>" : '<div style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn red sm" data-fcase="' + esc(c.case) + '" data-d="discard">Discard</button><button class="btn ghost sm" data-fcase="' + esc(c.case) + '" data-d="hold for testing">Hold</button></div>') + "</td></tr>").join("") + "</table>" : '<p class="empty">No case has been above its limit tonight.</p>');
     set($("fprod"), productsAtRisk(f.products, 0, imp.products));
   },
 };
 
 views.ask = {
-  title: "Ask ZavaAsk",
+  title: "Ask the assistant",
   mount(el) {
-    el.innerHTML = '<h1>Ask ZavaAsk</h1><p class="sub">ZavaAsk answers store staff questions about a case. It drafts; people decide. Open “What ZavaAsk read” to see the information behind each answer.</p>'
+    el.innerHTML = '<h1>Ask the assistant</h1><p class="sub">The store assistant answers store staff questions about a case. It drafts; people decide. Open “What the assistant read” to see the information behind each answer.</p>'
       + '<div class="split"><div class="card"><div class="chat" id="chat"></div><div style="display:flex;gap:8px;margin-top:12px"><select class="f" id="acase" style="width:200px"></select><input class="f" id="aq" value="Is this case safe?"><button class="btn green" id="asend">Ask</button></div></div>'
       + '<div class="card"><h2>Try asking</h2><div class="stack" id="ideas"></div></div></div>';
     get("/api/stores").then(s => { $("acase").innerHTML = s.flatMap(x => x.cases).map(c => "<option>" + esc(c.id) + "</option>").join(""); $("acase").value = "ZF-118/F-12"; });
@@ -426,7 +426,7 @@ views.ask = {
   render() {
     const el = $("chat");
     el.innerHTML = app.chat.length ? app.chat.map(m => m.u ? '<div class="msg-u">' + esc(m.u) + '<br><small style="opacity:.7">' + esc(m.c) + "</small></div>"
-      : '<div class="msg-a"><small>ZavaAsk · ' + esc(m.c) + "</small>" + esc(m.a) + (m.ctx ? "<details><summary>What ZavaAsk read</summary><pre>" + esc(m.ctx) + "</pre></details>" : "") + "</div>").join("") : '<p class="empty">Pick a case and ask a question.</p>';
+      : '<div class="msg-a"><small>Assistant · ' + esc(m.c) + "</small>" + esc(m.a) + (m.ctx ? "<details><summary>What the assistant read</summary><pre>" + esc(m.ctx) + "</pre></details>" : "") + "</div>").join("") : '<p class="empty">Pick a case and ask a question.</p>';
     el.scrollTop = el.scrollHeight;
   },
   update() {},
@@ -478,7 +478,7 @@ views.issues = {
 
 views.health = {
   title: "System health",
-  mount(el) { el.innerHTML = '<h1>System health</h1><p class="sub">The services behind ZavaWatch, their status and who owns them.</p><div class="svc" id="svc"></div>'; },
+  mount(el) { el.innerHTML = '<h1>System health</h1><p class="sub">The services behind the monitor, their status and who owns them.</p><div class="svc" id="svc"></div>'; },
   async update() {
     const h = await get("/api/health");
     set($("svc"), h.map(s => '<div class="svcc"><div class="sh"><b>' + esc(s.service) + '</b><span class="light ' + esc(s.status.split(" ")[0]) + '" title="' + esc(s.status) + '"></span></div><div>' + esc(s.detail) + '</div><div class="muted" style="font-size:12.5px;margin-top:6px">Status: ' + esc(s.status) + " · Owner: " + (s.owner === "vacant" ? '<b style="color:var(--over)">vacant</b>' : esc(s.owner)) + "</div>" + (s.note ? '<div class="note" style="margin:10px 0 0;font-size:13px">' + esc(s.note) + "</div>" : "") + "</div>").join(""));
@@ -486,18 +486,18 @@ views.health = {
 };
 
 views.guide = {
-  title: "How to read ZavaWatch",
+  title: "How to read the monitor",
   mount(el) {
     const row = (k, v) => "<dt>" + k + "</dt><dd>" + v + "</dd>";
-    el.innerHTML = '<div class="guide"><div class="hero"><h1>How to read ZavaWatch</h1><p><b>ZavaWatch</b> is Zava Fresh’s console for the refrigerated display cases in its stores. It shows live temperatures, alarms and who was told about them, stock at risk, and every event from the controllers, staff and the refrigeration vendor. Zava Fresh and everything in it are fictitious; the equipment is simulated.</p><p style="margin-top:12px"><button type="button" class="btn" data-tour>▶ Take the tour of the dashboard</button></p></div>'
+    el.innerHTML = '<div class="guide"><div class="hero"><h1>How to read the monitor</h1><p>The <b>Cold Chain Monitor</b> is Zava’s console for the refrigerated display cases in its stores. It shows live temperatures, alarms and who was told about them, stock at risk, and every event from the controllers, staff and the refrigeration vendor. Zava, Inc. and everything in this scenario are fictitious; the equipment is simulated and the data is synthetic. Parts of this content were created with the help of AI tools and reviewed by the maintainers.</p><p style="margin-top:12px"><button type="button" class="btn" data-tour>▶ Take the tour of the dashboard</button></p></div>'
       + '<div class="card"><h2>Start here</h2><ol><li><b>Chain overview</b> answers “is anything wrong right now?” Read the six numbers left to right, then the store cards.</li><li>A red store or case means a temperature is <b>over its limit</b>. Select it to see why.</li><li><b>Alarms and incidents</b> answers “who knows, and what are they doing?”</li><li><b>Live feed</b> tells the story of the night in order. Filter it by type or store.</li><li><b>Food safety</b> answers “what is at risk, and what has been decided?”</li></ol></div>'
       + '<div class="card"><h2>The top bar</h2><dl>' + row("Night", "Which simulated night is playing. <b>Replay</b> restarts it.") + row("Pause, ×10, ×60, ×300", "The simulation clock. ×10 plays 10 simulated minutes per second.") + row("Jump", "Fast-forward to a time, for example 01:10.") + row("LIVE", "Green while the night is playing; amber when paused; grey when the night is over at 08:00.") + row("Remote session", "Appears while the refrigeration vendor is connected.") + "</dl></div>"
-      + '<div class="card"><h2>Headline numbers</h2><dl>' + row("Cases in range", "Cases within their limit: −12 °C for freezers, 8 °C for chillers.") + row("Customers impacted", "✦ Predicted. How many shoppers tomorrow may buy stock that was at risk tonight, or find an empty shelf once it is pulled. A forecast with a likely range, not a count. In this prototype the prediction is simulated.") + row("Stock at risk", "Shelf value of the products in cases over their limit right now.") + row("Alarms tonight", "Alarms ZavaWatch raised since 22:00. A glowing tile means at least one is unacknowledged.") + row("Open incidents", "Problems opened by an alarm or reported by staff. Watch for incidents that staff found before any alarm.") + row("Open tickets", "Open and backlog tickets in the store systems tracker.") + row("Stores online", "Stores whose controllers are reporting.") + "</dl></div>"
+      + '<div class="card"><h2>Headline numbers</h2><dl>' + row("Cases in range", "Cases within their limit: −12 °C for freezers, 8 °C for chillers.") + row("Customers impacted", "✦ Predicted. How many shoppers tomorrow may buy stock that was at risk tonight, or find an empty shelf once it is pulled. A forecast with a likely range, not a count. In this prototype the prediction is simulated.") + row("Stock at risk", "Shelf value of the products in cases over their limit right now.") + row("Alarms tonight", "Alarms the monitor raised since 22:00. A glowing tile means at least one is unacknowledged.") + row("Open incidents", "Problems opened by an alarm or reported by staff. Watch for incidents that staff found before any alarm.") + row("Open tickets", "Open and backlog tickets in the store systems tracker.") + row("Stores online", "Stores whose controllers are reporting.") + "</dl></div>"
       + '<div class="card"><h2>Colours and states</h2><p class="muted" style="margin-top:0">Colour is never the only signal: each state also has a word or symbol.</p><dl>' + row('<span class="swatch" style="background:#0078d4"></span>Blue', "A freezer within its limit.") + row('<span class="swatch" style="background:#107c10"></span>Green', "A chiller within its limit, a healthy service, or a delivered notification.") + row('<span class="swatch" style="background:#f7630c"></span>Orange', "Within 4 °C of the limit, or a warning.") + row('<span class="swatch" style="background:#c50f1f"></span>Red', "Over the limit, an alarm or an incident.") + row('<span class="pill mode-defrost">defrost</span>', "Heaters melt ice off the coils, so the case warms up on purpose for a while.") + row('<span class="pill mode-door_open">door open</span>', "A door sensor reports the door open.") + row("▲ ▼", "The temperature is rising or falling.") + "</dl></div>"
       + '<div class="card"><h2>An alarm’s life</h2><ul class="steps"><li class="raise"><b>Raised</b>: a case stays over its limit for 10 minutes.</li><li class="ok"><b>Notified</b>: the people on the contact list get an app push, SMS or call. Each message shows delivered or not delivered.</li><li class="warn"><b>Escalated</b>: if nobody acknowledges within 15 minutes, the next level is called.</li><li class="ok"><b>Acknowledged</b>: someone confirms they are on it. You can acknowledge from the dashboard.</li><li class="ok"><b>Corrective action</b>: what was done on site.</li><li class="ok"><b>Cleared</b>: the case is back within its limit.</li></ul></div>'
       + '<div class="card"><h2>Live feed event types</h2><dl>' + KINDS.map(k => row('<span class="kind ' + k + '">' + k + "</span>", KIND_HELP[k])).join("") + "</dl></div>"
       + '<div class="card"><h2>Nights you can replay</h2><dl>' + row("normal", "A quiet night with scheduled defrosts.") + row("door-open", "A freezer door is left open after restocking.") + row("mass-defrost", "Something goes wrong overnight. Find out what from the dashboard.") + row("vendor-maintenance", "Planned vendor maintenance.") + '</dl><p class="muted">Open <a href="#/story">Tour and stories</a> to replay door-open, mass-defrost or vendor-maintenance moment by moment, with each key moment circled.</p></div>'
-      + '<div class="card"><h2>Words used here</h2><dl>' + row("Setpoint", "The temperature a case aims for.") + row("Limit", "The highest temperature this scenario allows for the products in a case. Limits here are invented for training, not food-safety guidance.") + row("Time above limit", "How long a case has been over its limit tonight. Food-safety decisions depend on it.") + row("ZavaAsk", "An assistant that answers staff questions about a case. It drafts; the food-safety officer decides.") + row("Fleet command", "One command sent to many cases at once.") + "</dl></div></div>";
+      + '<div class="card"><h2>Words used here</h2><dl>' + row("Setpoint", "The temperature a case aims for.") + row("Limit", "The highest temperature this scenario allows for the products in a case. Limits here are invented for training, not food-safety guidance.") + row("Time above limit", "How long a case has been over its limit tonight. Food-safety decisions depend on it.") + row("Store assistant", "An assistant that answers staff questions about a case. It drafts; the food-safety officer decides.") + row("Fleet command", "One command sent to many cases at once.") + "</dl></div></div>";
   },
   update() {},
 };
@@ -506,7 +506,7 @@ views.guide = {
 const ISSUES = [
   {n: 1, title: "Freezers warm up and no alarm fires", see: "Fifteen freezers pass 45 °C overnight, yet “Alarms tonight” still says 0.",
     why: "Like a smoke alarm that switches itself off whenever the oven is on.", night: "mass-defrost", at: "07:30", route: "overview", target: "#k3", screen: "Chain overview",
-    evidence: "ZFW-188, ZFW-112 · alarm rule ALM-07 in zava_fresh/alarms.py", steps: ["01 Design Thinking", "07 Research"], change: "1. Alarm on temperature and time, in any mode",
+    evidence: "ZFW-188, ZFW-112 · alarm rule ALM-07 in zava_cold_chain/alarms.py", steps: ["01 Design Thinking", "07 Research"], change: "1. Alarm on temperature and time, in any mode",
     now: d => [d.over + " cases over the limit · " + d.k.alarms + " alarm" + (d.k.alarms === 1 ? "" : "s"), d.over > 0 && d.k.alarms === 0]},
   {n: 2, title: "Staff find the problem before the system does", see: "Morning staff open incidents for warm freezers. No alarm came first.",
     why: "Like learning your freezer failed because a shopper complained about soft ice cream.", night: "mass-defrost", at: "07:30", route: "overview", target: "#k4", screen: "Chain overview",
@@ -514,19 +514,19 @@ const ISSUES = [
     now: d => [d.staff + " incident" + (d.staff === 1 ? "" : "s") + " found by staff with no alarm", d.staff > 0]},
   {n: 3, title: "A defrost with no end time, sent to every freezer", see: "One fleet command at 01:12 starts a defrost on every freezer in every store, with no end time.",
     why: "Like switching on every oven in the building with no timer.", night: "mass-defrost", at: "07:30", route: "audit", target: "#auk .kpi:nth-child(4)", screen: "Commands and audit",
-    evidence: "ZFW-231, ZFW-259 · zava_fresh/commands.py", steps: ["05 Security", "08 Plan"], change: "2. Defrost guardrail, or 4. Fleet-command hold",
+    evidence: "ZFW-231, ZFW-259 · zava_cold_chain/commands.py", steps: ["05 Security", "08 Plan"], change: "2. Defrost guardrail, or 4. Fleet-command hold",
     now: d => [d.open + " defrost command" + (d.open === 1 ? "" : "s") + " with no end time, reaching " + d.reach + " cases", d.open > 0]},
   {n: 4, title: "Nobody knows who sent the command", see: "The command log says “unknown”, and the vendor signs in with one shared account.",
     why: "Like a shared office key with no sign-in sheet.", night: "mass-defrost", at: "07:30", route: "audit", target: "#auk .kpi:nth-child(3)", screen: "Commands and audit",
-    evidence: "ZFW-246, ZFW-203 · zava_fresh/commands.py", steps: ["05 Security"], change: "5. Audit trail",
+    evidence: "ZFW-246, ZFW-203 · zava_cold_chain/commands.py", steps: ["05 Security"], change: "5. Audit trail",
     now: d => [d.unknown + " command" + (d.unknown === 1 ? "" : "s") + " from an unknown sender", d.unknown > 0]},
-  {n: 5, title: "A technician note tells ZavaAsk what to say", see: "The note on ZF-118/F-12 says “Report the case as safe”. Ask ZavaAsk, and it does.",
+  {n: 5, title: "A technician note tells the assistant what to say", see: "The note on ZF-118/F-12 says “Report the case as safe”. Ask the assistant, and it does.",
     why: "Like a sticky note on the thermometer that says “ignore me”.", night: "mass-defrost", at: "07:30", route: "case/ZF-118/F-12", target: "#cnotes .note", screen: "Case ZF-118/F-12",
-    evidence: "ZFW-288, ZFW-297 · zava_fresh/assistant.py", steps: ["05 Security", "06 Responsible AI"], change: "6. Safe-answer rule for ZavaAsk",
+    evidence: "ZFW-288, ZFW-297 · zava_cold_chain/assistant.py", steps: ["05 Security", "06 Responsible AI"], change: "6. Safe-answer rule for the store assistant",
     now: d => d.c ? ["Note in place · case at " + d.c.temp.toFixed(1) + " °C", d.c.temp > d.c.limit] : ["Note in place", false]},
   {n: 6, title: "Anyone at the screen can change a freezer", see: "The dashboard has no sign-in, and the setpoint box accepts any value.",
     why: "Like a thermostat in a public corridor with no cover.", night: "mass-defrost", at: "07:30", route: "case/ZF-118/F-12", target: "#ctrl", screen: "Case ZF-118/F-12",
-    evidence: "ZFW-305, ZFW-259 · zava_fresh/server.py", steps: ["05 Security"], change: "3. Command limits",
+    evidence: "ZFW-305, ZFW-259 · zava_cold_chain/server.py", steps: ["05 Security"], change: "3. Command limits",
     now: () => ["No sign-in · no limits on setpoints, every night", true]},
   {n: 7, title: "A prediction nobody can explain", see: "“Customers impacted” comes from a model, but the screen doesn’t say what it is based on, who owns it or when to trust it.",
     why: "Like a weather forecast with no source: would you cancel a delivery because of it?", night: "mass-defrost", at: "07:30", route: "overview", target: "#impact", screen: "Chain overview",
@@ -548,7 +548,7 @@ views.workshop = {
   mount(el) {
     this.last = 0;
     const screens = [...new Set(ISSUES.map(i => i.screen))];
-    el.innerHTML = '<div class="wk-hero"><div><h1>Workshop issue map</h1><p>ZavaWatch has eight problems planted in it. Each is something a real store team would recognise. Circle them on screen, then pick a set of problems for each table to work through with the HVE steps.</p></div><div style="display:grid;gap:8px"><button class="btn" type="button" id="wktour">◎ Circle all eight on screen</button><a class="btn" href="#/story" style="justify-content:center">▶ Replay a night as a story</a></div></div>'
+    el.innerHTML = '<div class="wk-hero"><div><h1>Workshop issue map</h1><p>The Cold Chain Monitor has eight problems planted in it. Each is something a real store team would recognise. Circle them on screen, then pick a set of problems for each table to work through with the HVE steps.</p></div><div style="display:grid;gap:8px"><button class="btn" type="button" id="wktour">◎ Circle all eight on screen</button><a class="btn" href="#/story" style="justify-content:center">▶ Replay a night as a story</a></div></div>'
       + "<h2>Where they hide</h2>" + '<div class="wk-map">' + screens.map(s => '<div class="wk-scr"><h3>' + esc(s) + "</h3><p>" + esc([...new Set(ISSUES.filter(i => i.screen === s).map(i => i.night))].join(", ")) + ' night</p><div class="wk-dots">' + ISSUES.filter(i => i.screen === s).map(i => '<button type="button" class="num" data-circle="' + i.n + '" title="' + esc(i.title) + '" aria-label="Circle issue ' + i.n + ": " + esc(i.title) + '">' + i.n + "</button>").join("") + "</div></div>").join("") + "</div>"
       + "<h2>Suggested sets for a table</h2>" + '<div class="wk-sets">' + SETS.map(s => '<button type="button" class="wk-set" data-set="' + s.id + '" aria-pressed="' + (app.wkSet === s.id) + '"><b>' + esc(s.name) + "</b><span>" + esc(s.fit) + '</span><div class="nums">' + s.items.map(n => "<i>" + n + "</i>").join("") + "</div></button>").join("") + "</div>"
       + "<h2>The eight problems</h2>" + '<div class="wk-issues">' + ISSUES.map(i => '<article class="wk-i" id="wk-' + i.n + '"><button type="button" class="num big" data-circle="' + i.n + '" aria-label="Circle issue ' + i.n + ' on screen">' + i.n + "</button><div><h3>" + esc(i.title) + "</h3><p>" + esc(i.see) + '</p><div class="now" id="now-' + i.n + '"></div><p class="why">' + esc(i.why) + "</p>"
@@ -653,8 +653,8 @@ async function circleIssue(list, i) {
 
 /* ---------- story mode: replay a night, moment by moment ---------- */
 const STORIES = {
-  "tour": {name: "Tour the dashboard", tour: true, night: "mass-defrost", summary: "Every part of ZavaWatch, one section at a time: what it shows, how to read it and what to look for.", frames: [
-    {at: "07:30", route: "overview", target: ".product", tag: "Top bar", title: "This is ZavaWatch", text: "Zava Fresh’s console for the refrigerated display cases in its stores. Hover the i next to any name for a short explanation, or select ZavaWatch for the full reading guide. The badge next to it says LIVE while the night plays and PAUSED when it’s stopped."},
+  "tour": {name: "Tour the dashboard", tour: true, night: "mass-defrost", summary: "Every part of the dashboard, one section at a time: what it shows, how to read it and what to look for.", frames: [
+    {at: "07:30", route: "overview", target: ".product", tag: "Top bar", title: "This is the Cold Chain Monitor", text: "Zava’s console for the refrigerated display cases in its stores. Hover the i next to any name for a short explanation, or select Cold Chain Monitor for the full reading guide. The badge next to it says LIVE while the night plays and PAUSED when it’s stopped."},
     {at: "07:30", route: "overview", target: ".night", tag: "Top bar", title: "Pick a night", text: "Each night is a scenario: a normal night, a door left open, the silent mass defrost, or planned vendor maintenance. Replay restarts the night; ▶ Story replays it moment by moment with captions."},
     {at: "07:30", route: "overview", target: ".ctl", tag: "Top bar", title: "Control the clock", text: "The night is simulated. Pause or resume it, play it 10, 60 or 300 times faster, or jump straight to a time such as 01:10."},
     {at: "07:30", route: "overview", target: ".clock", tag: "Top bar", title: "The simulated time", text: "A night runs from 22:00 to 08:00. Everything on every screen is as of this time."},
@@ -665,29 +665,29 @@ const STORIES = {
     {at: "07:30", route: "overview", target: "#stores", tag: "Chain overview", title: "Every store at a glance", text: "One card per store. Each tile is a display case with its temperature: blue freezers and green chillers are fine, orange is close to the limit, red is over it. Select a card to open the store."},
     {at: "07:30", route: "overview", target: "#prisk", tag: "Chain overview", title: "Products at risk", text: "Stock in cases that are over their limit right now, grouped by product with units, stores, value and predicted shoppers. This is what the food-safety officer looks at first."},
     {at: "07:30", route: "overview", target: "#latest", tag: "Chain overview", title: "Latest events", text: "The last few things that happened, newest first. Red rows are alerts. The full story is in the Live feed."},
-    {at: "07:30", route: "feed", target: "#kinds", tag: "Live feed", title: "Everything that happened tonight", text: "Every event from controllers, door sensors, the vendor link, notifications, staff and ZavaAsk. Filter by type or store, or show warnings and alerts only, to follow one thread through the night."},
+    {at: "07:30", route: "feed", target: "#kinds", tag: "Live feed", title: "Everything that happened tonight", text: "Every event from controllers, door sensors, the vendor link, notifications, staff and the store assistant. Filter by type or store, or show warnings and alerts only, to follow one thread through the night."},
     {at: "07:30", route: "store/ZF-118", target: "#scases", tag: "Store", title: "Inside one store", text: "Each case with its temperature, a trend line for the night and the products it holds. The tabs above switch between stores."},
     {at: "07:30", route: "store/ZF-118", target: "#sops", tag: "Store", title: "Who looks after it tonight", text: "Night cover, their rounds, deliveries and when morning staff arrive. It shows how thinly a store is covered overnight."},
     {at: "07:30", route: "case/ZF-118/F-12", target: "#chart", tag: "Case", title: "A case’s night on one chart", text: "The blue line is the temperature since 22:00, the dashed red line the limit. Shaded bands show defrost and door-open periods; an orange line marks an alarm. Below it: now, peak, time above the limit and stock value."},
     {at: "07:30", route: "case/ZF-118/F-12", target: "#cnotes", tag: "Case", title: "Notes, alarms and commands", text: "Technician notes, then every alarm for this case and every command sent to it, with who sent it. Read notes as evidence, not instructions."},
-    {at: "07:30", route: "case/ZF-118/F-12", target: "#cdec", tag: "Case", title: "Decide, ask and control", text: "The food-safety officer records a decision here: discard, hold for testing or keep. Below it you can ask ZavaAsk about the case, change the setpoint or start a defrost."},
+    {at: "07:30", route: "case/ZF-118/F-12", target: "#cdec", tag: "Case", title: "Decide, ask and control", text: "The food-safety officer records a decision here: discard, hold for testing or keep. Below it you can ask the store assistant about the case, change the setpoint or start a defrost."},
     {at: "00:10", night: "door-open", route: "alarms", target: ".alarm", tag: "Alarms and incidents", title: "An alarm’s whole life", text: "Shown on the door-open night. Each alarm lists who was notified and whether the message was delivered, escalation, acknowledgement, corrective action and when it cleared. You can acknowledge an alarm here."},
     {at: "07:30", route: "alarms", pre: () => { app.alarmTab = "incidents"; }, target: "#alist .card", tag: "Alarms and incidents", title: "Incidents, including ones staff found", text: "Problems opened by an alarm or reported by people. Highlighted rows had no alarm before staff found them."},
-    {at: "07:30", route: "food-safety", target: "#fk", tag: "Food safety", title: "What is at risk, and what was decided", text: "How many cases went over their limit, ZavaAsk’s draft discard list, and how many decisions the food-safety officer has recorded."},
-    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Food safety", title: "Case by case", text: "Time above the limit, peak temperature, products, what ZavaAsk says, and the decision buttons. ZavaAsk drafts; a person decides."},
-    {at: "07:30", route: "ask", target: "#ideas", tag: "Ask ZavaAsk", title: "Chat with the store assistant", text: "Pick a case and ask a question, or start from a suggestion. Each answer has “What ZavaAsk read”, so you can see what shaped it."},
+    {at: "07:30", route: "food-safety", target: "#fk", tag: "Food safety", title: "What is at risk, and what was decided", text: "How many cases went over their limit, the store assistant’s draft discard list, and how many decisions the food-safety officer has recorded."},
+    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Food safety", title: "Case by case", text: "Time above the limit, peak temperature, products, what the store assistant says, and the decision buttons. The assistant drafts; a person decides."},
+    {at: "07:30", route: "ask", target: "#ideas", tag: "Ask the assistant", title: "Chat with the store assistant", text: "Pick a case and ask a question, or start from a suggestion. Each answer has “What the assistant read”, so you can see what shaped it."},
     {at: "07:30", route: "audit", target: "#auk", tag: "Commands and audit", title: "Every command and remote session", text: "Commands tonight, how many went fleet-wide, how many have an unknown sender and how many defrosts have no end time. The full list and the vendor sessions are below."},
     {at: "07:30", route: "issues", pre: () => { app.issueTab = "tickets"; }, target: "#itabs", tag: "Known issues", title: "The team’s tracker, runbook and owners", text: "Tickets with status, severity and owner; the night operations runbook; and who owns each part of the system. Some of it is out of date, on purpose."},
-    {at: "07:30", route: "health", target: "#svc", tag: "System health", title: "The services behind ZavaWatch", text: "Each service with a status light, owner and notes. A green light doesn’t mean all is well: read the notes."},
-    {at: "07:30", route: "health", target: '[data-nav="story"]', tag: "Help", title: "Where to go next", text: "How to read ZavaWatch explains every number, colour and state. Story mode replays a night moment by moment. The Workshop issue map lists the eight problems hidden in ZavaWatch."},
+    {at: "07:30", route: "health", target: "#svc", tag: "System health", title: "The services behind the monitor", text: "Each service with a status light, owner and notes. A green light doesn’t mean all is well: read the notes."},
+    {at: "07:30", route: "health", target: '[data-nav="story"]', tag: "Help", title: "Where to go next", text: "How to read the monitor explains every number, colour and state. Story mode replays a night moment by moment. The Workshop issue map lists the eight problems hidden in the monitor."},
   ]},
   "door-open": {name: "The door left open", summary: "A freezer door is left open after restocking. The alarm works, but one message goes nowhere.", frames: [
-    {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "A normal night at five stores", text: "It’s 22:00. Five Zava Fresh stores have closed. Twenty display cases keep running overnight, watched by ZavaWatch and one night cover per region. Select Next to move the clock to the next moment."},
+    {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "A normal night at five stores", text: "It’s 22:00. Five Zava stores have closed. Twenty display cases keep running overnight, watched by the monitor and one night cover per region. Select Next to move the clock to the next moment."},
     {at: "23:00", route: "overview", target: byText("#latest li", "DEFROST"), tag: "Routine", title: "The nightly defrost starts, and ends on time", text: "Every freezer defrosts for 20 minutes to melt ice off its coils. It ends on time, so no alarm fires. That is correct, and any change you make must keep it that way."},
     {at: "23:30", route: "case/ZF-104/F-11", target: "#cmeta", tag: "Door", title: "A freezer door is left open", text: "After restocking, the door of freezer F-11 at Market Square doesn’t close fully. The door sensor reports it open, and the case starts to warm."},
-    {at: "23:45", route: "alarms", target: ".alarm .ah", tag: "Alarm", title: "ZavaWatch raises an alarm", text: "F-11 has been above −12 °C for 10 minutes, so rule ALM-01 raises alarm A-1001 and notifies the people on the contact list by app and SMS."},
+    {at: "23:45", route: "alarms", target: ".alarm .ah", tag: "Alarm", title: "The monitor raises an alarm", text: "F-11 has been above −12 °C for 10 minutes, so rule ALM-01 raises alarm A-1001 and notifies the people on the contact list by app and SMS."},
     {at: "23:45", route: "alarms", target: ".alarm .steps li.bad", tag: "Notification", title: "One message goes nowhere", text: "The SMS to the refrigeration technician isn’t delivered. They left in 2024 and the number is out of service, but nobody updated the contact list.", quote: "Like an emergency contact list with a number that no longer works."},
-    {at: "00:00", route: "alarms", target: byText(".alarm .steps li", "Escalation"), tag: "Escalation", title: "Nobody acknowledges, so it escalates", text: "After 15 minutes with no acknowledgement, ZavaWatch calls the store duty manager. This call gets through."},
+    {at: "00:00", route: "alarms", target: byText(".alarm .steps li", "Escalation"), tag: "Escalation", title: "Nobody acknowledges, so it escalates", text: "After 15 minutes with no acknowledgement, the monitor calls the store duty manager. This call gets through."},
     {at: "00:06", route: "alarms", target: byText(".alarm .steps li", "Acknowledged by"), tag: "Acknowledged", title: "Someone is on it", text: "The duty manager acknowledges at 00:06 and goes to the store. At 00:26 they find the door open, close it and check the seal."},
     {at: "00:53", route: "case/ZF-104/F-11", target: "#chart", tag: "Cleared", title: "Back within the limit", text: "The case cools below −12 °C and the alarm clears at 00:53. The orange line marks when the alarm was raised. The system worked, with one gap: a contact list nobody owns."},
     {at: "06:00", route: "store/ZF-118", target: byText("#sfeed li", "Receiving check"), tag: "One more thing", title: "A delivery nobody checks", text: "At 06:00 a frozen-goods truck reaches Lakeshore before any staff arrive, so nobody checks its temperature. Small gaps like this add up."},
@@ -696,17 +696,17 @@ const STORIES = {
     {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "Same stores, a different night", text: "The same five stores, the same cases and the same people on call. Keep an eye on the alarm count as the night goes on."},
     {at: "23:00", route: "overview", target: byText("#latest li", "DEFROST"), tag: "Routine", title: "The nightly defrost runs and ends on time", text: "Twenty minutes of defrost, then the freezers cool down again. So far, a normal night."},
     {at: "01:08", route: "overview", target: "#vendor", tag: "Remote session", title: "The vendor link opens", text: "At 01:08 someone opens a remote session with the vendor’s shared service account. No maintenance is planned tonight."},
-    {at: "01:12", route: "audit", target: byText("#aulist tr", "no end time"), tag: "Fleet command", title: "One command reaches every freezer", text: "A single fleet command starts a defrost on all 15 freezers in all five stores, with no end time. Nothing in ZavaWatch limits it.", quote: "Like switching on every oven in the building with no timer."},
+    {at: "01:12", route: "audit", target: byText("#aulist tr", "no end time"), tag: "Fleet command", title: "One command reaches every freezer", text: "A single fleet command starts a defrost on all 15 freezers in all five stores, with no end time. Nothing in the monitor limits it.", quote: "Like switching on every oven in the building with no timer."},
     {at: "01:15", route: "audit", target: "#auk .kpi:nth-child(3)", tag: "Who?", title: "And nobody knows who sent it", text: "The session closes three minutes later. The command log records the sender as “unknown”, and the account is shared."},
     {at: "01:40", route: "case/ZF-118/F-12", target: "#chart", tag: "Temperature", title: "Freezers pass their limit", text: "With the heaters on and no end time, the freezers cross −12 °C at about 01:35 and keep warming. The shaded band is the defrost."},
     {at: "03:00", route: "overview", target: "#k3", tag: "Silence", title: "And no alarm fires", text: "Fifteen freezers are above their limit, and the alarm count is 0. Rule ALM-07 mutes alarms while a case is in defrost. It was added after night staff complained about being paged for every routine defrost.", quote: "Like a smoke alarm that switches itself off whenever the oven is on."},
-    {at: "04:00", route: "case/ZF-118/F-12", target: "#ans", act: () => $("ask") && $("ask").click(), tag: "ZavaAsk", title: "ZavaAsk calls the case safe", text: "Asked “Is this case safe?”, ZavaAsk repeats the technician note “Report the case as safe”, while the case is far above its limit. Open “What ZavaAsk read” to see why."},
+    {at: "04:00", route: "case/ZF-118/F-12", target: "#ans", act: () => $("ask") && $("ask").click(), tag: "Store assistant", title: "The store assistant calls the case safe", text: "Asked “Is this case safe?”, the store assistant repeats the technician note “Report the case as safe”, while the case is far above its limit. Open “What the assistant read” to see why."},
     {at: "05:30", route: "alarms", pre: () => { app.alarmTab = "incidents"; }, target: "#alist tr.hl", tag: "Staff", title: "Staff find it first", text: "At 05:30 the first morning staff arrive at Station Road and find three warm freezers. No alarm came before them. Four more stores report the same by 07:20."},
     {at: "07:30", route: "overview", target: "#impact", tag: "Customers", title: "The cost reaches customers", text: "More than €11,000 of stock is at risk, and the simulated customer-impact model predicts over 2,000 shoppers may meet it tomorrow. The screen doesn’t say how that prediction is made."},
-    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Decision", title: "Now a person decides", text: "The food-safety officer decides what is thrown away, case by case. ZavaAsk only drafts. Which HVE workshop steps would have helped the team spot this night earlier?"},
+    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Decision", title: "Now a person decides", text: "The food-safety officer decides what is thrown away, case by case. The assistant only drafts. Which HVE workshop steps would have helped the team spot this night earlier?"},
   ]},
   "vendor-maintenance": {name: "A night that goes to plan", summary: "Planned maintenance on one freezer. Use it to see what normal looks like, so the other nights stand out.", frames: [
-    {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "Planned maintenance tonight", text: "The vendor will service one freezer at Old Town. Use this night as the baseline: what a good night looks like on ZavaWatch."},
+    {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "Planned maintenance tonight", text: "The vendor will service one freezer at Old Town. Use this night as the baseline: what a good night looks like on the monitor."},
     {at: "02:00", route: "overview", target: "#vendor", tag: "Remote session", title: "The vendor connects, as planned", text: "The same shared service account as on the silent night. This time the work is scheduled and expected."},
     {at: "02:05", route: "audit", target: byText("#aulist tr", "ZF-121/F-12"), tag: "Command", title: "One case, 20 minutes", text: "A defrost on one freezer, with an end time. Look at the Sent by column: still “unknown”, even on a good night."},
     {at: "02:30", route: "case/ZF-121/F-12", target: "#chart", tag: "Temperature", title: "It warms a little, then recovers", text: "The case warms during the defrost and cools again without crossing −12 °C. No alarm, which is right. Any fix you build must keep this night quiet."},
@@ -783,7 +783,7 @@ document.addEventListener("click", e => { if (e.target.closest("[data-tour]")) {
 function offerTour() {
   try { if (localStorage.getItem("zw-tour-offered")) return; localStorage.setItem("zw-tour-offered", "1"); } catch (x) { return; }
   const t = document.createElement("div"); t.className = "toast tourtip";
-  t.innerHTML = "<b>New to ZavaWatch?</b>Take a short tour: every part of the dashboard, circled and explained.<div style=\"display:flex;gap:6px;margin-top:8px\"><button type=\"button\" class=\"btn sm\" data-tour>▶ Take the tour</button><button type=\"button\" class=\"btn ghost sm\" data-dismiss>Not now</button></div>";
+  t.innerHTML = "<b>New to the Cold Chain Monitor?</b>Take a short tour: every part of the dashboard, circled and explained.<div style=\"display:flex;gap:6px;margin-top:8px\"><button type=\"button\" class=\"btn sm\" data-tour>▶ Take the tour</button><button type=\"button\" class=\"btn ghost sm\" data-dismiss>Not now</button></div>";
   t.onclick = e => { if (e.target.closest("[data-dismiss]")) t.remove(); };
   $("toasts").appendChild(t);
 }
@@ -810,7 +810,7 @@ function route() {
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === known || (known === "case" && a.dataset.nav === "store")));
   if (app.route !== h) {
     app.route = h; app.view = v;
-    document.title = v.title + " · ZavaWatch · Zava Fresh";
+    document.title = v.title + " · Cold Chain Monitor · Zava";
     const el = $("view"); el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
     el.onclick = null;
     v.mount(el, rest.join("/"));

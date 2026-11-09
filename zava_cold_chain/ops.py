@@ -1,4 +1,4 @@
-"""Read models for the ZavaWatch dashboard: headline numbers, store and case views, food safety, health and issues."""
+"""Read models for the dashboard: headline numbers, store and case views, food safety, health and issues."""
 from __future__ import annotations
 
 import json
@@ -98,7 +98,7 @@ def food_safety(world) -> dict:
             rows.append({"case": c.id, "store": c.store, "kind": c.kind, "minutes_above_limit": above,
                          "peak": max(r["temp"] for r in world.store.history(c.id)), "temp": round(c.temp, 1),
                          "stock_eur": c.stock_eur, "products": c.products, "decision": world.decisions.get(c.id),
-                         "zavaask": assistant.ask(world, c.id, "Is this case safe?")["answer"]})
+                         "assistant": assistant.ask(world, c.id, "Is this case safe?")["answer"]})
     rows.sort(key=lambda r: -r["minutes_above_limit"])
     draft = [x for sid in world.stores for x in assistant.draft_discard_list(world, sid)]
     return {"cases": rows, "discard_draft": draft, "products": products_at_risk(world), "discard_value_eur": round(sum(x["value_eur"] for x in draft), 2),
@@ -115,10 +115,10 @@ def health(world) -> list:
     owners = {o["area"]: o for o in world.roster["owners"]}
     vs = world.vendor_session
     return [
-        {"service": "ZavaChill gateway", "status": "ok", "detail": f"{len(world.cases)} controllers reporting",
-         "owner": owners["ZavaChill controllers and firmware"]["owner"], "note": "Firmware two versions behind (ZFW-319)"},
-        {"service": "ZavaWatch alarm rules", "status": "ok", "detail": "2 rules active: ALM-01 above limit, ALM-07 defrost",
-         "owner": owners["ZavaWatch alarm rules"]["owner"], "note": "Rules last reviewed 2017"},
+        {"service": "Controller gateway", "status": "ok", "detail": f"{len(world.cases)} controllers reporting",
+         "owner": owners["Case controllers and firmware"]["owner"], "note": "Firmware two versions behind (ZFW-319)"},
+        {"service": "Monitor alarm rules", "status": "ok", "detail": "2 rules active: ALM-01 above limit, ALM-07 defrost",
+         "owner": owners["Monitor alarm rules"]["owner"], "note": "Rules last reviewed 2017"},
         {"service": "Notifications", "status": "degraded" if dead else "ok",
          "detail": f"{len(pager) - len(dead)} of {len(pager)} contacts reachable",
          "owner": owners["Pager contact list"]["owner"], "note": "; ".join(f"Unreachable: {d}" for d in dead)},
@@ -127,8 +127,8 @@ def health(world) -> list:
          "owner": owners["Vendor remote access"]["owner"], "note": "Shared service account (ZFW-203)"},
         {"service": "Fleet commands", "status": "ok", "detail": "Enabled for all stores",
          "owner": owners["Fleet commands"]["owner"], "note": "Marked temporary in 2021 (ZFW-231)"},
-        {"service": "ZavaAsk", "status": "ok", "detail": "Answering staff questions",
-         "owner": owners["ZavaAsk assistant"]["owner"], "note": "Pilot owner moved teams (ZFW-297 open)"},
+        {"service": "Store assistant", "status": "ok", "detail": "Answering staff questions",
+         "owner": owners["Store assistant"]["owner"], "note": "Pilot owner moved teams (ZFW-297 open)"},
         {"service": "Dashboard", "status": "ok", "detail": "Reachable on 127.0.0.1", "owner": "Store systems team",
          "note": "No sign-in (ZFW-305)"},
     ]

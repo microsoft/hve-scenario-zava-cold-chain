@@ -1,4 +1,4 @@
-"""Commands for ZavaChill controllers: setpoints and defrost, for one case or the whole fleet.
+"""Commands for the case controllers: setpoints and defrost, for one case or the whole fleet.
 
 The same entry point serves technicians (dashboard), the vendor's remote service and the defrost schedule.
 """

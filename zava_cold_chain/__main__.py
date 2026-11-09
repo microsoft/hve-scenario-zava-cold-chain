@@ -1,4 +1,4 @@
-"""Command line: python -m zava_fresh serve | replay <night> | nights"""
+"""Command line: python -m zava_cold_chain serve | replay <night> | nights"""
 from __future__ import annotations
 
 import argparse
@@ -11,7 +11,7 @@ def cmd_serve(args) -> None:
     from .server import serve
     httpd = serve(args.port, args.night, args.speed)
     url = f"http://127.0.0.1:{args.port}/"
-    print(f"Zava Fresh ZavaWatch running at {url}  (night: {args.night}; Ctrl+C to stop)")
+    print(f"Zava Cold Chain Monitor running at {url}  (night: {args.night}; Ctrl+C to stop)")
     if not args.no_browser:
         webbrowser.open(url)
     try:
@@ -34,7 +34,7 @@ def cmd_replay(args) -> None:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(prog="python -m zava_fresh", description="Zava Fresh cold-chain monitor (fictitious, local only)")
+    p = argparse.ArgumentParser(prog="python -m zava_cold_chain", description="Zava cold-chain monitoring scenario (fictitious, local only)")
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("serve", help="start the dashboard on 127.0.0.1")
     s.add_argument("--port", type=int, default=8740)

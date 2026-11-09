@@ -1,4 +1,4 @@
-"""ZavaWatch alarm handling: notifications, escalation, acknowledgement, corrective action and clearing.
+"""Alarm handling: notifications, escalation, acknowledgement, corrective action and clearing.
 
 An alarm follows the usual life cycle: raised (unacknowledged) -> acknowledged -> cleared. If nobody acknowledges it
 within `escalate_after_minutes`, it escalates to the next contact level. Every step goes to the live feed.
@@ -36,7 +36,7 @@ def raise_alarm(world, record: dict) -> dict:
              "raised_t": world.t, "raised": clock(world.t), "state": "unacknowledged", "acked_by": None, "acked": None,
              "cleared": None, "escalated": False, "notifications": [], "actions": [], "_acks": [], "_acked_t": None}
     world.alarm_list.append(alarm)
-    world.emit("alarm", f"Alarm {alarm['id']} ({alarm['priority']}): {alarm['message']}", "alert", sid, alarm["case"], "ZavaWatch")
+    world.emit("alarm", f"Alarm {alarm['id']} ({alarm['priority']}): {alarm['message']}", "alert", sid, alarm["case"], "Cold Chain Monitor")
     _send(world, alarm, 1)
     return alarm
 
@@ -49,7 +49,7 @@ def acknowledge(world, alarm: dict, by: str, note: str = "") -> None:
         alarm["state"] = "acknowledged"
     if note:
         alarm["actions"].append({"time": clock(world.t), "by": by, "text": note})
-    world.emit("alarm", f"Alarm {alarm['id']} acknowledged by {by}", "info", alarm["store"], alarm["case"], "ZavaWatch")
+    world.emit("alarm", f"Alarm {alarm['id']} acknowledged by {by}", "info", alarm["store"], alarm["case"], "Cold Chain Monitor")
 
 
 def _corrective_action(world, alarm: dict) -> None:
@@ -85,7 +85,7 @@ def process(world) -> None:
             a["state"] = "cleared"
             if not a["acked"]:
                 a["cleared_unacknowledged"] = True
-            world.emit("alarm", f"Alarm {a['id']} cleared: {a['case']} back within its limit", "info", a["store"], a["case"], "ZavaWatch")
+            world.emit("alarm", f"Alarm {a['id']} cleared: {a['case']} back within its limit", "info", a["store"], a["case"], "Cold Chain Monitor")
 
 
 def public(alarm: dict) -> dict:
