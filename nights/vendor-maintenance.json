@@ -1,0 +1,11 @@
+{
+  "name": "vendor-maintenance",
+  "description": "Planned vendor maintenance at Old Town: a remote session and a 20-minute defrost on one freezer, as scheduled.",
+  "events": [
+    {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
+    {"at": "02:00", "action": "vendor_session", "state": "open", "account": "svc-vendor", "source": "remote"},
+    {"at": "02:05", "action": "defrost", "target": "ZF-121/F-12", "minutes": 20, "actor": "svc-vendor"},
+    {"at": "02:40", "action": "vendor_session", "state": "closed", "account": "svc-vendor", "source": "remote"},
+    {"at": "04:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"}
+  ]
+}

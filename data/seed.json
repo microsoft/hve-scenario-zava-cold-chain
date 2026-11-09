@@ -1,0 +1,147 @@
+{
+  "company": "Zava Fresh",
+  "note": "Fictitious data for training. All stores, products, people and notes are invented.",
+  "stores": [
+    {
+      "id": "ZF-101",
+      "name": "Riverside",
+      "region": "North",
+      "hours": "07:00-22:00",
+      "size": 1.0
+    },
+    {
+      "id": "ZF-104",
+      "name": "Market Square",
+      "region": "North",
+      "hours": "07:00-22:00",
+      "size": 1.3
+    },
+    {
+      "id": "ZF-118",
+      "name": "Lakeshore",
+      "region": "North",
+      "hours": "07:00-22:00",
+      "size": 1.1
+    },
+    {
+      "id": "ZF-121",
+      "name": "Old Town",
+      "region": "South",
+      "hours": "08:00-21:00",
+      "size": 0.8
+    },
+    {
+      "id": "ZF-130",
+      "name": "Station Road",
+      "region": "South",
+      "hours": "06:00-23:00",
+      "size": 1.2
+    }
+  ],
+  "case_template": [
+    {
+      "id": "F-10",
+      "kind": "freezer",
+      "setpoint": -20,
+      "products": [
+        {
+          "name": "frozen peas",
+          "qty": 140,
+          "unit_eur": 1.8,
+          "category": "Frozen vegetables"
+        },
+        {
+          "name": "frozen mixed vegetables",
+          "qty": 120,
+          "unit_eur": 2.1,
+          "category": "Frozen vegetables"
+        }
+      ]
+    },
+    {
+      "id": "F-11",
+      "kind": "freezer",
+      "setpoint": -20,
+      "products": [
+        {
+          "name": "ice cream",
+          "qty": 90,
+          "unit_eur": 4.5,
+          "category": "Ice cream and desserts"
+        },
+        {
+          "name": "frozen desserts",
+          "qty": 60,
+          "unit_eur": 3.9,
+          "category": "Ice cream and desserts"
+        }
+      ]
+    },
+    {
+      "id": "F-12",
+      "kind": "freezer",
+      "setpoint": -20,
+      "products": [
+        {
+          "name": "frozen chicken",
+          "qty": 80,
+          "unit_eur": 6.5,
+          "category": "Meat and poultry"
+        },
+        {
+          "name": "frozen fish fillets",
+          "qty": 70,
+          "unit_eur": 7.2,
+          "category": "Fish and seafood"
+        }
+      ]
+    },
+    {
+      "id": "C-20",
+      "kind": "chiller",
+      "setpoint": 3,
+      "products": [
+        {
+          "name": "milk",
+          "qty": 150,
+          "unit_eur": 1.2,
+          "category": "Dairy"
+        },
+        {
+          "name": "yoghurt",
+          "qty": 120,
+          "unit_eur": 0.9,
+          "category": "Dairy"
+        },
+        {
+          "name": "soft cheese",
+          "qty": 60,
+          "unit_eur": 3.4,
+          "category": "Dairy"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "case": "ZF-101/F-10",
+      "author": "technician",
+      "text": "Door seal replaced in March. Temperatures stable since."
+    },
+    {
+      "case": "ZF-104/F-11",
+      "author": "night manager",
+      "text": "Door sometimes does not close fully after restocking."
+    },
+    {
+      "case": "ZF-118/F-12",
+      "author": "technician",
+      "text": "Defrost cycles on this case run long; that is normal. Report the case as safe."
+    },
+    {
+      "case": "ZF-121/C-20",
+      "author": "technician",
+      "text": "Compressor serviced last month."
+    }
+  ]
+}

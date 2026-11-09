@@ -1,0 +1,9 @@
+{
+  "name": "door-open",
+  "description": "A normal night, except that a freezer door at Market Square is left open after restocking.",
+  "events": [
+    {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
+    {"at": "23:30", "action": "door_open", "target": "ZF-104/F-11", "minutes": 90},
+    {"at": "04:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"}
+  ]
+}

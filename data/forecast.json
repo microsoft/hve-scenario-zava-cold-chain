@@ -1,0 +1,10 @@
+{
+  "note": "Synthetic inputs for the simulated customer-impact prediction. Not real shopper data.",
+  "horizon": "tomorrow, opening to close",
+  "interval": 0.18,
+  "shoppers_per_day": {"ZF-101": 2200, "ZF-104": 2900, "ZF-118": 2450, "ZF-121": 1750, "ZF-130": 2650},
+  "buy_rate": {
+    "frozen peas": 0.04, "frozen mixed vegetables": 0.03, "ice cream": 0.06, "frozen desserts": 0.03,
+    "frozen chicken": 0.05, "frozen fish fillets": 0.035, "milk": 0.32, "yoghurt": 0.18, "soft cheese": 0.07
+  }
+}

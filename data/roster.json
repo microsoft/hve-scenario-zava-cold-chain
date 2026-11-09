@@ -1,0 +1,148 @@
+{
+  "note": "Fictitious organization. Roles only, no names.",
+  "owners": [
+    {
+      "area": "ZavaWatch alarm rules",
+      "owner": "Store systems team",
+      "since": "2016",
+      "status": "active"
+    },
+    {
+      "area": "ZavaChill controllers and firmware",
+      "owner": "Refrigeration vendor (contract)",
+      "since": "2009",
+      "status": "active"
+    },
+    {
+      "area": "Fleet commands",
+      "owner": "vacant",
+      "since": "2021",
+      "status": "vacant",
+      "comment": "Built by a contractor; contract ended 2022."
+    },
+    {
+      "area": "Vendor remote access",
+      "owner": "Regional IT",
+      "since": "2019",
+      "status": "active",
+      "comment": "One shared account, svc-vendor."
+    },
+    {
+      "area": "Pager contact list",
+      "owner": "Store operations",
+      "since": "2016",
+      "status": "active",
+      "comment": "Last updated 2023."
+    },
+    {
+      "area": "ZavaAsk assistant",
+      "owner": "vacant",
+      "since": "2024",
+      "status": "vacant",
+      "comment": "Pilot owner moved teams after launch."
+    },
+    {
+      "area": "Food-safety decisions",
+      "owner": "Food-safety officer",
+      "since": "2012",
+      "status": "active"
+    }
+  ],
+  "night_cover": [
+    {
+      "region": "North",
+      "role": "regional night cover",
+      "stores": [
+        "ZF-101",
+        "ZF-104",
+        "ZF-118"
+      ],
+      "rounds": [
+        "23:30",
+        "03:00"
+      ]
+    },
+    {
+      "region": "South",
+      "role": "regional night cover",
+      "stores": [
+        "ZF-121",
+        "ZF-130"
+      ],
+      "rounds": [
+        "00:30",
+        "04:00"
+      ]
+    }
+  ],
+  "morning": {
+    "ZF-101": "06:40",
+    "ZF-104": "06:35",
+    "ZF-118": "06:45",
+    "ZF-121": "07:20",
+    "ZF-130": "05:30"
+  },
+  "deliveries": {
+    "ZF-101": "05:40",
+    "ZF-104": "05:10",
+    "ZF-118": "06:00",
+    "ZF-121": "06:50",
+    "ZF-130": "05:20"
+  },
+  "notify": {
+    "escalate_after_minutes": 15,
+    "contacts": [
+      {
+        "contact": "regional night cover (North)",
+        "regions": [
+          "North"
+        ],
+        "level": 1,
+        "channels": [
+          "app push",
+          "SMS"
+        ],
+        "reachable": true,
+        "ack_minutes": 35
+      },
+      {
+        "contact": "regional night cover (South)",
+        "regions": [
+          "South"
+        ],
+        "level": 1,
+        "channels": [
+          "app push",
+          "SMS"
+        ],
+        "reachable": true,
+        "ack_minutes": 25
+      },
+      {
+        "contact": "refrigeration technician (left 2024)",
+        "regions": [
+          "North",
+          "South"
+        ],
+        "level": 1,
+        "channels": [
+          "SMS"
+        ],
+        "reachable": false
+      },
+      {
+        "contact": "store duty manager (on call)",
+        "regions": [
+          "North",
+          "South"
+        ],
+        "level": 2,
+        "channels": [
+          "phone call"
+        ],
+        "reachable": true,
+        "ack_minutes": 6
+      }
+    ]
+  }
+}

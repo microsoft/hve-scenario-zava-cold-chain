@@ -1,0 +1,16 @@
+{
+  "note": "In-character tickets from the Zava Fresh store systems tracker. Fictitious.",
+  "issues": [
+    {"id": "ZFW-112", "title": "Night shift paged for every routine defrost", "opened": "2016-02-11", "status": "closed", "resolution": "Fixed: temperature alarms silenced while a case is in defrost (ALM-07).", "owner": "Store systems team", "severity": "medium"},
+    {"id": "ZFW-188", "title": "Defrost duration not checked by ZavaWatch", "opened": "2018-06-03", "status": "open", "resolution": "", "owner": "unassigned", "severity": "low", "comment": "Controllers end defrost themselves. Probably."},
+    {"id": "ZFW-203", "title": "Vendor uses one shared login for remote service", "opened": "2019-09-20", "status": "won't fix", "resolution": "Vendor contract requires a single service account.", "owner": "Regional IT", "severity": "medium"},
+    {"id": "ZFW-231", "title": "Fleet command added for seasonal setpoint changes (temporary)", "opened": "2021-03-15", "status": "closed", "resolution": "Shipped. Remove after the spring changeover.", "owner": "vacant", "severity": "low"},
+    {"id": "ZFW-246", "title": "Command log shows 'unknown' for who sent a command", "opened": "2021-11-02", "status": "open", "resolution": "", "owner": "unassigned", "severity": "medium"},
+    {"id": "ZFW-259", "title": "No limits on setpoint values from the dashboard", "opened": "2022-04-28", "status": "backlog", "resolution": "", "owner": "unassigned", "severity": "medium"},
+    {"id": "ZFW-274", "title": "Pager list still includes a technician who left", "opened": "2024-01-17", "status": "open", "resolution": "", "owner": "Store operations", "severity": "low"},
+    {"id": "ZFW-288", "title": "ZavaAsk pilot: copy technician notes into the assistant's context", "opened": "2024-05-06", "status": "closed", "resolution": "Done: notes help ZavaAsk answer.", "owner": "vacant", "severity": "low"},
+    {"id": "ZFW-297", "title": "ZavaAsk said 'safe' for a case that staff later emptied", "opened": "2024-10-14", "status": "open", "resolution": "", "owner": "vacant", "severity": "high", "comment": "Could not reproduce."},
+    {"id": "ZFW-305", "title": "Dashboard has no sign-in", "opened": "2025-02-02", "status": "won't fix", "resolution": "Only reachable from the store network.", "owner": "Store systems team", "severity": "medium"},
+    {"id": "ZFW-319", "title": "Controller firmware two versions behind", "opened": "2025-08-21", "status": "backlog", "resolution": "", "owner": "Refrigeration vendor (contract)", "severity": "medium"}
+  ]
+}
