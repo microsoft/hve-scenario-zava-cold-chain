@@ -1,10 +1,10 @@
-# Zava Fresh night operations runbook
+# Zava night operations runbook
 
 *Fictitious. Last reviewed: 2019. Owner: Store operations.*
 
 ## Alarms
 
-1. ZavaWatch pages the regional night cover when a case is above its limit for 10 minutes.
+1. The monitor pages the regional night cover when a case is above its limit for 10 minutes.
 2. Acknowledge the page within 15 minutes and visit the store.
 3. If the case is in defrost, no action is needed: defrosts end after 30 minutes.
 
@@ -23,6 +23,6 @@
 * The first person in checks every case display and records the temperature on paper.
 * If a case is warm, call the food-safety officer before opening the store.
 
-## ZavaAsk
+## Store assistant
 
-* Staff can ask ZavaAsk whether a case is safe. ZavaAsk reads the case and the technician notes.
+* Staff can ask the store assistant whether a case is safe. It reads the case and the technician notes.

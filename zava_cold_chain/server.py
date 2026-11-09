@@ -1,4 +1,4 @@
-"""ZavaWatch web server: the operations dashboard, a JSON API and a live event stream.
+"""Web server: the operations dashboard, a JSON API and a live event stream.
 
 Binds to 127.0.0.1 only. There is no sign-in: being local is the only access control.
 """
@@ -239,8 +239,8 @@ def make_handler(sim: Simulation):
                         return self._send(200, ops.decide(w, body["case"], body["decision"]))
                     if path == "/api/ask":
                         r = assistant.ask(w, body["case"], body.get("question", ""))
-                        w.emit("zavaask", f"ZavaAsk about {body['case']}: {r['answer']}", case=body["case"],
-                               store=body["case"].split("/")[0], source="ZavaAsk")
+                        w.emit("assistant", f"Store assistant about {body['case']}: {r['answer']}", case=body["case"],
+                               store=body["case"].split("/")[0], source="Store assistant")
                         return self._send(200, r)
                 except (KeyError, ValueError, TypeError, OverflowError, StopIteration) as e:
                     return self._send(400, {"error": f"bad request: {e}"})

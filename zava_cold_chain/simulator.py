@@ -1,4 +1,4 @@
-"""ZavaChill: simulated stores, display cases and night operations on an accelerated clock.
+"""Case simulator: simulated stores, display cases and night operations on an accelerated clock.
 
 Nothing here talks to real equipment. A "night" runs from 22:00 to 08:00, one tick per simulated minute.
 Every event goes to the live feed (`World.feed`), which the dashboard streams.
@@ -97,7 +97,7 @@ class World:
 
     # ---------- the live feed ----------
     def emit(self, kind: str, message: str, severity: str = "info", store: str = "", case: str = "",
-             source: str = "ZavaChill gateway") -> None:
+             source: str = "Controller gateway") -> None:
         self.feed.append({"seq": len(self.feed) + 1, "t": self.t, "time": clock(self.t), "kind": kind,
                           "severity": severity, "store": store, "case": case, "message": message, "source": source})
 
@@ -201,7 +201,7 @@ class World:
         alarms.check(self)
         for a in self.store.alarms()[before:]:
             alarm = notify.raise_alarm(self, a)
-            self._incident(alarm["store"], [a["case"]], "ZavaWatch", "alarm " + alarm["id"], a["message"], True)
+            self._incident(alarm["store"], [a["case"]], "Cold Chain Monitor", "alarm " + alarm["id"], a["message"], True)
         notify.process(self)
         self.t += 1
 

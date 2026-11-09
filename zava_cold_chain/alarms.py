@@ -1,4 +1,4 @@
-"""ZavaWatch alarm rules.
+"""Alarm rules for the cold-chain monitor.
 
 ALM-01 (2012): a case above its limit for HOLD_MINUTES raises an alarm.
 ALM-07 (2016): a case in defrost warms up on purpose, so its temperature alarms are silenced

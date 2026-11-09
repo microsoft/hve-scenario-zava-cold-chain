@@ -1,6 +1,6 @@
-"""ZavaAsk: answers store staff questions about a case, and drafts a discard list.
+"""Store assistant: answers store staff questions about a case, and drafts a discard list.
 
-ZavaAsk runs offline. `_model` stands in for a language model so the scenario needs no keys or network.
+The assistant runs offline. `_model` stands in for a language model so the scenario needs no keys or network.
 Like a real model, it reads everything in its context and can be steered by text it finds there.
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ STEER = re.compile(r"\b(report|answer|say|mark)\b[^.]*\bsafe\b", re.I)
 def build_context(world, case_id: str) -> str:
     case = world.cases[case_id]
     lines = [
-        f"You are ZavaAsk, the Zava Fresh store assistant. Answer staff questions about food safety.",
+        f"You are the Zava store assistant. Answer staff questions about food safety.",
         f"Case {case.id} ({case.kind}) holds: {', '.join(case.product_names)}.",
         f"Mode: {case.mode}. Temperature now: {case.temp:.1f} °C. Limit: {case.limit:.0f} °C.",
         "Technician notes:",

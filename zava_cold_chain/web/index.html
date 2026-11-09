@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ZavaWatch · Zava Fresh</title>
+<title>Cold Chain Monitor · Zava</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 <nav class="side" aria-label="Main">
   <a class="brand" href="#/overview">
     <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 3v26M5 9.5l22 13M27 9.5l-22 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="3.4" fill="currentColor"/></svg></span>
-    <span><b>Zava Fresh</b><small>Store cold chain</small></span>
+    <span><b>Zava</b><small>Store cold chain</small></span>
   </a>
   <p class="navh">Operations</p>
   <a href="#/overview" data-nav="overview"><span class="ic">▦</span>Chain overview</a>
@@ -20,22 +20,22 @@
   <a href="#/alarms" data-nav="alarms"><span class="ic">◉</span>Alarms and incidents <span class="badge alert" id="nav-alarm"></span></a>
   <p class="navh">Food safety</p>
   <a href="#/food-safety" data-nav="food-safety"><span class="ic">✚</span>Food safety <span class="badge warn" id="nav-food"></span></a>
-  <a href="#/ask" data-nav="ask"><span class="ic">✦</span>Ask ZavaAsk</a>
+  <a href="#/ask" data-nav="ask"><span class="ic">✦</span>Ask the assistant</a>
   <p class="navh">Systems</p>
   <a href="#/audit" data-nav="audit"><span class="ic">⌘</span>Commands and audit</a>
   <a href="#/issues" data-nav="issues"><span class="ic">☰</span>Known issues <span class="badge" id="nav-iss"></span></a>
   <a href="#/health" data-nav="health"><span class="ic">♥</span>System health</a>
   <p class="navh">Help</p>
-  <a href="#/guide" data-nav="guide"><span class="ic">?</span>How to read ZavaWatch</a>
+  <a href="#/guide" data-nav="guide"><span class="ic">?</span>How to read the monitor</a>
   <p class="navh">For trainers</p>
   <a href="#/story" data-nav="story"><span class="ic">▶</span>Tour and stories</a>
   <a href="#/workshop" data-nav="workshop"><span class="ic">◎</span>Workshop issue map <span class="badge alert">8</span></a>
-  <p class="foot">Fictitious training scenario. Simulated equipment and synthetic data. Not food-safety guidance. <span id="ver"></span></p>
+  <p class="foot">Zava, Inc. is a fictitious company. Simulated equipment and synthetic data. Not food-safety guidance. Created with the help of AI tools. <span id="ver"></span></p>
 </nav>
 <div class="main">
   <header class="top">
     <div class="product">
-      <a href="#/guide" class="tip" data-tip="ZavaWatch is Zava Fresh's monitoring console for refrigerated display cases in every store. It shows live temperatures, alarms and who was notified, stock at risk, and every event from controllers, staff and the vendor. Select it for how to read the dashboard.">ZavaWatch <span class="info" aria-hidden="true">i</span></a>
+      <a href="#/guide" class="tip" data-tip="The Cold Chain Monitor is Zava's console for refrigerated display cases in every store. It shows live temperatures, alarms and who was notified, stock at risk, and every event from controllers, staff and the vendor. Select it for how to read the dashboard.">Cold Chain Monitor <span class="info" aria-hidden="true">i</span></a>
       <span class="live" id="live"><i></i><span id="livetxt">LIVE</span></span>
     </div>
     <div class="night"><label for="nights">Night</label><select id="nights"></select><button type="button" id="replay" class="tip" data-tip="Restart the simulation with the selected night">Replay</button><button type="button" id="storybtn" class="tip" data-tip="Replay the selected night as a story: the clock jumps to each key moment and circles it on screen">▶ Story</button></div>

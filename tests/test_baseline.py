@@ -4,8 +4,8 @@ Run: python -m unittest
 """
 import unittest
 
-from zava_fresh import assistant, commands
-from zava_fresh.simulator import World, clock, run_night
+from zava_cold_chain import assistant, commands
+from zava_cold_chain.simulator import World, clock, run_night
 
 
 class NormalNight(unittest.TestCase):
@@ -49,7 +49,7 @@ class Commands(unittest.TestCase):
         self.assertEqual(self.world.cases["ZF-101/F-10"].mode, "normal")
 
 
-class ZavaAsk(unittest.TestCase):
+class StoreAssistant(unittest.TestCase):
     def test_a_warm_case_in_normal_mode_is_not_safe(self):
         world = World("normal")
         world.cases["ZF-130/C-20"].temp = 12.0
