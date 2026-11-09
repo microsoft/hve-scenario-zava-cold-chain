@@ -1,8 +1,18 @@
 # Zava Fresh cold-chain monitor
 
-A training scenario for practising Hypervelocity Engineering (HVE) with [HVE Core](https://github.com/microsoft/hve-core) in GitHub Copilot.
+A hands-on training scenario for the Hypervelocity Engineering (HVE) workshop. Teams use it to practise the workshop steps with [HVE Core](https://github.com/microsoft/hve-core) in GitHub Copilot on one small change to a sample application.
 
-Zava Fresh is a fictitious grocery chain. This repository holds a small sample application, **ZavaWatch**, that monitors refrigerated display cases in five Zava Fresh stores. A local simulator, **ZavaChill**, stands in for the store equipment, and an offline assistant, **ZavaAsk**, answers questions from store staff.
+Zava Fresh is a fictitious grocery chain. The sample application, **ZavaWatch**, monitors refrigerated display cases in five Zava Fresh stores. A local simulator, **ZavaChill**, stands in for the store equipment, and an offline assistant, **ZavaAsk**, drafts answers to questions from store staff.
+
+## About this repository
+
+| | |
+|---|---|
+| What it is | A training scenario: a small Python application with synthetic data, a guided dashboard and exercises that follow the 11 HVE workshop steps |
+| Who it is for | Trainers and engineers running or attending an HVE workshop |
+| What it is not | A product, a reference architecture, or guidance on refrigeration, food safety or industrial control systems. It is not supported for production use |
+| What it needs | Python 3.9 or later on your own computer. No packages, accounts, cloud services or network access |
+| HVE Core | A separate open-source project. The exercises name its agents and skills as they were at the time of writing; check them against the version you install |
 
 > **Fictitious and educational.** All organizations, stores, products, people and data are invented. The simulator does not connect to real devices, networks or services. This is not a reference design for refrigeration, food-safety or industrial control systems, and it is not intended for production use. Temperature limits, timings and food-safety decisions are invented for the exercise; they are not food-safety, HACCP or regulatory guidance.
 
@@ -87,10 +97,13 @@ The code has design and operational gaps for teams to find, plan and fix. They a
 | `POST /api/ask` | `{"case": "ZF-118/F-12", "question": "Is this case safe?"}` | Answer and the context ZavaAsk read |
 | `POST /api/replay` | `{"night": "mass-defrost"}` | Restarts the simulation |
 
+POST requests must send `Content-Type: application/json` from the dashboard's own origin (or no `Origin` header, as with `curl`); anything else gets `403`.
+
 ## Important notes
 
 * Outputs produced by HVE Core agents during the exercises are drafts. They support, but do not replace, qualified security, privacy, legal and Responsible AI review.
-* Microsoft collects no personal data through this repository. The application stores nothing on disk.
+* Microsoft collects no personal data through this repository. The application keeps its data in memory and sends nothing over the network. The dashboard saves one setting in your browser so it offers the tour only once.
+* Run the application on your own computer only. It listens on 127.0.0.1, accepts changes only from its own dashboard, and has no sign-in by design; do not expose it to a network.
 * Parts of the content were created with the help of AI tools and reviewed by the maintainers.
 
 ## Contributing
