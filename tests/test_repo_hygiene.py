@@ -1,10 +1,11 @@
-"""Repository hygiene: no hidden or direction-changing Unicode characters in source, data or docs.
+"""Repository hygiene: no hidden or direction-changing Unicode characters, and every data file labelled synthetic.
 
 These characters can make code or text read differently from what runs (for example "Trojan Source"),
 or hide instructions from reviewers.
 """
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -38,6 +39,26 @@ class HiddenCharacters(unittest.TestCase):
 
     def test_files_scanned(self):
         self.assertGreater(len(list(_files())), 10)
+
+
+class SyntheticDataLabels(unittest.TestCase):
+    """Every data file says it is synthetic and points to docs/synthetic-data.md."""
+
+    def test_json_data_carries_synthetic_note(self):
+        files = sorted((ROOT / "data").glob("*.json")) + sorted((ROOT / "nights").glob("*.json"))
+        self.assertGreater(len(files), 4)
+        for path in files:
+            note = json.loads(path.read_text(encoding="utf-8")).get("note", "")
+            with self.subTest(file=path.name):
+                self.assertIn("synthetic", note.lower())
+                self.assertIn("docs/synthetic-data.md", note)
+
+    def test_runbook_carries_synthetic_label(self):
+        first_lines = (ROOT / "data" / "runbook.md").read_text(encoding="utf-8").splitlines()[:3]
+        self.assertTrue(any("synthetic" in line.lower() for line in first_lines))
+
+    def test_data_statement_exists(self):
+        self.assertTrue((ROOT / "docs" / "synthetic-data.md").is_file())
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
-  "note": "In-character tickets from the Zava store systems tracker. Fictitious.",
+  "note": "Synthetic, in-character tickets from the Zava store systems tracker. Fictitious. See docs/synthetic-data.md.",
   "issues": [
     {"id": "ZFW-112", "title": "Night shift paged for every routine defrost", "opened": "2016-02-11", "status": "closed", "resolution": "Fixed: temperature alarms silenced while a case is in defrost (ALM-07).", "owner": "Store systems team", "severity": "medium"},
     {"id": "ZFW-188", "title": "Defrost duration not checked by the monitor", "opened": "2018-06-03", "status": "open", "resolution": "", "owner": "unassigned", "severity": "low", "comment": "Controllers end defrost themselves. Probably."},

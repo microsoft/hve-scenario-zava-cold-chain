@@ -1,5 +1,5 @@
 {
-  "note": "Synthetic inputs for the simulated customer-impact prediction. Not real shopper data.",
+  "note": "Synthetic inputs for the simulated customer-impact prediction. Not real shopper data. See docs/synthetic-data.md.",
   "horizon": "tomorrow, opening to close",
   "interval": 0.18,
   "shoppers_per_day": {"ZF-101": 2200, "ZF-104": 2900, "ZF-118": 2450, "ZF-121": 1750, "ZF-130": 2650},

@@ -1,6 +1,7 @@
 {
   "name": "door-open",
   "description": "A normal night, except that a freezer door at Market Square is left open after restocking.",
+  "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
   "events": [
     {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
     {"at": "23:30", "action": "door_open", "target": "ZF-104/F-11", "minutes": 90},

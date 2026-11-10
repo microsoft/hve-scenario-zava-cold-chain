@@ -1,6 +1,7 @@
 {
   "name": "vendor-maintenance",
   "description": "Planned vendor maintenance at Old Town: a remote session and a 20-minute defrost on one freezer, as scheduled.",
+  "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
   "events": [
     {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
     {"at": "02:00", "action": "vendor_session", "state": "open", "account": "svc-vendor", "source": "remote"},

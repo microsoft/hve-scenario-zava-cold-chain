@@ -9,6 +9,7 @@ In this scenario, Zava runs five grocery stores. The sample application, the **C
 | | |
 |---|---|
 | What it is | A training scenario: a small Python application with synthetic data, a guided dashboard and exercises that follow the 11 HVE workshop steps |
+| Data | All synthetic and unseeded: invented for this scenario, with no personal, customer or confidential data. See [About the data](docs/synthetic-data.md) |
 | Who it is for | Trainers and engineers running or attending an HVE workshop |
 | What it is not | A product, a reference architecture, or guidance on refrigeration, food safety or industrial control systems. It is not supported for production use |
 | What it needs | Python 3.9 or later on your own computer. No packages, accounts, cloud services or network access |
@@ -70,7 +71,7 @@ The people who know the system, played by coaches in a workshop: the night store
 | Customer impact | `zava_cold_chain/impact.py` | Simulated prediction of shoppers affected tomorrow |
 | Web server and API | `zava_cold_chain/server.py`, `zava_cold_chain/web/` | Dashboard, JSON API and live event stream on 127.0.0.1 |
 | Storage | `zava_cold_chain/store.py` | In-memory SQLite: readings, alarms, notes |
-| Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook and nights |
+| Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook and nights ([how they were made](docs/synthetic-data.md)) |
 | Tests | `tests/` | Baseline tests that pass today |
 
 The code has design and operational gaps for teams to find, plan and fix. They are teaching exercises, not real vulnerabilities, and the repository contains no credentials or secrets.
@@ -106,7 +107,7 @@ POST requests must send `Content-Type: application/json` from the dashboard's ow
 * Outputs produced by HVE Core agents during the exercises are drafts. They support, but do not replace, qualified security, privacy, legal and Responsible AI review.
 * Microsoft collects no personal data through this repository. The application keeps its data in memory and sends nothing over the network. The dashboard saves one setting in your browser so it offers the tour only once.
 * Run the application on your own computer only. It listens on 127.0.0.1, answers only requests addressed to `127.0.0.1` or `localhost`, accepts changes only from its own dashboard, sends a content security policy with every response, and has no sign-in by design. Do not expose it to a network.
-* Parts of the content were created with the help of AI tools and reviewed by the maintainers.
+* Parts of the content, including the synthetic data, were created with the help of AI tools and reviewed by the maintainers. [About the data](docs/synthetic-data.md) explains how the data was made and what it does not contain.
 
 ## Contributing
 
