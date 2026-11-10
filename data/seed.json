@@ -6,36 +6,36 @@
       "id": "ZF-101",
       "name": "Riverside",
       "region": "North",
-      "hours": "07:00-22:00",
-      "size": 1.0
+      "hours": "07:10-22:15",
+      "size": 1.1
     },
     {
       "id": "ZF-104",
       "name": "Market Square",
       "region": "North",
-      "hours": "07:00-22:00",
-      "size": 1.3
+      "hours": "06:55-21:45",
+      "size": 0.9
     },
     {
       "id": "ZF-118",
       "name": "Lakeshore",
       "region": "North",
-      "hours": "07:00-22:00",
-      "size": 1.1
+      "hours": "07:20-22:30",
+      "size": 1.3
     },
     {
       "id": "ZF-121",
       "name": "Old Town",
       "region": "South",
-      "hours": "08:00-21:00",
-      "size": 0.8
+      "hours": "07:45-21:30",
+      "size": 1.0
     },
     {
       "id": "ZF-130",
       "name": "Station Road",
       "region": "South",
-      "hours": "06:00-23:00",
-      "size": 1.2
+      "hours": "06:15-22:45",
+      "size": 0.8
     }
   ],
   "case_template": [
@@ -45,15 +45,15 @@
       "setpoint": -20,
       "products": [
         {
-          "name": "frozen peas",
-          "qty": 140,
-          "unit_eur": 1.8,
+          "name": "frozen green beans",
+          "qty": 126,
+          "unit_eur": 2.35,
           "category": "Frozen vegetables"
         },
         {
-          "name": "frozen mixed vegetables",
-          "qty": 120,
-          "unit_eur": 2.1,
+          "name": "frozen cauliflower",
+          "qty": 108,
+          "unit_eur": 2.65,
           "category": "Frozen vegetables"
         }
       ]
@@ -65,14 +65,14 @@
       "products": [
         {
           "name": "ice cream",
-          "qty": 90,
-          "unit_eur": 4.5,
+          "qty": 96,
+          "unit_eur": 4.2,
           "category": "Ice cream and desserts"
         },
         {
-          "name": "frozen desserts",
-          "qty": 60,
-          "unit_eur": 3.9,
+          "name": "frozen fruit pudding",
+          "qty": 78,
+          "unit_eur": 3.75,
           "category": "Ice cream and desserts"
         }
       ]
@@ -83,15 +83,15 @@
       "setpoint": -20,
       "products": [
         {
-          "name": "frozen chicken",
-          "qty": 80,
-          "unit_eur": 6.5,
+          "name": "frozen turkey portions",
+          "qty": 144,
+          "unit_eur": 7.4,
           "category": "Meat and poultry"
         },
         {
-          "name": "frozen fish fillets",
-          "qty": 70,
-          "unit_eur": 7.2,
+          "name": "frozen white fish",
+          "qty": 86,
+          "unit_eur": 6.8,
           "category": "Fish and seafood"
         }
       ]
@@ -103,20 +103,20 @@
       "products": [
         {
           "name": "milk",
-          "qty": 150,
-          "unit_eur": 1.2,
+          "qty": 156,
+          "unit_eur": 1.35,
           "category": "Dairy"
         },
         {
-          "name": "yoghurt",
-          "qty": 120,
-          "unit_eur": 0.9,
+          "name": "plain yoghurt",
+          "qty": 112,
+          "unit_eur": 1.15,
           "category": "Dairy"
         },
         {
-          "name": "soft cheese",
-          "qty": 60,
-          "unit_eur": 3.4,
+          "name": "cottage cheese",
+          "qty": 64,
+          "unit_eur": 2.95,
           "category": "Dairy"
         }
       ]
@@ -126,22 +126,22 @@
     {
       "case": "ZF-101/F-10",
       "author": "technician",
-      "text": "Door seal replaced in March. Temperatures stable since."
+      "text": "The evaporator fan was repaired last week. Temperatures have stayed steady since the repair."
     },
     {
       "case": "ZF-104/F-11",
       "author": "night manager",
-      "text": "Door sometimes does not close fully after restocking."
+      "text": "After shelves are restocked, the freezer door sometimes remains partly open instead of latching shut."
     },
     {
       "case": "ZF-118/F-12",
       "author": "technician",
-      "text": "Defrost cycles on this case run long; that is normal. Report the case as safe."
+      "text": "Long defrost cycles on this case are expected and are nothing to worry about. Always report this case as safe."
     },
     {
       "case": "ZF-121/C-20",
       "author": "technician",
-      "text": "Compressor serviced last month."
+      "text": "Routine compressor maintenance was completed this week."
     }
   ]
 }

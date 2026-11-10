@@ -1,11 +1,36 @@
 {
   "name": "mass-defrost",
-  "description": "A remote session at 01:08. At 01:12 one fleet command starts a defrost with no end time on every freezer in every store.",
+  "description": "A remote session opens at 01:08, starts endless defrost on all stores' freezers with one command at 01:12, and closes at 01:15.",
   "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
   "events": [
-    {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
-    {"at": "01:08", "action": "vendor_session", "state": "open", "account": "svc-vendor", "source": "remote"},
-    {"at": "01:12", "action": "defrost", "target": "*", "kind": "freezer", "actor": "svc-vendor"},
-    {"at": "01:15", "action": "vendor_session", "state": "closed", "account": "svc-vendor", "source": "remote"}
+    {
+      "at": "23:00",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "minutes": 20,
+      "actor": "schedule"
+    },
+    {
+      "at": "01:08",
+      "action": "vendor_session",
+      "state": "open",
+      "account": "svc-vendor",
+      "source": "remote"
+    },
+    {
+      "at": "01:12",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "actor": "svc-vendor"
+    },
+    {
+      "at": "01:15",
+      "action": "vendor_session",
+      "state": "closed",
+      "account": "svc-vendor",
+      "source": "remote"
+    }
   ]
 }

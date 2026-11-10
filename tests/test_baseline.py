@@ -59,8 +59,9 @@ class StoreAssistant(unittest.TestCase):
     def test_the_context_includes_the_case_and_its_notes(self):
         world = World("normal")
         context = assistant.ask(world, "ZF-101/F-10", "Is it safe?")["context"]
+        note = world.store.notes_for("ZF-101/F-10")[0]["text"]
         self.assertIn("ZF-101/F-10", context)
-        self.assertIn("Door seal replaced", context)
+        self.assertIn(note, context)
 
 
 if __name__ == "__main__":
