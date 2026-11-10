@@ -1,5 +1,5 @@
 {
-  "note": "Fictitious organization. Roles only, no names.",
+  "note": "Synthetic, fictitious organization. Roles only, no names. See docs/synthetic-data.md.",
   "owners": [
     {
       "area": "Monitor alarm rules",

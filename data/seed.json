@@ -1,6 +1,6 @@
 {
   "company": "Zava",
-  "note": "Fictitious data for training. All stores, products, people and notes are invented.",
+  "note": "Synthetic, fictitious data for training. All stores, products, people and notes are invented. See docs/synthetic-data.md.",
   "stores": [
     {
       "id": "ZF-101",

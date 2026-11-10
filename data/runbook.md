@@ -1,6 +1,6 @@
 # Zava night operations runbook
 
-*Fictitious. Last reviewed: 2019. Owner: Store operations.*
+*Fictitious, synthetic document for training (see docs/synthetic-data.md). Last reviewed: 2019. Owner: Store operations.*
 
 ## Alarms
 
