@@ -1,9 +1,23 @@
 {
   "name": "normal",
-  "description": "A quiet night. Every freezer runs two scheduled defrosts that end on time.",
+  "description": "A quiet night has two scheduled defrosts on every freezer, both ending on time.",
   "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
   "events": [
-    {"at": "23:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"},
-    {"at": "04:00", "action": "defrost", "target": "*", "kind": "freezer", "minutes": 20, "actor": "schedule"}
+    {
+      "at": "23:00",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "minutes": 20,
+      "actor": "schedule"
+    },
+    {
+      "at": "04:00",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "minutes": 20,
+      "actor": "schedule"
+    }
   ]
 }

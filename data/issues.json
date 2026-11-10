@@ -1,16 +1,106 @@
 {
   "note": "Synthetic, in-character tickets from the Zava store systems tracker. Fictitious. See docs/synthetic-data.md.",
   "issues": [
-    {"id": "ZFW-112", "title": "Night shift paged for every routine defrost", "opened": "2016-02-11", "status": "closed", "resolution": "Fixed: temperature alarms silenced while a case is in defrost (ALM-07).", "owner": "Store systems team", "severity": "medium"},
-    {"id": "ZFW-188", "title": "Defrost duration not checked by the monitor", "opened": "2018-06-03", "status": "open", "resolution": "", "owner": "unassigned", "severity": "low", "comment": "Controllers end defrost themselves. Probably."},
-    {"id": "ZFW-203", "title": "Vendor uses one shared login for remote service", "opened": "2019-09-20", "status": "won't fix", "resolution": "Vendor contract requires a single service account.", "owner": "Regional IT", "severity": "medium"},
-    {"id": "ZFW-231", "title": "Fleet command added for seasonal setpoint changes (temporary)", "opened": "2021-03-15", "status": "closed", "resolution": "Shipped. Remove after the spring changeover.", "owner": "vacant", "severity": "low"},
-    {"id": "ZFW-246", "title": "Command log shows 'unknown' for who sent a command", "opened": "2021-11-02", "status": "open", "resolution": "", "owner": "unassigned", "severity": "medium"},
-    {"id": "ZFW-259", "title": "No limits on setpoint values from the dashboard", "opened": "2022-04-28", "status": "backlog", "resolution": "", "owner": "unassigned", "severity": "medium"},
-    {"id": "ZFW-274", "title": "Pager list still includes a technician who left", "opened": "2024-01-17", "status": "open", "resolution": "", "owner": "Store operations", "severity": "low"},
-    {"id": "ZFW-288", "title": "Store assistant pilot: copy technician notes into the assistant's context", "opened": "2024-05-06", "status": "closed", "resolution": "Done: notes help the assistant answer.", "owner": "vacant", "severity": "low"},
-    {"id": "ZFW-297", "title": "Store assistant said 'safe' for a case that staff later emptied", "opened": "2024-10-14", "status": "open", "resolution": "", "owner": "vacant", "severity": "high", "comment": "Could not reproduce."},
-    {"id": "ZFW-305", "title": "Dashboard has no sign-in", "opened": "2025-02-02", "status": "won't fix", "resolution": "Only reachable from the store network.", "owner": "Store systems team", "severity": "medium"},
-    {"id": "ZFW-319", "title": "Controller firmware two versions behind", "opened": "2025-08-21", "status": "backlog", "resolution": "", "owner": "Refrigeration vendor (contract)", "severity": "medium"}
+    {
+      "id": "ZFW-112",
+      "title": "Scheduled defrosts repeatedly page night cover",
+      "opened": "2016-04-19",
+      "status": "closed",
+      "resolution": "Alarm rule ALM-07 now suppresses temperature alarms while a case is in defrost.",
+      "owner": "Store systems team",
+      "severity": "medium"
+    },
+    {
+      "id": "ZFW-188",
+      "title": "Monitor does not measure elapsed defrost time",
+      "opened": "2018-08-14",
+      "status": "open",
+      "resolution": "",
+      "owner": "unassigned",
+      "severity": "medium",
+      "comment": "We assume the case controllers always end defrost on their own, but this has not been confirmed."
+    },
+    {
+      "id": "ZFW-203",
+      "title": "Remote vendor work shares one login",
+      "opened": "2019-05-23",
+      "status": "won't fix",
+      "resolution": "Separate logins were declined because the vendor contract requires a single service account.",
+      "owner": "Regional IT",
+      "severity": "high"
+    },
+    {
+      "id": "ZFW-231",
+      "title": "Temporary command changes every case across the fleet",
+      "opened": "2021-02-16",
+      "status": "closed",
+      "resolution": "Shipped the temporary fleet command for seasonal setpoint changes, with removal promised after the next changeover.",
+      "owner": "vacant",
+      "severity": "medium"
+    },
+    {
+      "id": "ZFW-246",
+      "title": "Command history cannot identify the sender",
+      "opened": "2021-09-07",
+      "status": "open",
+      "resolution": "",
+      "owner": "unassigned",
+      "severity": "high"
+    },
+    {
+      "id": "ZFW-259",
+      "title": "Dashboard accepts setpoints outside any defined range",
+      "opened": "2022-06-21",
+      "status": "backlog",
+      "resolution": "",
+      "owner": "unassigned",
+      "severity": "high"
+    },
+    {
+      "id": "ZFW-274",
+      "title": "Departed technician remains on the pager contact list",
+      "opened": "2024-03-12",
+      "status": "open",
+      "resolution": "",
+      "owner": "Store operations",
+      "severity": "medium"
+    },
+    {
+      "id": "ZFW-288",
+      "title": "Include technician notes in the assistant pilot context",
+      "opened": "2024-07-18",
+      "status": "closed",
+      "resolution": "Added technician notes to the store assistant context because they improved its answers.",
+      "owner": "vacant",
+      "severity": "low"
+    },
+    {
+      "id": "ZFW-297",
+      "title": "Assistant called a case safe before staff emptied it",
+      "opened": "2024-11-26",
+      "status": "open",
+      "resolution": "",
+      "owner": "vacant",
+      "severity": "high",
+      "comment": "The team could not reproduce the answer during its follow-up check."
+    },
+    {
+      "id": "ZFW-305",
+      "title": "Store dashboard opens without sign-in",
+      "opened": "2025-04-08",
+      "status": "won't fix",
+      "resolution": "Sign-in was declined because the dashboard is only reachable from the store network.",
+      "owner": "Store systems team",
+      "severity": "high"
+    },
+    {
+      "id": "ZFW-319",
+      "title": "Case controllers are two firmware versions behind",
+      "opened": "2025-09-16",
+      "status": "backlog",
+      "resolution": "",
+      "owner": "Refrigeration vendor (contract)",
+      "severity": "medium"
+    }
   ]
 }

@@ -4,13 +4,13 @@
     {
       "area": "Monitor alarm rules",
       "owner": "Store systems team",
-      "since": "2016",
+      "since": "2015",
       "status": "active"
     },
     {
       "area": "Case controllers and firmware",
       "owner": "Refrigeration vendor (contract)",
-      "since": "2009",
+      "since": "2011",
       "status": "active"
     },
     {
@@ -18,33 +18,33 @@
       "owner": "vacant",
       "since": "2021",
       "status": "vacant",
-      "comment": "Built by a contractor; contract ended 2022."
+      "comment": "An outside contractor built the fleet commands, and that contract has ended."
     },
     {
       "area": "Vendor remote access",
       "owner": "Regional IT",
-      "since": "2019",
+      "since": "2018",
       "status": "active",
-      "comment": "One shared account, svc-vendor."
+      "comment": "The vendor uses a single shared service account called svc-vendor."
     },
     {
       "area": "Pager contact list",
       "owner": "Store operations",
-      "since": "2016",
+      "since": "2017",
       "status": "active",
-      "comment": "Last updated 2023."
+      "comment": "The pager contact list was last updated in 2022."
     },
     {
       "area": "Store assistant",
       "owner": "vacant",
       "since": "2024",
       "status": "vacant",
-      "comment": "Pilot owner moved teams after launch."
+      "comment": "The role that ran the pilot moved to another team."
     },
     {
       "area": "Food-safety decisions",
       "owner": "Food-safety officer",
-      "since": "2012",
+      "since": "2014",
       "status": "active"
     }
   ],

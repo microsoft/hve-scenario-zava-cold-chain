@@ -4,25 +4,22 @@
 
 ## Alarms
 
-1. The monitor pages the regional night cover when a case is above its limit for 10 minutes.
-2. Acknowledge the page within 15 minutes and visit the store.
-3. If the case is in defrost, no action is needed: defrosts end after 30 minutes.
+1. The monitor pages regional night cover after a case stays above its limit for 10 minutes.
+2. Acknowledge within 15 minutes and visit the store.
+3. During defrost, no action is needed because defrosts always end after 30 minutes.
 
 ## Defrost
 
-* Freezers defrost twice a night on a schedule, at 23:00 and 04:00, for 20 minutes.
-* Technicians can start a defrost from the dashboard. Leave the minutes blank to use the controller default.
+Freezers defrost twice nightly, at 23:00 and 04:00, for 20 minutes each. Technicians can start defrost from the dashboard; empty minutes use the controller's default.
 
 ## Vendor remote service
 
-* The refrigeration vendor connects with the service account to apply updates and change schedules.
-* Remote sessions are pre-approved. No notification is needed.
+The vendor uses the service account to install updates and change schedules. Sessions are approved in advance; nobody needs to be told.
 
 ## Morning checks
 
-* The first person in checks every case display and records the temperature on paper.
-* If a case is warm, call the food-safety officer before opening the store.
+The first person in checks every case display and writes temperatures on paper. For a warm case, call the food-safety officer before opening.
 
 ## Store assistant
 
-* Staff can ask the store assistant whether a case is safe. It reads the case and the technician notes.
+Staff can ask whether a case is safe. The store assistant reads case data and technician notes.
