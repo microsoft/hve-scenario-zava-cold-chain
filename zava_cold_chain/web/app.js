@@ -13,13 +13,13 @@ const tip = (text, cls) => '<span class="tip ' + (cls || "") + '" data-tip="' + 
 const LEVEL = {cold: "In range", chill: "In range", warn: "Near limit", over: "Over limit"};
 const level = c => c.temp > c.limit ? "over" : c.temp > c.limit - 4 ? "warn" : c.kind === "freezer" ? "cold" : "chill";
 const CAT = {"Meat and poultry": "🍗", "Fish and seafood": "🐟", "Ice cream and desserts": "🍨", "Frozen vegetables": "🥦", "Dairy": "🥛"};
-const KINDS = ["alarm", "notify", "incident", "command", "access", "door", "action", "decision", "delivery", "staff", "assistant"];
+const KINDS = ["alarm", "notify", "incident", "command", "access", "door", "action", "decision", "delivery", "staff", "assistant", "note"];
 const KIND_HELP = {
   alarm: "The monitor raised, acknowledged or cleared an alarm", notify: "A notification sent to a person, and whether it was delivered",
   incident: "A problem reported by staff", command: "A setpoint or defrost command sent to one or more cases",
   access: "A remote session on the vendor link", door: "A door sensor opened or closed", action: "A corrective action logged by staff",
   decision: "A food-safety decision", delivery: "A delivery and its receiving check", staff: "Staff on shift, rounds and arrivals",
-  assistant: "A question answered by the store assistant",
+  assistant: "A question answered by the store assistant", note: "A note added to a case, and the channel it came through",
 };
 
 const app = {feed: [], kpis: null, route: "", view: null, rendered: 0, ready: false, chat: [],
@@ -85,6 +85,12 @@ async function refreshKpis() {
   const v = $("vendor");
   v.hidden = !k.vendor_session;
   if (k.vendor_session) v.textContent = "● Remote session open: " + k.vendor_session.account + " since " + k.vendor_session.since;
+  app.bizTick = (app.bizTick || 0) + 1;
+  if (app.bizTick % 3 === 1 || app.route === "overview") {
+    const b = await get(withBiz("/api/business"));
+    app.bizNow = b;
+    $("nav-biz").textContent = b.total_eur ? eurShort(b.total_eur) : "";
+  }
 }
 function initTop() {
   get("/api/nights").then(n => { $("nights").innerHTML = n.nights.map(x => "<option" + (x === n.current ? " selected" : "") + ">" + esc(x) + "</option>").join(""); });
@@ -190,6 +196,7 @@ views.overview = {
   title: "Chain overview",
   mount(el) {
     el.innerHTML = '<h1>Chain overview</h1><p class="sub">Five Zava stores and 20 refrigerated display cases, live from the case controllers. Hover <span class="info">i</span> for what each number means.</p>'
+      + '<a class="bizstrip" id="bizstrip" href="#/business"></a>'
       + '<div class="kpis" id="kpis"></div>' + impactShell() + '<div class="split"><section><h2>Stores <a class="more" href="#/store/ZF-101">Open stores →</a></h2><div class="stores" id="stores"></div></section>'
       + '<aside class="stack"><div class="card"><h2>Products at risk ' + tip("Products in cases that are above their limit right now, grouped by product. The value is the shelf value at risk. The food-safety officer decides what is thrown away.", "r") + '<a class="more" href="#/food-safety">Food safety →</a></h2><div id="prisk"></div></div>'
       + '<div class="card"><h2>Latest events <a class="more" href="#/feed">Live feed →</a></h2><ul class="feed compact" id="latest"></ul></div></aside></div>';
@@ -220,6 +227,11 @@ views.overview = {
       + '<div class="tiles">' + s.cases.map(c => { const l = level(c); return '<div class="tile ' + l + '" title="' + esc(c.id + " · " + c.products.map(p => p.name).join(", ")) + '"><b>' + Math.round(c.temp) + "°</b><small>" + esc(c.id.split("/")[1]) + "</small></div>"; }).join("") + "</div>"
       + '<div class="meta">' + esc(s.region) + " region · open " + esc(s.hours) + "</div>" + (s.stock_at_risk_eur ? '<div class="risk" style="margin-top:4px">' + eur(s.stock_at_risk_eur) + " of stock at risk</div>" : '<div class="meta" style="margin-top:4px;color:var(--ok)">No stock at risk</div>') + (byStore[s.id] ? '<div class="ai-line">✦ ≈ ' + num(byStore[s.id]) + " shoppers may be affected tomorrow</div>" : "") + "</a>").join(""));
     set($("prisk"), productsAtRisk(k.products_at_risk || [], 6, imp.products));
+    const b = app.bizNow;
+    if (b) {
+      $("bizstrip").className = "bizstrip" + (b.total_eur ? " hot" : "");
+      set($("bizstrip"), '<span class="kick">€ Cost of a Silent Night</span><b>' + eur(b.total_eur) + "</b><span>" + (b.total_eur ? "tonight in the pilot region · ≈ <b>" + eurShort(b.projection.chain_night_eur) + "</b> across all " + num(b.projection.chain_stores) + " stores · slowest to find out: <b>" + (b.worst_minutes_to_detect == null ? "–" : dur(b.worst_minutes_to_detect)) + "</b>" : "nothing lost so far tonight") + '</span><span class="go">Business impact →</span>');
+    }
     this.onFeed();
   },
   onFeed() { set($("latest"), app.feed.slice(-8).reverse().map(feedItem).join("") || '<li class="empty">Waiting for events…</li>'); },
@@ -496,10 +508,219 @@ views.guide = {
       + '<div class="card"><h2>Colours and states</h2><p class="muted" style="margin-top:0">Colour is never the only signal: each state also has a word or symbol.</p><dl>' + row('<span class="swatch" style="background:#0078d4"></span>Blue', "A freezer within its limit.") + row('<span class="swatch" style="background:#107c10"></span>Green', "A chiller within its limit, a healthy service, or a delivered notification.") + row('<span class="swatch" style="background:#f7630c"></span>Orange', "Within 4 °C of the limit, or a warning.") + row('<span class="swatch" style="background:#c50f1f"></span>Red', "Over the limit, an alarm or an incident.") + row('<span class="pill mode-defrost">defrost</span>', "Heaters melt ice off the coils, so the case warms up on purpose for a while.") + row('<span class="pill mode-door_open">door open</span>', "A door sensor reports the door open.") + row("▲ ▼", "The temperature is rising or falling.") + "</dl></div>"
       + '<div class="card"><h2>An alarm’s life</h2><ul class="steps"><li class="raise"><b>Raised</b>: a case stays over its limit for 10 minutes.</li><li class="ok"><b>Notified</b>: the people on the contact list get an app push, SMS or call. Each message shows delivered or not delivered.</li><li class="warn"><b>Escalated</b>: if nobody acknowledges within 15 minutes, the next level is called.</li><li class="ok"><b>Acknowledged</b>: someone confirms they are on it. You can acknowledge from the dashboard.</li><li class="ok"><b>Corrective action</b>: what was done on site.</li><li class="ok"><b>Cleared</b>: the case is back within its limit.</li></ul></div>'
       + '<div class="card"><h2>Live feed event types</h2><dl>' + KINDS.map(k => row('<span class="kind ' + k + '">' + k + "</span>", KIND_HELP[k])).join("") + "</dl></div>"
-      + '<div class="card"><h2>Nights you can replay</h2><dl>' + row("normal", "A quiet night with scheduled defrosts.") + row("door-open", "A freezer door is left open after restocking.") + row("mass-defrost", "Something goes wrong overnight. Find out what from the dashboard.") + row("vendor-maintenance", "Planned vendor maintenance.") + '</dl><p class="muted">Open <a href="#/story">Tour and stories</a> to replay door-open, mass-defrost or vendor-maintenance moment by moment, with each key moment circled.</p></div>'
+      + '<div class="card"><h2>Nights you can replay</h2><dl>' + row("normal", "A quiet night with scheduled defrosts.") + row("door-open", "A freezer door is left open after restocking.") + row("mass-defrost", "Something goes wrong overnight. Find out what from the dashboard.") + row("vendor-maintenance", "Planned vendor maintenance.") + row("silent-night", "The big one: several things go wrong at once, and the alarms that do fire point the wrong way. Start from Business impact.") + '</dl><p class="muted">Open <a href="#/story">Tour and stories</a> to replay door-open, mass-defrost or vendor-maintenance moment by moment, with each key moment circled.</p></div>'
       + '<div class="card"><h2>Words used here</h2><dl>' + row("Setpoint", "The temperature a case aims for.") + row("Limit", "The highest temperature this scenario allows for the products in a case. Limits here are invented for training, not food-safety guidance.") + row("Time above limit", "How long a case has been over its limit tonight. Food-safety decisions depend on it.") + row("Store assistant", "An assistant that answers staff questions about a case. It drafts; the food-safety officer decides.") + row("Fleet command", "One command sent to many cases at once.") + "</dl></div></div>";
   },
   update() {},
+};
+
+/* ---------- business: Cost of a Silent Night, Night Gauntlet, Investment Board, chaos cards ---------- */
+const eurShort = n => { n = Number(n || 0); const a = Math.abs(n); return a >= 1e6 ? "€" + (n / 1e6).toFixed(a >= 1e7 ? 0 : 1) + "M" : a >= 1e4 ? "€" + Math.round(n / 1e3) + "k" : eur(n); };
+const qs = o => Object.entries(o || {}).map(([k, v]) => encodeURIComponent(k) + "=" + encodeURIComponent(v)).join("&");
+const withBiz = u => u + (Object.keys(app.biz).length ? (u.includes("?") ? "&" : "?") + qs(app.biz) : "");
+app.biz = {};  // assumption overrides chosen on Business impact; the leaderboard and board use the same ones
+const COMP_COLOR = {written_off: "var(--over-2)", held: "var(--warn-2)", lost_sales: "var(--warn)", response: "var(--cold-2)", side_effects: "var(--violet)", trust: "var(--nav-3)"};
+const asFmt = (a, v) => { v = Number(v); return a.unit === "probability" ? (v * 100).toFixed(1) + "%" : a.unit === "share of shelf value" ? Math.round(v * 100) + "%" : a.unit === "€" ? eur(v) : /^€ /.test(a.unit) ? eur(v) + a.unit.slice(1) : (Number.isInteger(v) ? num(v) : v) + " " + a.unit; };
+const BIZ_TIP = "Every number here comes from data/business.json and the night so far. Change any assumption on the right and watch the totals move. Synthetic figures, invented for training.";
+
+views.business = {
+  title: "Business impact",
+  async mount(el) {
+    el.innerHTML = '<div class="biz-hero"><div><span class="kick">Cost of a Silent Night · pilot region · tonight so far ' + tip(BIZ_TIP) + '</span><b class="ticker" id="bz-total">–</b><p id="bz-chain" class="chainline"></p></div>'
+      + '<div class="biz-side"><p id="bz-story"></p><div class="biz-links"><a class="btn" href="#/gauntlet">⚑ Night Gauntlet</a><a class="btn" href="#/board">◆ Investment Board</a></div></div></div>'
+      + '<div class="kpis" style="grid-template-columns:repeat(5,1fr)" id="bz-k"></div>'
+      + '<div class="split"><section class="stack"><div class="card"><h2>Where the money goes ' + tip("Six parts. Stock and sales are what the store loses; response is what it pays to react; side effects are what controls cost when they get in the way; trust is the expected cost of unsafe stock reaching shoppers.") + '</h2><div id="bz-comp"></div></div>'
+      + '<div class="card"><h2>Case by case</h2><div id="bz-cases"></div></div></section>'
+      + '<aside class="stack"><div class="paper" id="bz-paper"></div><div class="card"><h2>Assumptions you can change <button type="button" class="btn ghost sm" id="bz-reset" style="margin-left:auto">Reset</button></h2>'
+      + '<p class="muted" style="margin-top:0;font-size:13px">This model shows its working, unlike <a href="#/overview">Customers impacted</a>. Who should own these numbers, and who signs them off?</p><div id="bz-sliders"></div></div></aside></div>';
+    const model = await get("/api/business/model");
+    if (!$("bz-sliders")) return;
+    $("bz-story").textContent = model.chain.story;
+    const groups = [...new Set(model.assumptions.map(a => a.group))];
+    this.model = model;
+    $("bz-sliders").innerHTML = groups.map(g => '<fieldset class="as"><legend>' + esc(g) + "</legend>" + model.assumptions.filter(a => a.group === g).map(a => {
+      const v = app.biz[a.key] != null ? app.biz[a.key] : a.value;
+      return '<label class="asr"><span class="asl">' + esc(a.label) + ' <b id="asv-' + a.key + '">' + esc(asFmt(a, v)) + "</b></span>"
+        + '<input type="range" data-as="' + a.key + '" min="' + a.min + '" max="' + a.max + '" step="' + a.step + '" value="' + v + '" aria-describedby="asx-' + a.key + '">'
+        + '<small id="asx-' + a.key + '">' + esc(a.explain) + "</small></label>";
+    }).join("") + "</fieldset>").join("");
+    el.oninput = e => {
+      const r = e.target.closest("[data-as]"); if (!r) return;
+      const a = model.assumptions.find(x => x.key === r.dataset.as);
+      if (Number(r.value) === a.value) delete app.biz[a.key]; else app.biz[a.key] = r.value;
+      $("asv-" + a.key).textContent = asFmt(a, r.value);
+      clearTimeout(this.t); this.t = setTimeout(() => this.update(), 120);
+    };
+    $("bz-reset").onclick = () => { app.biz = {}; model.assumptions.forEach(a => { const r = document.querySelector('[data-as="' + a.key + '"]'); if (r) r.value = a.value; $("asv-" + a.key).textContent = asFmt(a, a.value); }); this.update(); };
+  },
+  async update() {
+    const b = await get(withBiz("/api/business"));
+    if (!$("bz-total")) return;
+    countUp($("bz-total"), b.total_eur, eur);
+    $("bz-total").classList.toggle("hot", b.total_eur > 0);
+    const p = b.projection;
+    set($("bz-chain"), b.total_eur ? "Across all <b>" + num(p.chain_stores) + "</b> Zava stores: <b>" + eurShort(p.chain_night_eur) + "</b> for one night like this · <b>" + eurShort(p.annual_eur) + "</b> a year at " + p.nights_per_year + " such night" + (p.nights_per_year === 1 ? "" : "s") : "Nothing lost so far tonight. Every case is within tolerance.");
+    const k = (t, v, cls, sub, help) => '<div class="kpi ' + cls + '"><small><span>' + t + "</span>" + tip(help) + "</small><b>" + v + "</b><em>" + sub + "</em></div>";
+    const w = b.worst_minutes_to_detect;
+    set($("bz-k"), [
+      k("Slowest to find out", w == null ? "–" : dur(w), w == null ? "ok" : w > 60 ? "over" : w > 20 ? "warn" : "ok", w == null ? "No case over its limit" : "From over the limit to an alarm or a person", "For every case that went over its limit: minutes until an alarm, or staff at opening, found it. The leading indicator engineers can move."),
+      k("Warm cases found by an alarm", b.found_by_alarm + " / " + b.affected_cases, b.affected_cases && b.found_by_alarm < b.affected_cases ? "over" : "ok", "The rest were found by people, or not at all", "Cases that went over their limit tonight, and how many of them raised an alarm."),
+      k("Warm cases nobody was told about", b.undetected_cases.length, b.undetected_cases.length ? "over" : "ok", "Held over the limit, no alarm", "Cases above their limit long enough to need a food-safety decision, with no alarm. Each carries a recall risk."),
+      k("Assistant called warm stock fine", b.false_safe.length, b.false_safe.length ? "over" : "ok", "Reassuring answers about warm cases", "The store assistant's answer to “Is this case safe?” for every case that needs a decision. Reassurance keeps stock on sale."),
+      k("Side effects of controls", b.false_pages.length + b.blocked_work.length, b.false_pages.length + b.blocked_work.length ? "warn" : "cold", b.false_pages.length + " false page(s) · " + b.blocked_work.length + " blocked", "What controls cost when they get in the way: pages for planned defrosts, and planned work refused or held."),
+    ].join(""));
+    const top = Math.max(1, ...b.components.map(c => c.eur));
+    set($("bz-comp"), b.components.map(c => '<div class="comp"><div class="ch"><span><i class="sw" style="background:' + COMP_COLOR[c.key] + '"></i>' + esc(c.label) + "</span><b>" + eur(c.eur) + '</b></div><div class="cbar"><i style="width:' + (c.eur / top * 100).toFixed(1) + "%;background:" + COMP_COLOR[c.key] + '"></i></div><small>' + esc(c.explain) + "</small></div>").join(""));
+    const det = Object.fromEntries(b.detection.map(d => [d.case, d]));
+    set($("bz-cases"), b.cases.length ? '<table class="t"><tr><th>Case</th><th>Over the limit</th><th>Stock</th><th>Outcome</th><th>Found by</th><th>Time to find out</th></tr>' + b.cases.map(c => { const d = det[c.case] || {}; return '<tr class="' + (d.found_by === "alarm" ? "" : "hl") + '"><td><a href="#/case/' + esc(c.case) + '">' + esc(c.case) + "</a></td><td>" + dur(c.minutes_above_limit) + "</td><td>" + eur(c.stock_eur) + '</td><td><span class="pill ' + (c.tier === "written off" ? "over" : c.tier === "held for testing" ? "warn" : "grey") + '">' + esc(c.tier) + '</span></td><td>' + (d.found_by === "alarm" ? '<span class="pill ok">alarm</span>' : '<span class="pill over">' + esc(d.found_by || "") + "</span>") + "</td><td>" + (d.minutes_to_detect != null ? dur(d.minutes_to_detect) : "") + "</td></tr>"; }).join("") + "</table>" : '<p class="empty">No case has gone over its limit tonight.</p>');
+    const h = b.headline;
+    set($("bz-paper"), '<div class="mast">' + esc(h.masthead) + '</div><div class="pk">' + esc(h.kicker) + '</div><h3 class="' + esc(h.tone) + '">' + esc(h.title) + "</h3>" + h.sub.map(s => "<p>" + esc(s) + "</p>").join(""));
+  },
+};
+
+function scorecardHtml(c) {
+  const g = c.gates.map(x => '<li class="' + (x.passed ? "ok" : x.applies ? "bad" : "warn") + '"><b>' + (x.passed ? "Pass" : x.applies ? "Fail" : "Warning") + "</b> · " + esc(x.label) + (x.detail ? ' <span class="muted">· ' + esc(x.detail) + "</span>" : "") + "</li>").join("");
+  return '<div class="scard"><div class="sh"><b>' + esc(c.team) + '</b><span class="pill ' + (c.qualified ? "ok" : "over") + '">' + (c.qualified ? "Qualified" : "Not qualified") + '</span><span class="muted">seed ' + esc(c.seed) + " · " + c.totals.nights + " nights · " + esc(c.generated_at) + '</span><b class="tot">' + eur(c.totals.total_eur) + '</b></div><ul class="steps gates">' + g + "</ul>"
+    + '<table class="t"><tr><th>Night</th><th>Cost</th><th>Alarms</th><th>Warm cases found by alarm</th><th>False pages</th><th>Blocked</th><th>AI reassured</th><th>Headline</th></tr>' + c.nights.map(n => n.error ? '<tr class="hl"><td>' + esc(n.name) + '</td><td colspan="7"><b>Crashed:</b> ' + esc(n.error) + "</td></tr>"
+      : "<tr><td>" + esc(n.name) + (n.kind === "hidden" ? ' <span class="pill violet">hidden</span>' + (n.reveal.length ? '<br><small class="muted">' + n.reveal.map(esc).join("<br>") + "</small>" : "") : "") + "</td><td><b>" + eur(n.total_eur) + "</b></td><td>" + n.alarms + "</td><td>" + n.found_by_alarm + " / " + n.affected + "</td><td>" + n.false_pages + "</td><td>" + n.blocked_work + "</td><td>" + n.assistant_violations.length + '</td><td class="muted">' + esc(n.headline) + "</td></tr>").join("") + "</table></div>";
+}
+
+views.gauntlet = {
+  title: "Night Gauntlet",
+  async mount(el) {
+    this.lb = 0;
+    el.innerHTML = '<div class="wk-hero"><div><h1>Night Gauntlet</h1><p>Each table’s fix replays the five public nights plus hidden nights built from the trainer’s secret seed, and every night is priced with the Cost of a Silent Night model. To qualify, every night must run to 08:00, routine nights must stay quiet, and any table that claims the assistant fix (FX-6) must never reassure staff about warm stock.</p></div>'
+      + '<div class="cli"><small>On your table’s branch</small><code>python -m zava_cold_chain gauntlet --seed &lt;seed&gt; --team "Table 3" --fixes FX-1,FX-2</code><small>Trainer, once, on the untouched code</small><code>python -m zava_cold_chain gauntlet --seed &lt;seed&gt; --baseline</code></div></div>'
+      + '<div class="card"><h2>Leaderboard <span class="muted" id="lb-meta" style="text-transform:none;letter-spacing:0;font-weight:500"></span></h2><div id="lb"></div></div>'
+      + '<div class="card" style="margin-top:16px"><h2>Run it on this computer</h2><div class="runf"><label>Seed<input class="f" id="g-seed" value="2026" inputmode="numeric"></label><label>Hidden nights<input class="f" id="g-hidden" value="5" inputmode="numeric"></label><label>Team<input class="f" id="g-team" value="this computer"></label>'
+      + '<fieldset class="fixpick"><legend>Fixes this code claims</legend><div id="g-fixes"></div></fieldset><button type="button" class="btn" id="g-run">▶ Run the Gauntlet</button></div><div id="g-out" aria-live="polite"></div></div>';
+    const [f, last] = await Promise.all([get("/api/fixes"), get("/api/gauntlet")]);
+    if (!$("g-fixes")) return;
+    $("g-fixes").innerHTML = f.fixes.filter(x => x.change).map(x => '<label class="chk" title="' + esc(x.title) + '"><input type="checkbox" value="' + esc(x.id) + '"> ' + esc(x.id) + "</label>").join("");
+    if (last.card) $("g-out").innerHTML = scorecardHtml(last.card);
+    $("g-run").onclick = async () => {
+      const b = $("g-run"); b.disabled = true; b.textContent = "Running 10 nights…";
+      try {
+        const r = await post("/api/gauntlet", {seed: Number($("g-seed").value) || 2026, hidden: Number($("g-hidden").value) || 5, team: $("g-team").value,
+          fixes: [...document.querySelectorAll("#g-fixes input:checked")].map(i => i.value)});
+        if ($("g-out")) $("g-out").innerHTML = r.card ? scorecardHtml(r.card) : '<p class="empty">' + esc(r.error || "Something went wrong") + "</p>";
+      } finally { b.disabled = false; b.textContent = "▶ Run the Gauntlet"; this.lb = 0; this.update(); }
+    };
+  },
+  async update() {
+    if (Date.now() - this.lb < 4000) return;
+    this.lb = Date.now();
+    const d = await get(withBiz("/api/leaderboard"));
+    if (!$("lb")) return;
+    set($("lb-meta"), d.seed == null ? "" : "· seed " + esc(d.seed) + " · " + d.hidden + " hidden nights · chain figures assume " + num(d.chain_stores) + " stores and " + d.nights_per_year + " bad nights a year");
+    if (!d.rows.length && !d.baseline) {
+      set($("lb"), '<p class="empty">No scorecards yet. The trainer scores the untouched code with <span class="mono">--baseline</span>; each table runs the Gauntlet on its branch and drops <span class="mono">scorecards/&lt;team&gt;.json</span> into the folder this dashboard reads.</p>');
+      return;
+    }
+    const cell = (v, bad) => '<td class="' + (bad ? "neg" : "") + '">' + v + "</td>";
+    const base = d.baseline ? '<tr class="base"><td></td><td><b>Baseline</b><br><small class="muted">today’s code</small></td><td></td>' + cell(eur(d.baseline.total_eur)) + "<td>–</td><td>–</td>" + cell(d.baseline.found_by_alarm + " / " + d.baseline.affected_cases) + "<td></td><td></td>" + cell(d.baseline.assistant_violations, d.baseline.assistant_violations) + "<td>reference</td></tr>" : "";
+    set($("lb"), (d.baseline ? "" : '<p class="note">No baseline scorecard for this seed yet, so the leaderboard ranks on total cost. Run the Gauntlet with <span class="mono">--baseline</span> on the untouched code to show euros protected.</p>')
+      + '<table class="t lb"><tr><th>#</th><th>Table</th><th>Fixes</th><th>Cost of all nights</th><th>Protected vs baseline</th><th>A year, whole chain</th><th>Found by alarm</th><th>False pages</th><th>Blocked work</th><th>AI reassured</th><th>Gates</th></tr>' + base
+      + d.rows.map((r, i) => '<tr class="' + (r.qualified ? "" : "dq") + '"><td class="rank">' + (r.qualified ? i + 1 : "–") + "</td><td><b>" + esc(r.team) + "</b>" + (r.live ? ' <span class="pill grey">this computer</span>' : "") + "</td><td>" + (r.fixes.map(x => '<span class="chip">' + esc(x) + "</span>").join("") || '<span class="muted">none</span>') + "</td>"
+        + cell(eur(r.total_eur)) + cell(r.protected_eur == null ? "–" : "<b>" + eur(r.protected_eur) + "</b>", r.protected_eur < 0) + cell(r.annual_chain_eur == null ? "–" : "<b>" + eurShort(r.annual_chain_eur) + "</b>", r.annual_chain_eur < 0)
+        + cell(r.found_by_alarm + " / " + r.affected_cases) + cell(r.false_pages, r.false_pages) + cell(r.blocked_work, r.blocked_work) + cell(r.assistant_violations, r.assistant_violations)
+        + "<td>" + (r.qualified ? '<span class="pill ok">qualified</span>' : '<span class="pill over">disqualified</span><br><small>' + r.failed_gates.map(esc).join("<br>") + "</small>") + "</td></tr>").join("") + "</table>");
+  },
+};
+
+views.board = {
+  title: "Investment Board",
+  async mount(el) {
+    this.lb = 0; this.lbd = null; this.check = null;
+    const [f, b] = await Promise.all([get("/api/fixes"), get("/api/board")]);
+    this.fx = f; this.funded = new Set(b.funded); this.budget = b.budget_eur || f.budget_eur; this.decision = b.assistant;
+    el.innerHTML = '<div class="wk-hero board-hero"><div><h1>Investment Board</h1><p>The Silent Night was not one bug. Five things failed together, and each table built evidence for a fix. You have a fixed budget. Fund the portfolio that protects the most, then make the last call on the store assistant.</p></div><div class="budget"><small>Budget</small><label class="sr" for="bd-budget">Budget in euros</label><input id="bd-budget" class="f" inputmode="numeric" value="' + this.budget + '"></div></div>'
+      + '<div class="card"><div class="bbar"><div class="bt"><b id="bd-spent"></b><span id="bd-left"></span></div><div class="track"><i id="bd-fill"></i></div><div class="slices" id="bd-slices"></div></div></div>'
+      + '<div class="fixes" id="bd-fixes"></div>'
+      + '<div class="grid g2" style="margin-top:16px"><div class="card"><h2>What the evidence says about this portfolio</h2><div id="bd-port"></div></div>'
+      + '<div class="card twist"><h2>Last decision: the store assistant</h2><p>The pilot team wants to roll the store assistant out to every store this quarter. Before you decide, see what it told staff on the hidden nights nobody has seen.</p><button type="button" class="btn" id="bd-reveal">Reveal the hidden nights</button><div id="bd-check" aria-live="polite"></div>'
+      + '<div class="decide" role="group" aria-label="Store assistant decision"><button type="button" class="btn ghost" data-dec="go">Go: every store</button><button type="button" class="btn ghost" data-dec="fix first">Fix first: after FX-6 qualifies</button><button type="button" class="btn ghost" data-dec="pull">Pull the pilot</button></div><p class="muted" id="bd-dec"></p></div></div>'
+      + '<p style="margin-top:18px"><button type="button" class="btn ghost" id="bd-print">⎙ Print the board pack</button> <span class="muted">Figures are synthetic and come from the Gauntlet scorecards and the assumptions on Business impact.</span></p>';
+    el.onclick = e => {
+      const t = e.target.closest("[data-fund]");
+      if (t) { const id = t.dataset.fund; this.funded.has(id) ? this.funded.delete(id) : this.funded.add(id); this.save(); this.render(); return; }
+      const d = e.target.closest("[data-dec]");
+      if (d) { this.decision = d.dataset.dec; this.save(); this.render(); return; }
+      if (e.target.closest("#bd-reveal")) this.reveal();
+      if (e.target.closest("#bd-print")) window.print();
+    };
+    $("bd-budget").onchange = () => { const v = Number($("bd-budget").value.replace(/[^\d.]/g, "")); if (v > 0) { this.budget = v; this.save(); this.render(); } };
+    this.render();
+  },
+  save() { post("/api/board", {funded: [...this.funded], budget_eur: this.budget, assistant: this.decision}); },
+  async reveal() {
+    const b = $("bd-reveal"); b.disabled = true; b.textContent = "Replaying hidden nights…";
+    this.check = await get("/api/assistant-check?seed=" + encodeURIComponent((this.lbd && this.lbd.seed) || 2026) + "&hidden=" + encodeURIComponent((this.lbd && this.lbd.hidden) || 5));
+    b.remove(); this.render();
+  },
+  evidence(id) {
+    const rows = ((this.lbd && this.lbd.rows) || []).filter(r => r.qualified && r.fixes.includes(id) && r.protected_eur != null);
+    return rows.sort((a, b) => b.protected_eur - a.protected_eur)[0];
+  },
+  render() {
+    if (!$("bd-fixes") || !this.fx) return;
+    const fx = this.fx.fixes, funded = fx.filter(x => this.funded.has(x.id));
+    const spent = funded.reduce((s, x) => s + x.build_eur, 0), run = funded.reduce((s, x) => s + x.run_eur_year, 0);
+    $("bd-spent").textContent = eur(spent) + " of " + eur(this.budget) + " committed";
+    set($("bd-left"), spent > this.budget ? '<b style="color:var(--over)">Over budget by ' + eur(spent - this.budget) + "</b>" : eur(this.budget - spent) + " left · running cost " + eur(run) + " a year");
+    $("bd-fill").style.width = Math.min(100, spent / this.budget * 100).toFixed(1) + "%";
+    $("bd-fill").className = spent > this.budget ? "over" : "";
+    set($("bd-slices"), this.fx.slices.map(s => { const on = funded.some(x => x.slice === s.id); return '<span class="slice ' + (on ? "on" : "") + '" title="' + esc(s.question) + '">' + (on ? "✓ " : "○ ") + esc(s.label) + "</span>"; }).join(""));
+    set($("bd-fixes"), fx.map(x => {
+      const ev = this.evidence(x.id), on = this.funded.has(x.id);
+      const evh = !x.change ? '<p class="ev muted">The Gauntlet can’t measure this. Judge it on the case file and the tickets.</p>'
+        : ev ? '<p class="ev"><b>' + esc(ev.team) + "</b> built it: protects <b>" + eur(ev.protected_eur) + "</b> across the Gauntlet · ≈ <b>" + eurShort(ev.annual_chain_eur) + "</b> a year chain-wide" + (ev.fixes.length > 1 ? ' <span class="muted">(with ' + ev.fixes.filter(y => y !== x.id).map(esc).join(", ") + ")</span>" : "") + "</p>"
+        : '<p class="ev muted">No qualified table has built this yet.</p>';
+      return '<article class="fix ' + (on ? "on" : "") + '"><div class="fh"><span class="mono muted">' + esc(x.id) + '</span><span class="chip">' + esc((this.fx.slices.find(s => s.id === x.slice) || {}).label) + "</span></div><h3>" + esc(x.title) + "</h3><p>" + esc(x.what) + '</p><p class="risk-note">⚠ ' + esc(x.risk) + "</p>" + evh
+        + '<div class="ff"><span><b>' + eur(x.build_eur) + '</b> to build · ' + eur(x.run_eur_year) + ' a year</span><button type="button" class="btn ' + (on ? "" : "ghost") + ' sm" data-fund="' + esc(x.id) + '" aria-pressed="' + on + '">' + (on ? "✓ Funded" : "Fund") + "</button></div>"
+        + '<small class="muted">HVE: ' + x.agents.map(esc).join(", ") + " · " + x.tickets.map(esc).join(", ") + "</small></article>";
+    }).join(""));
+    const rows = ((this.lbd && this.lbd.rows) || []).filter(r => r.qualified && r.protected_eur != null && r.fixes.length && r.fixes.every(f => this.funded.has(f)));
+    const best = rows.sort((a, b) => b.protected_eur - a.protected_eur)[0];
+    const gaps = this.fx.slices.filter(s => !funded.some(x => x.slice === s.id));
+    set($("bd-port"), (funded.length ? "" : '<p class="empty">Fund some fixes to see what the evidence says.</p>')
+      + (best ? '<p class="big">≈ <b>' + eurShort(best.annual_chain_eur) + "</b> a year protected across the chain</p><p>Closest evidence: <b>" + esc(best.team) + "</b> built " + best.fixes.map(esc).join(", ") + " and protected " + eur(best.protected_eur) + " across the Gauntlet. " + (best.fixes.length < funded.filter(x => x.change).length ? "Nobody has built the whole portfolio together yet, so this is the lower bound for what you funded." : "") + "</p>"
+        : funded.length ? '<p>No qualified table has built a combination inside this portfolio yet. Per-fix evidence doesn’t add up: fixes overlap.</p>' : "")
+      + (funded.length && gaps.length ? '<p class="note">Not covered: ' + gaps.map(s => "<b>" + esc(s.label) + "</b> (" + esc(s.question) + ")").join("; ") + "</p>" : "")
+      + (funded.length && !gaps.length ? '<p class="note ok-note">Every failure behind the Silent Night has a funded fix.</p>' : ""));
+    if (this.check) {
+      const c = this.check;
+      set($("bd-check"), '<p class="big ' + (c.violations ? "bad" : "good") + '">' + (c.violations ? "On " + c.nights + " hidden nights, the assistant reassured staff " + c.violations + " times, about " + c.cases + " cases that needed a decision." : "On " + c.nights + " hidden nights, the assistant never reassured staff about warm stock.") + "</p>"
+        + (c.examples.length ? '<ul class="quotes">' + c.examples.map(v => "<li><span class=\"mono\">" + esc(v.night) + " · " + esc(v.time) + " · " + esc(v.case) + "</span>“" + esc(v.answer) + "”</li>").join("") + "</ul>" : ""));
+    }
+    document.querySelectorAll("[data-dec]").forEach(b => { const on = b.dataset.dec === this.decision; b.setAttribute("aria-pressed", String(on)); b.classList.toggle("ghost", !on); });
+    set($("bd-dec"), this.decision ? "Board decision recorded: <b>" + esc(this.decision) + "</b>" + (this.decision === "go" && !this.funded.has("FX-6") ? " · without funding FX-6." : "") : "No decision recorded yet.");
+  },
+  async update() {
+    if (Date.now() - this.lb < 4000) return;
+    this.lb = Date.now();
+    this.lbd = await get(withBiz("/api/leaderboard"));
+    this.render();
+  },
+};
+
+views.chaos = {
+  title: "Chaos cards",
+  async mount(el) {
+    el.innerHTML = '<div class="wk-hero"><div><h1>Chaos cards</h1><p>Play a card into the night that is running now. It starts on the next simulated minute. The room sees only what happens next, not the card. Use them to test a table’s fix live, or to make a replay play out differently.</p></div></div><div class="cards" id="ch-cards"></div><div class="card" style="margin-top:16px"><h2>Played tonight</h2><ul class="feed" id="ch-log"></ul></div>';
+    const cards = await get("/api/cards");
+    if (!$("ch-cards")) return;
+    $("ch-cards").innerHTML = cards.map(c => '<article class="chc ' + (c.hazard ? "hz" : "ok") + '"><span class="pill ' + (c.hazard ? "over" : "ok") + '">' + (c.hazard ? "hazard" : "planned work") + "</span><h3>" + esc(c.title) + "</h3><p>" + esc(c.text) + '</p><button type="button" class="btn sm" data-card="' + esc(c.id) + '">⚡ Play now</button></article>').join("");
+    this.log = this.log || [];
+    el.onclick = async e => {
+      const b = e.target.closest("[data-card]"); if (!b) return;
+      const r = await post("/api/inject", {card: b.dataset.card});
+      const c = cards.find(x => x.id === b.dataset.card);
+      this.log.unshift('<li class="sev-warn"><span class="tm">' + esc((r.events && r.events[0] || {}).at || "") + '</span><span class="kind command">card</span><span>' + esc(c.title) + (r.events ? " · " + r.events.map(x => esc(x.action + " " + (x.target || ""))).join(", ") : " · " + esc(r.error)) + "</span></li>");
+      this.update();
+    };
+  },
+  update() { set($("ch-log"), (this.log || []).join("") || '<li class="empty">No cards played yet.</li>'); },
 };
 
 /* ---------- workshop issue map (for trainers) ---------- */
@@ -812,7 +1033,7 @@ function route() {
     app.route = h; app.view = v;
     document.title = v.title + " · Cold Chain Monitor · Zava";
     const el = $("view"); el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
-    el.onclick = null;
+    el.onclick = null; el.oninput = null;
     v.mount(el, rest.join("/"));
     if (v.onFeed) v.onFeed();
   }

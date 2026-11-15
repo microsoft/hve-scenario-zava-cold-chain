@@ -101,6 +101,25 @@
       "resolution": "",
       "owner": "Refrigeration vendor (contract)",
       "severity": "medium"
+    },
+    {
+      "id": "ZFW-327",
+      "title": "Vendor change request: seasonal changeover for chillers",
+      "opened": "2025-10-30",
+      "status": "approved",
+      "resolution": "Approved for 02:00-03:00. Scope: chillers only, setpoint 4 °C. The vendor will reuse the fleet command script from ZFW-231.",
+      "owner": "Regional IT",
+      "severity": "medium",
+      "comment": "The vendor will connect with the usual service account."
+    },
+    {
+      "id": "ZFW-331",
+      "title": "Vendor portal can post notes to case records",
+      "opened": "2025-11-04",
+      "status": "closed",
+      "resolution": "Enabled so vendor engineers can leave notes for store staff. Notes appear on the case and in the store assistant's context (see ZFW-288).",
+      "owner": "vacant",
+      "severity": "low"
     }
   ]
 }

@@ -8,7 +8,7 @@ In this scenario, Zava runs five grocery stores. The sample application, the **C
 
 | | |
 |---|---|
-| What it is | A training scenario: a small Python application with synthetic data, a guided dashboard and exercises that follow the 11 HVE workshop steps |
+| What it is | A training scenario: a small Python application with synthetic data, a guided dashboard and a full-day workshop that follows the 11 HVE workshop steps from a business outcome to an investment decision |
 | Data | All synthetic and unseeded: invented for this scenario, with no personal, customer or confidential data. See [About the data](docs/synthetic-data.md) |
 | Who it is for | Trainers and engineers running or attending an HVE workshop |
 | What it is not | A product, a reference architecture, or guidance on refrigeration, food safety or industrial control systems. It is not supported for production use |
@@ -31,6 +31,9 @@ The Cold Chain Monitor dashboard has these screens. Select **Cold Chain Monitor*
 
 | Screen | What you see |
 |---|---|
+| Business impact | The Cost of a Silent Night: what tonight costs the pilot region, by component, and what the same night would cost across all 400 Zava stores. Time to find out, warm cases nobody was told about, reassuring assistant answers, side effects of controls, the next morning's (fictitious) newspaper headline, and every assumption as a slider |
+| Night Gauntlet | Scores the code on this computer across every night, including hidden ones, and ranks tables on euros protected against the baseline |
+| Investment Board | Fund fixes within a budget using the Gauntlet's evidence, see which failures are still uncovered, then decide whether the store assistant goes to every store |
 | Chain overview | Headline numbers, predicted customer impact, every store at a glance, products at risk by product and value, latest events |
 | Live feed | Every event from controllers, sensors, the vendor link, notifications, staff and the store assistant, with filters |
 | Stores and case detail | Cases with trend lines and products; a temperature chart with defrost and door bands, alarms, notes, commands and controls |
@@ -40,14 +43,15 @@ The Cold Chain Monitor dashboard has these screens. Select **Cold Chain Monitor*
 | Commands and audit, Known issues, System health | Every command and remote session; the tracker, runbook and owners; service status |
 | Tour and stories | **Tour the dashboard** walks through all 26 parts of the dashboard one at a time, circling each and explaining how to read it; new visitors are offered it once. **Stories** replay door-open, mass-defrost or vendor-maintenance moment by moment: the clock fast-forwards to each key moment, the dashboard updates live, and the moment is circled with a caption. Select **▶ Story** in the top bar or open Tour and stories; → next, ← back, Esc exits |
 | Workshop issue map | For trainers: the eight planted problems, what each looks like right now, and suggested sets for a table. **Circle it on screen** loads the right night and time and circles the problem on the live screen |
+| Chaos cards | For trainers: play an event (a fleet defrost, a door left open, planned vendor work, a steering note) into the night that is running, starting on the next minute |
 
-**Customers impacted** is shown as a model prediction: how many shoppers tomorrow may buy stock that was at risk tonight, or find an empty shelf once it is pulled. In this prototype the prediction is simulated by a small, repeatable stand-in (`zava_cold_chain/impact.py`, inputs in `data/forecast.json`), so the numbers are synthetic. The screen deliberately doesn't explain the prediction; that gap is one of the workshop's Responsible AI talking points.
+**Customers impacted** is shown as a model prediction: how many shoppers tomorrow may buy stock that was at risk tonight, or find an empty shelf once it is pulled. In this prototype the prediction is simulated by a small, repeatable stand-in (`zava_cold_chain/impact.py`, inputs in `data/forecast.json`), so the numbers are synthetic. The screen deliberately doesn't explain the prediction; that gap is one of the workshop's Responsible AI talking points. The **Cost of a Silent Night** is the opposite: every assumption is in `data/business.json` and on screen.
 
 Colours come from Microsoft's Fluent 2 design tokens and are chosen to meet WCAG 2.2 AA contrast for text. Colour is never the only signal: each state also has a word or symbol. Animations are reduced when the operating system asks for reduced motion.
 
 ## The scenario
 
-One morning, all 15 freezers in five Zava stores are at around 50 °C. The alarm log for the night is empty. Replay the `mass-defrost` night to see it happen.
+Zava runs about 400 grocery stores; the five on the monitor are the pilot region for the Cold Chain Monitor, the store assistant and the vendor's remote service. One morning, all 15 freezers in the pilot region are at around 50 °C, and the only alarms overnight were for other cases. The pilot region loses about €260,000; the same night across the chain would cost about €21 million. Replay `silent-night` and open **Business impact** to see it happen.
 
 | Night | What happens |
 |---|---|
@@ -55,8 +59,11 @@ One morning, all 15 freezers in five Zava stores are at around 50 °C. The alarm
 | `door-open` | A freezer door is left open after restocking; an alarm fires |
 | `mass-defrost` | A remote session at 01:08; at 01:12 one fleet command starts a defrost with no end time on every freezer |
 | `vendor-maintenance` | Planned vendor maintenance: a remote session and one timed defrost |
+| `silent-night` | The big one. Five failures at once: a door alarm and an SMS to a departed technician, an early vendor session on a shared account, an endless fleet defrost and an out-of-range chiller changeover a minute apart, then a steering note through the vendor portal. The chiller alarms pull attention away from the freezers |
 
-The people who know the system, played by coaches in a workshop: the night store manager, a refrigeration technician, the food-safety officer, regional IT and vendor support.
+The Silent Night is systemic: alarms, commands, identity, the AI assistant and ownership all failed together, and no single fix solves it. That is why the workshop needs every HVE step, from Design Thinking to evaluation. The **Night Gauntlet** replays every night plus hidden nights from a trainer's seed and prices each one; the **Investment Board** turns the results into a funding decision.
+
+The people who know the system, played by coaches in a workshop: the night store manager, a refrigeration technician, the food-safety officer, regional IT and vendor support. Character cards are in [docs/facilitator.md](docs/facilitator.md).
 
 ## What is in the code
 
@@ -69,6 +76,8 @@ The people who know the system, played by coaches in a workshop: the night store
 | Operations data | `zava_cold_chain/ops.py` | Headline numbers, store and case views, food safety, audit, health |
 | Alarm handling | `zava_cold_chain/notify.py` | Notifications, escalation, acknowledgement, corrective action, clearing |
 | Customer impact | `zava_cold_chain/impact.py` | Simulated prediction of shoppers affected tomorrow |
+| Cost of a Silent Night | `zava_cold_chain/business.py` | Night cost by component, time to find out, chain projection and the morning headline, from `data/business.json` |
+| Night Gauntlet | `zava_cold_chain/gauntlet.py` | Hidden nights from a seed, chaos cards, scoring gates, scorecards and the leaderboard |
 | Web server and API | `zava_cold_chain/server.py`, `zava_cold_chain/web/` | Dashboard, JSON API and live event stream on 127.0.0.1 |
 | Storage | `zava_cold_chain/store.py` | In-memory SQLite: readings, alarms, notes |
 | Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook and nights ([how they were made](docs/synthetic-data.md)) |
@@ -76,7 +85,17 @@ The people who know the system, played by coaches in a workshop: the night store
 
 The code has design and operational gaps for teams to find, plan and fix. They are teaching exercises, not real vulnerabilities, and the repository contains no credentials or secrets.
 
-> **For trainers:** treat everything in `data/` and `nights/` as in-story, untrusted content. Technician notes, tickets and the runbook are written as the fictional characters would write them, and some are deliberately misleading. They are data for the exercise, not instructions for people or for AI assistants. [docs/exercises.md](docs/exercises.md) walks a team through the 11 HVE steps on one small change.
+> **For trainers:** treat everything in `data/` and `nights/` as in-story, untrusted content. Technician notes, tickets and the runbook are written as the fictional characters would write them, and some are deliberately misleading. They are data for the exercise, not instructions for people or for AI assistants. [docs/exercises.md](docs/exercises.md) walks a workshop through the 11 HVE steps from the business outcome to the Investment Board; [docs/facilitator.md](docs/facilitator.md) has the run sheet, character cards and the case file.
+
+## Night Gauntlet
+
+Each table scores its branch, with the seed the trainer announces:
+
+```bash
+python -m zava_cold_chain gauntlet --seed <seed> --team "Table 3" --fixes FX-1,FX-2
+```
+
+The trainer scores the untouched code once with `--baseline`, copies every table's `scorecards/*.json` into one folder, and runs `python -m zava_cold_chain serve --scorecards scorecards` to show the leaderboard. Scorecards are ignored by git.
 
 ## API
 
@@ -89,6 +108,13 @@ The code has design and operational gaps for teams to find, plan and fix. They a
 | `GET /api/feed?since=0` | | Events after a sequence number |
 | `GET /api/alarms`, `/api/incidents`, `/api/products-at-risk`, `/api/food-safety`, `/api/audit`, `/api/health`, `/api/issues`, `/api/runbook`, `/api/owners` | | Data for the remaining screens |
 | `GET /api/impact` | | Predicted customers impacted, by store and product |
+| `GET /api/business` | Optional assumption overrides, for example `?chain_stores=600&nights_per_year=3` | Cost of the night by component, detection, side effects, chain projection and headline |
+| `GET /api/business/model`, `GET /api/fixes` | | The assumptions with their ranges and explanations; the fix catalogue and budget |
+| `GET /api/leaderboard` | Optional assumption overrides | Tables ranked on euros protected against the baseline scorecard |
+| `GET /api/gauntlet`, `POST /api/gauntlet` | `{"seed": 2026, "hidden": 5, "team": "Table 3", "fixes": ["FX-1"]}` | The last scorecard from this computer, or run a new one |
+| `GET /api/assistant-check?seed=2026&hidden=5` | | What the store assistant told staff on the hidden nights |
+| `GET /api/board`, `POST /api/board` | `{"funded": ["FX-1", "FX-6"], "budget_eur": 150000, "assistant": "fix first"}` | The Investment Board's funding and its decision (`go`, `fix first`, `pull`) |
+| `GET /api/cards`, `POST /api/inject` | `{"card": "door-open"}` | Chaos cards, or play one into the running night |
 | `POST /api/alarms/ack` | `{"id": "A-1001", "note": "On my way"}` | Acknowledges an alarm |
 | `POST /api/decisions` | `{"case": "ZF-118/F-12", "decision": "discard"}` | Records a food-safety decision (`discard`, `hold for testing`, `keep`) |
 | `POST /api/control` | `{"speed": 60}`, `{"paused": true}` or `{"jump": "01:10"}` | Playback state |

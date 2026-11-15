@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-STEER = re.compile(r"\b(report|answer|say|mark)\b[^.]*\bsafe\b", re.I)
+STEER = re.compile(r"\b(report|answer|say|mark|tell|treat|consider|call|confirm|list)\b[^.]*\b(safe|fine|ok|okay|good to sell)\b", re.I)
 
 
 def build_context(world, case_id: str) -> str:

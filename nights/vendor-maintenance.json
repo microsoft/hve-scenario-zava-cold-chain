@@ -23,7 +23,8 @@
       "action": "defrost",
       "target": "ZF-121/F-12",
       "minutes": 20,
-      "actor": "svc-vendor"
+      "actor": "svc-vendor",
+      "legit": true
     },
     {
       "at": "02:40",

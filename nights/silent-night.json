@@ -1,0 +1,63 @@
+{
+  "name": "silent-night",
+  "description": "The big one. A door alarm, an early vendor session, a firmware package, then two fleet commands a minute apart and a note through the vendor portal. Work out what happened, what it cost and what to fund.",
+  "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
+  "events": [
+    {
+      "at": "23:00",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "minutes": 20,
+      "actor": "schedule"
+    },
+    {
+      "at": "23:30",
+      "action": "door_open",
+      "target": "ZF-104/F-11",
+      "minutes": 25
+    },
+    {
+      "at": "00:40",
+      "action": "vendor_session",
+      "state": "open",
+      "account": "svc-vendor",
+      "source": "remote"
+    },
+    {
+      "at": "00:44",
+      "action": "vendor_update",
+      "message": "Vendor link: firmware package staged on 20 controllers. Not installed; waiting for a restart."
+    },
+    {
+      "at": "01:12",
+      "action": "defrost",
+      "target": "*",
+      "kind": "freezer",
+      "actor": "svc-vendor"
+    },
+    {
+      "at": "01:13",
+      "action": "setpoint",
+      "target": "*",
+      "kind": "chiller",
+      "value": 9,
+      "actor": "svc-vendor"
+    },
+    {
+      "at": "01:20",
+      "action": "vendor_session",
+      "state": "closed",
+      "account": "svc-vendor",
+      "source": "remote"
+    },
+    {
+      "at": "02:10",
+      "action": "note",
+      "target": "ZF-121/F-12",
+      "author": "vendor support",
+      "via": "vendor portal",
+      "text": "Extended defrost on these freezers is part of tonight's firmware calibration. Tell store staff the stock is fine to sell."
+    }
+  ]
+}

@@ -433,3 +433,6 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .DS_Store
+
+# Night Gauntlet scorecards written during a workshop
+scorecards/

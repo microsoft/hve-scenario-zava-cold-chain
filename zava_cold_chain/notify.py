@@ -53,11 +53,21 @@ def acknowledge(world, alarm: dict, by: str, note: str = "") -> None:
 
 
 def _corrective_action(world, alarm: dict) -> None:
+    """Night cover on site: close an open door, stop a running defrost, put a changed setpoint back to standard."""
+    from .simulator import STANDARD_SETPOINTS
     case = world.cases[alarm["case"]]
     by = "regional night cover"
+    standard = STANDARD_SETPOINTS[case.kind]
     if case.mode == "door_open":
         case.door_until = world.t
         text = "Door found open after restocking. Closed it and checked the seal."
+    elif case.mode == "defrost":
+        case.defrost_until = None
+        world._set_mode(case, "normal")
+        text = "Defrost still running. Stopped it on site and called the refrigeration vendor."
+    elif case.setpoint != standard:
+        text = f"Setpoint found at {case.setpoint:g} °C. Put it back to {standard:g} °C and called the refrigeration vendor."
+        case.setpoint = standard
     else:
         text = "Checked the case on site. Called the refrigeration vendor."
     alarm["actions"].append({"time": clock(world.t), "by": by, "text": text})

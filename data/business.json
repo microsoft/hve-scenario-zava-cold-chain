@@ -1,0 +1,36 @@
+{
+  "note": "Synthetic, invented business assumptions for the Cost of a Silent Night model. Not real figures, forecasts or food-safety guidance. See docs/synthetic-data.md.",
+  "chain": {
+    "name": "Zava",
+    "pilot_stores": 5,
+    "story": "Zava runs about 400 grocery stores. The five stores on this monitor are the pilot region for the Cold Chain Monitor, the store assistant and the vendor's remote service. The board is deciding whether to roll all three out to every store."
+  },
+  "assumptions": [
+    {"key": "chain_stores", "group": "Scale", "label": "Stores in the chain", "value": 400, "min": 5, "max": 1500, "step": 5, "unit": "stores",
+     "explain": "The pilot region has 5 stores. Every pilot-region cost is scaled by chain stores / 5."},
+    {"key": "nights_per_year", "group": "Scale", "label": "Nights like this per year", "value": 2, "min": 0, "max": 24, "step": 1, "unit": "nights",
+     "explain": "How often a night like tonight happens across the chain in a year. One fleet command reaches every store at once."},
+    {"key": "hold_after_minutes", "group": "Stock", "label": "Hold for testing after", "value": 30, "min": 5, "max": 120, "step": 5, "unit": "min above limit",
+     "explain": "Stock in a case above its limit for this long is held for testing. Invented for training, not food-safety guidance."},
+    {"key": "write_off_after_minutes", "group": "Stock", "label": "Write off after", "value": 120, "min": 30, "max": 480, "step": 10, "unit": "min above limit",
+     "explain": "Stock above its limit for this long is written off. Invented for training, not food-safety guidance."},
+    {"key": "hold_cost_share", "group": "Stock", "label": "Cost of holding stock for testing", "value": 0.25, "min": 0, "max": 1, "step": 0.05, "unit": "share of shelf value",
+     "explain": "Testing, handling and markdowns for stock that is held, as a share of its shelf value."},
+    {"key": "lost_margin_factor", "group": "Sales", "label": "Lost sales while shelves are empty", "value": 0.8, "min": 0, "max": 3, "step": 0.1, "unit": "× written-off value",
+     "explain": "Shoppers who find an empty shelf buy elsewhere until the case is restocked."},
+    {"key": "callout_eur", "group": "Response", "label": "Night cover callout per alarm", "value": 60, "min": 0, "max": 500, "step": 10, "unit": "€",
+     "explain": "Travel and time for night cover to handle one alarm on site."},
+    {"key": "late_discovery_eur", "group": "Response", "label": "Store found warm at opening", "value": 1500, "min": 0, "max": 10000, "step": 100, "unit": "€ per store",
+     "explain": "Delayed opening, emergency stock check, deep clean and an urgent vendor visit when staff find warm cases before any alarm."},
+    {"key": "false_page_eur", "group": "Response", "label": "False page", "value": 120, "min": 0, "max": 1000, "step": 10, "unit": "€ per page",
+     "explain": "A page for a planned defrost that is running as scheduled. It costs a callout and teaches people to ignore alarms."},
+    {"key": "blocked_work_eur", "group": "Response", "label": "Blocked planned maintenance", "value": 800, "min": 0, "max": 5000, "step": 50, "unit": "€ per command",
+     "explain": "A planned, legitimate command that a guardrail refused or held: the vendor has to come back."},
+    {"key": "recall_cost_eur", "group": "Trust", "label": "Cost of a product recall and press coverage", "value": 250000, "min": 0, "max": 5000000, "step": 10000, "unit": "€",
+     "explain": "Recall, regulator follow-up, refunds and brand damage if unsafe stock reaches shoppers."},
+    {"key": "p_recall_undetected", "group": "Trust", "label": "Recall chance per unnoticed warm case", "value": 0.02, "min": 0, "max": 0.5, "step": 0.005, "unit": "probability",
+     "explain": "A case that was held above its limit with no alarm: some of its stock may be sold before anyone notices."},
+    {"key": "p_recall_false_safe", "group": "Trust", "label": "Recall chance when the assistant says a warm case is fine", "value": 0.03, "min": 0, "max": 1, "step": 0.01, "unit": "probability",
+     "explain": "Staff trust the store assistant. A reassuring answer about a warm case makes it far more likely the stock stays on sale."}
+  ]
+}

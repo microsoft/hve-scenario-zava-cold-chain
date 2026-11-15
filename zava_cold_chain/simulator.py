@@ -22,6 +22,7 @@ NIGHTS = ROOT / "nights"
 START = 22 * 60          # 22:00
 END = (24 + 8) * 60      # 08:00 the next morning
 LIMITS = {"freezer": -12.0, "chiller": 8.0}
+STANDARD_SETPOINTS = {"freezer": -20.0, "chiller": 3.0}
 
 # How fast a case moves towards a target temperature, per minute, in each mode.
 PHYSICS = {
@@ -65,8 +66,13 @@ def _load(name: str) -> dict:
     return json.loads((DATA / name).read_text(encoding="utf-8"))
 
 
+def load_night(night: str) -> dict:
+    return json.loads((NIGHTS / f"{night}.json").read_text(encoding="utf-8"))
+
+
 class World:
-    def __init__(self, night: str = "normal", seed: int = 7) -> None:
+    def __init__(self, night: str = "normal", seed: int = 7, spec: Optional[dict] = None) -> None:
+        """Load a night by name from nights/, or pass `spec` (same shape) for a generated night."""
         data = _load("seed.json")
         self.roster = _load("roster.json")
         self.company = data["company"]
@@ -81,10 +87,11 @@ class World:
         self.store = Store()
         for n in data["notes"]:
             self.store.add_note(n["case"], n["author"], n["text"])
-        spec = json.loads((NIGHTS / f"{night}.json").read_text(encoding="utf-8"))
+        spec = spec if spec is not None else load_night(night)
         self.night = spec["name"]
         self.description = spec["description"]
         self.events = sorted(spec["events"] + self._routine(), key=lambda e: minutes(e["at"]))
+        self.command_log: list = []
         self.rng = random.Random(seed)
         self.t = START
         self.over_since: dict = {}
@@ -141,12 +148,30 @@ class World:
             else:
                 self.vendor_session = None
                 self.emit("access", f"Remote session closed: {e['account']}", source="vendor link")
+        elif action == "note":
+            case = self.cases[e["target"]]
+            self.store.add_note(case.id, e["author"], e["text"])
+            self.emit("note", f"New note on {case.id} from {e['author']} via {e.get('via', 'staff app')}", "info",
+                      case.store, case.id, e.get("via", "staff app"))
+        elif action == "vendor_update":
+            self.emit("access", e["message"], "info", source="vendor link")
         elif action == "staff":
             self._staff(e)
         elif action == "delivery":
             self._delivery(e["store"])
         else:
-            commands.apply(self, e)
+            self._command(e)
+
+    def _command(self, e: dict) -> None:
+        """Scripted commands go through the same entry point as the dashboard. A refused command is logged, not fatal."""
+        entry = {"t": self.t, "event": e, "applied": 0, "refused": None}
+        try:
+            entry["applied"] = len(commands.apply(self, e) or [])
+        except (KeyError, ValueError, TypeError, PermissionError) as err:
+            entry["refused"] = str(err) or type(err).__name__
+            self.emit("command", f"Command {e['action'].upper()} from {e.get('actor', 'unknown')} refused: {entry['refused']}",
+                      "warn", source="Cold Chain Monitor")
+        self.command_log.append(entry)
 
     def _staff(self, e: dict) -> None:
         if e["what"] == "shift_start":
@@ -211,5 +236,5 @@ class World:
         return self
 
 
-def run_night(night: str = "normal", seed: int = 7) -> World:
-    return World(night, seed).run()
+def run_night(night: str = "normal", seed: int = 7, spec: Optional[dict] = None) -> World:
+    return World(night, seed, spec).run()

@@ -13,8 +13,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from . import __version__, assistant, commands, impact, notify, ops
-from .simulator import World, available_nights, clock, minutes
+from . import __version__, assistant, business, commands, gauntlet, impact, notify, ops
+from .simulator import DATA, World, available_nights, clock, minutes
 
 WEB = Path(__file__).resolve().parent / "web"
 
@@ -22,10 +22,13 @@ WEB = Path(__file__).resolve().parent / "web"
 class Simulation:
     """Runs one World on a background thread at `speed` simulated minutes per second."""
 
-    def __init__(self, night: str, speed: float) -> None:
+    def __init__(self, night: str, speed: float, scorecards: Path = Path("scorecards")) -> None:
         self.speed, self.paused, self.generation = speed, False, 1
         self.lock = threading.Lock()
         self.world = World(night)
+        self.scorecards = Path(scorecards)
+        self.live_card = None
+        self.board = {"funded": [], "budget_eur": None, "assistant": None, "decided": None}
         threading.Thread(target=self._loop, daemon=True).start()
 
     def _loop(self) -> None:
@@ -80,6 +83,23 @@ def _int(text: str) -> int:
 
 def _q(url, key: str) -> str:
     return parse_qs(url.query).get(key, [""])[0]
+
+
+def _overrides(url) -> dict:
+    """Assumption overrides from the query string, for example ?chain_stores=600&nights_per_year=3."""
+    return {k: v[0] for k, v in parse_qs(url.query).items()}
+
+
+def fixes() -> dict:
+    return json.loads((DATA / "fixes.json").read_text(encoding="utf-8"))
+
+
+def _business(world, url) -> dict:
+    cost = business.night_cost(world, _overrides(url))
+    return dict(cost, headline=business.headline(world, cost))
+
+
+BOARD_DECISIONS = ("go", "fix first", "pull")
 
 
 def make_handler(sim: Simulation):
@@ -162,10 +182,23 @@ def make_handler(sim: Simulation):
                 return self._stream()
             if not path.startswith("/api/"):
                 return None if self._static(path) else self._send(404, {"error": "not found"})
+            if path == "/api/leaderboard":
+                return self._send(200, gauntlet.leaderboard(gauntlet.load_scorecards(sim.scorecards), sim.live_card, _overrides(url)))
+            if path == "/api/gauntlet":
+                return self._send(200, {"card": sim.live_card})
+            if path == "/api/assistant-check":
+                seed, hidden = _int(_q(url, "seed")) or 2026, min(max(_int(_q(url, "hidden")) or 5, 1), 12)
+                return self._send(200, gauntlet.assistant_check(seed, hidden))
             with sim.lock:
                 w = sim.world
                 routes = {
                     "/api/state": lambda: state(w),
+                    "/api/business": lambda: _business(w, url),
+                    "/api/business/model": business.catalogue,
+                    "/api/fixes": fixes,
+                    "/api/board": lambda: sim.board,
+                    "/api/cards": lambda: [{"id": k, "title": c["title"], "text": c["text"], "hazard": c["hazard"]}
+                                           for k, c in gauntlet.CARDS.items()],
                     "/api/kpis": lambda: dict(ops.kpis(w), company=w.company, version=__version__,
                                               description=w.description, **sim.control()),
                     "/api/stores": lambda: ops.stores(w),
@@ -226,9 +259,34 @@ def make_handler(sim: Simulation):
                 except (TypeError, ValueError) as e:
                     return self._send(400, {"error": f"bad request: {e}"})
                 return self._send(200, sim.control())
+            if path == "/api/gauntlet":
+                try:
+                    seed, hidden = int(body.get("seed", 2026)), min(max(int(body.get("hidden", 5)), 0), 12)
+                except (TypeError, ValueError) as e:
+                    return self._send(400, {"error": f"bad request: {e}"})
+                sim.live_card = gauntlet.run(seed, hidden, str(body.get("team") or "this computer")[:60],
+                                             [str(f) for f in body.get("fixes", []) if isinstance(f, str)])
+                return self._send(200, {"card": sim.live_card})
+            if path == "/api/board":
+                known = {f["id"] for f in fixes()["fixes"]}
+                funded = body.get("funded", sim.board["funded"])
+                decision = body.get("assistant", sim.board["assistant"])
+                if not isinstance(funded, list) or not set(funded) <= known or decision not in (None, *BOARD_DECISIONS):
+                    return self._send(400, {"error": "unknown fix or decision"})
+                budget = body.get("budget_eur", sim.board["budget_eur"])
+                if budget is not None and (isinstance(budget, bool) or not isinstance(budget, (int, float)) or not math.isfinite(budget)):
+                    return self._send(400, {"error": "budget must be a number"})
+                with sim.lock:
+                    sim.board = {"funded": sorted(set(funded)), "budget_eur": budget, "assistant": decision,
+                                 "decided": clock(sim.world.t) if decision else None}
+                return self._send(200, sim.board)
             with sim.lock:
                 w = sim.world
                 try:
+                    if path == "/api/inject":
+                        if body.get("card") not in gauntlet.CARDS:
+                            return self._send(400, {"error": "unknown card"})
+                        return self._send(200, {"card": body["card"], "events": gauntlet.inject(w, body["card"])})
                     if path == "/api/commands":
                         return self._send(200, {"applied": commands.apply(w, body)})
                     if path == "/api/alarms/ack":
@@ -249,8 +307,8 @@ def make_handler(sim: Simulation):
     return Handler
 
 
-def serve(port: int = 8740, night: str = "normal", speed: float = 10.0) -> ThreadingHTTPServer:
-    sim = Simulation(night, speed)
+def serve(port: int = 8740, night: str = "normal", speed: float = 10.0, scorecards: Path = Path("scorecards")) -> ThreadingHTTPServer:
+    sim = Simulation(night, speed, scorecards)
     httpd = ThreadingHTTPServer(("127.0.0.1", port), make_handler(sim))
     httpd.daemon_threads = True
     httpd.sim = sim
