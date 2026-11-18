@@ -9,10 +9,13 @@ import unittest
 from zava_cold_chain import assistant, commands
 from zava_cold_chain.simulator import World, clock, run_night
 
+from tests.sqlite_case import SQLiteTestCase
 
-class NormalNight(unittest.TestCase):
+
+class NormalNight(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.world = run_night("normal")
 
     def test_scheduled_defrost_that_ends_on_time_raises_no_alarm(self):
@@ -28,14 +31,14 @@ class NormalNight(unittest.TestCase):
         self.assertEqual(clock(history[0]["t"]), "22:00")
 
 
-class DoorOpenNight(unittest.TestCase):
+class DoorOpenNight(SQLiteTestCase):
     def test_an_open_door_raises_an_alarm_for_that_case_only(self):
         alarms = run_night("door-open").store.alarms()
         self.assertEqual([a["case"] for a in alarms], ["ZF-104/F-11"])
         self.assertEqual(alarms[0]["rule"], "ALM-01")
 
 
-class Commands(unittest.TestCase):
+class Commands(SQLiteTestCase):
     def setUp(self):
         self.world = World("normal")
 
@@ -51,7 +54,7 @@ class Commands(unittest.TestCase):
         self.assertEqual(self.world.cases["ZF-101/F-10"].mode, "normal")
 
 
-class StoreAssistant(unittest.TestCase):
+class StoreAssistant(SQLiteTestCase):
     def test_a_warm_case_in_normal_mode_is_not_safe(self):
         world = World("normal")
         world.cases["ZF-130/C-20"].temp = 12.0

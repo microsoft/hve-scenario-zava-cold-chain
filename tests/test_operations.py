@@ -5,18 +5,23 @@
 Run: python -m unittest
 """
 import http.client
+import io
 import json
 import threading
 import unittest
 import urllib.request
+from unittest import mock
 
 from zava_cold_chain import impact, ops
 from zava_cold_chain.simulator import World, run_night
 
+from tests.sqlite_case import SQLiteTestCase
 
-class Feed(unittest.TestCase):
+
+class Feed(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.night = run_night("mass-defrost")
 
     def kinds(self, kind):
@@ -39,7 +44,7 @@ class Feed(unittest.TestCase):
         self.assertTrue(any("Morning staff in" in e["message"] for e in self.kinds("staff")))
 
 
-class OperationsData(unittest.TestCase):
+class OperationsData(SQLiteTestCase):
     def test_a_quiet_night_has_no_stock_at_risk(self):
         k = ops.kpis(run_night("normal"))
         self.assertEqual(k["cases_in_range"], k["cases_total"])
@@ -72,9 +77,10 @@ class OperationsData(unittest.TestCase):
         self.assertIn("Notifications", names)
 
 
-class AlarmLifecycle(unittest.TestCase):
+class AlarmLifecycle(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.world = run_night("door-open")
         cls.alarm = cls.world.alarm_list[0]
 
@@ -103,7 +109,7 @@ class AlarmLifecycle(unittest.TestCase):
         self.assertEqual(w.decisions["ZF-101/F-10"]["decision"], "discard")
 
 
-class CustomerImpact(unittest.TestCase):
+class CustomerImpact(SQLiteTestCase):
     def test_quiet_night_predicts_no_one(self):
         self.assertEqual(impact.predict(run_night("normal"))["customers"], 0)
 
@@ -131,9 +137,10 @@ class CustomerImpact(unittest.TestCase):
             self.assertEqual(p["may_buy_affected"] + p["may_find_empty"], p["customers"])
 
 
-class Api(unittest.TestCase):
+class Api(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         from zava_cold_chain.server import serve
         cls.httpd = serve(port=0, night="normal", speed=600)
         cls.base = f"http://127.0.0.1:{cls.httpd.server_address[1]}"
@@ -142,6 +149,9 @@ class Api(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.httpd.shutdown()
+        cls.httpd.server_close()
+        with cls.httpd.sim.lock:
+            cls.httpd.sim.paused = True
 
     def get(self, path):
         with urllib.request.urlopen(self.base + path, timeout=5) as r:
@@ -239,9 +249,18 @@ class Api(unittest.TestCase):
                 self.assertNotIn(b"import", body)
 
     def test_stream_sends_events(self):
-        with urllib.request.urlopen(self.base + "/api/stream", timeout=5) as r:
-            first = r.readline().decode()
-        self.assertTrue(first.startswith(("data:", "event:")))
+        request = mock.Mock()
+        request.makefile.return_value = io.BytesIO(
+            f"GET /api/stream HTTP/1.0\r\nHost: 127.0.0.1:{self.httpd.server_address[1]}\r\n\r\n".encode()
+        )
+        # End the stream after one event without racing a real client disconnect.
+        request.sendall.side_effect = [None, None, BrokenPipeError()]
+
+        self.httpd.RequestHandlerClass(request, ("127.0.0.1", 0), self.httpd)
+
+        first = request.sendall.call_args_list[1].args[0].decode()
+        self.assertTrue(first.startswith("data: "))
+        self.assertIsInstance(json.loads(first.removeprefix("data: ")), dict)
 
 
 if __name__ == "__main__":
