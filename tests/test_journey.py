@@ -18,6 +18,8 @@ from unittest import mock
 
 from zava_cold_chain import journey
 
+from tests.sqlite_case import SQLiteTestCase
+
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "workshop"
 CHAPTER_IDS = [f"{n:02d}" for n in range(1, 12)]
@@ -161,7 +163,17 @@ class Disk(unittest.TestCase):
 
     def test_a_link_out_of_the_repo_is_never_found(self):
         (self.outside / "secret-brd.md").write_text("no", encoding="utf-8")
-        (self.tmp / "docs").symlink_to(self.outside, target_is_directory=True)
+        try:
+            (self.tmp / "docs").symlink_to(self.outside, target_is_directory=True)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest(
+                    f"Windows denied symlink creation: {exc}. "
+                    "To run this test, open Windows Settings, search for 'Developer Mode', "
+                    "and enable Developer Mode (administrator approval or organizational policy may apply). "
+                    "Then rerun: python -m unittest -v tests.test_journey.Disk"
+                )
+            raise
         self.assertFalse(self.row("brd")["exists"])
         self.assertIsNone(journey.preview("brd", "yours"))
 
@@ -186,9 +198,10 @@ class Disk(unittest.TestCase):
         self.assertIn("line 1", e.exception.detail)
 
 
-class Routes(unittest.TestCase):
+class Routes(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         from zava_cold_chain.server import serve
         cls.httpd = serve(port=0, night="normal", speed=600)
         cls.base = f"http://127.0.0.1:{cls.httpd.server_address[1]}"
@@ -198,6 +211,8 @@ class Routes(unittest.TestCase):
     def tearDownClass(cls):
         cls.httpd.shutdown()
         cls.httpd.server_close()
+        with cls.httpd.sim.lock:
+            cls.httpd.sim.paused = True
 
     def get(self, path, **headers):
         with urllib.request.urlopen(urllib.request.Request(self.base + path, headers=headers), timeout=5) as r:
