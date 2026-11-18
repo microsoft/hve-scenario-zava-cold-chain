@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import math
-import mimetypes
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -19,6 +18,14 @@ from . import __version__, assistant, business, commands, gauntlet, impact, jour
 from .simulator import DATA, World, available_nights, clock, minutes
 
 WEB = Path(__file__).resolve().parent / "web"
+
+# The dashboard's files, listed once at start-up. A request can only pick a file from this table,
+# so text from the URL never becomes a filesystem path or a header value.
+CONTENT_TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
+                 ".css": "text/css; charset=utf-8", ".json": "application/json", ".svg": "image/svg+xml",
+                 ".png": "image/png", ".ico": "image/x-icon"}
+STATIC = {"/" + f.name: f for f in sorted(WEB.iterdir()) if f.is_file() and f.suffix in CONTENT_TYPES}
+STATIC.update({"/": WEB / "index.html", "/journey": WEB / "journey.html", "/journey/": WEB / "journey.html"})
 
 
 class Simulation:
@@ -144,12 +151,10 @@ def make_handler(sim: Simulation):
             return origin is None or origin in (f"http://127.0.0.1:{port}", f"http://localhost:{port}")
 
         def _static(self, path: str) -> bool:
-            name = {"/": "index.html", "/journey": "journey.html", "/journey/": "journey.html"}.get(path, path.lstrip("/"))
-            file = (WEB / name).resolve()
-            if WEB.resolve() not in file.parents or not file.is_file():
+            file = STATIC.get(path)
+            if file is None:
                 return False
-            ctype = mimetypes.guess_type(file.name)[0] or "application/octet-stream"
-            self._send(200, file.read_bytes(), ctype + ("; charset=utf-8" if ctype.startswith("text") else ""))
+            self._send(200, file.read_bytes(), CONTENT_TYPES[file.suffix])
             return True
 
         def _journey(self, path: str, url) -> None:

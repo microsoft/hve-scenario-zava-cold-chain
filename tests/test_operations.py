@@ -4,6 +4,7 @@
 
 Run: python -m unittest
 """
+import http.client
 import json
 import threading
 import unittest
@@ -212,6 +213,30 @@ class Api(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as e:
             urllib.request.urlopen(req, timeout=5)
         self.assertEqual(e.exception.code, 400)
+
+    def raw_get(self, path):
+        conn = http.client.HTTPConnection("127.0.0.1", self.httpd.server_address[1], timeout=5)
+        conn.putrequest("GET", path, skip_host=True)
+        conn.putheader("Host", f"127.0.0.1:{self.httpd.server_address[1]}")
+        conn.endheaders()
+        r = conn.getresponse()
+        body, ctype = r.read(), r.getheader("Content-Type")
+        conn.close()
+        return r.status, ctype, body
+
+    def test_static_files_come_only_from_the_dashboard(self):
+        for path, ctype in (("/", "text/html"), ("/journey", "text/html"), ("/app.js", "text/javascript"), ("/tokens.css", "text/css")):
+            with self.subTest(path=path):
+                status, got, _ = self.raw_get(path)
+                self.assertEqual(status, 200)
+                self.assertTrue(got.startswith(ctype), got)
+        for path in ("/../server.py", "/..%2fserver.py", "/%2e%2e/server.py", "//etc/passwd", "/web/../../README.md",
+                     "/../../../../etc/passwd", "/app.js%0d%0aX-Injected:%201", "/index.html/"):
+            with self.subTest(path=path):
+                status, got, body = self.raw_get(path)
+                self.assertEqual(status, 404)
+                self.assertEqual(got, "application/json")
+                self.assertNotIn(b"import", body)
 
     def test_stream_sends_events(self):
         with urllib.request.urlopen(self.base + "/api/stream", timeout=5) as r:
