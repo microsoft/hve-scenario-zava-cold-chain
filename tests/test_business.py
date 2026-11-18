@@ -16,6 +16,8 @@ from unittest import mock
 from zava_cold_chain import alarms, business, commands, gauntlet
 from zava_cold_chain.simulator import World, minutes, run_night
 
+from tests.sqlite_case import SQLiteTestCase
+
 
 def _alarm_in_any_mode(world):
     """A stand-in for change 1: ALM-01 without the ALM-07 defrost exemption."""
@@ -30,7 +32,7 @@ def _alarm_in_any_mode(world):
             world.alarmed.discard(case.id)
 
 
-class CostOfASilentNight(unittest.TestCase):
+class CostOfASilentNight(SQLiteTestCase):
     def test_a_quiet_night_costs_nothing(self):
         cost = business.night_cost(run_night("normal"))
         self.assertEqual(cost["total_eur"], 0)
@@ -75,9 +77,10 @@ class CostOfASilentNight(unittest.TestCase):
         self.assertFalse(business.reassuring("Unknown: there is a gap in the readings."))
 
 
-class SystemicNight(unittest.TestCase):
+class SystemicNight(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.world = run_night("silent-night")
 
     def test_the_alarms_that_fire_are_not_for_the_freezers_that_fail(self):
@@ -98,9 +101,10 @@ class SystemicNight(unittest.TestCase):
         self.assertTrue(any(t.startswith("Setpoint found at 9") for t in actions))
 
 
-class Gauntlet(unittest.TestCase):
+class Gauntlet(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.card = gauntlet.run(seed=11, hidden=3, team="baseline")
 
     def test_hidden_nights_are_repeatable_for_a_seed_and_differ_between_seeds(self):
@@ -180,9 +184,10 @@ class Gauntlet(unittest.TestCase):
             gauntlet.inject(run_night("normal"), "door-open")
 
 
-class BusinessApi(unittest.TestCase):
+class BusinessApi(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         from zava_cold_chain.server import serve
         cls.tmp = tempfile.TemporaryDirectory()
         cls.httpd = serve(port=0, night="normal", speed=600, scorecards=Path(cls.tmp.name))
@@ -192,6 +197,9 @@ class BusinessApi(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.httpd.shutdown()
+        cls.httpd.server_close()
+        with cls.httpd.sim.lock:
+            cls.httpd.sim.paused = True
         cls.tmp.cleanup()
 
     def get(self, path):
