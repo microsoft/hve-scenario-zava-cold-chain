@@ -1,0 +1,126 @@
+{
+  "id": "06",
+  "slug": "decomposition",
+  "title": "Decomposition",
+  "short": "Work items",
+  "hve": {
+    "stage": 4,
+    "name": "Decomposition",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/decomposition"
+  },
+  "minutes": 60,
+  "scenario": "Each table has acceptance cases and a security or RAI plan. Eight fixes are on offer, and the budget covers about half of their cost.",
+  "why": "Work items put every fix side by side with its acceptance cases and the controls that apply to it. Sprint planning picks from this list.",
+  "objective": "Turn the PRD and the security and RAI backlog handoffs into a GitHub work-item plan that maps every acceptance case to one of FX-1 to FX-8.",
+  "needs": [
+    "prd",
+    "security-plan",
+    "rai-plan"
+  ],
+  "produces": [
+    "work-items"
+  ],
+  "monitor": [
+    {
+      "label": "Investment Board",
+      "route": "board"
+    }
+  ],
+  "tools": [
+    {
+      "name": "Functional Planner",
+      "open": "agent picker",
+      "for": "Plans a work-item hierarchy from the PRD. It's read-only: it writes a handoff file and creates nothing in a tracker"
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Open [Investment Board](/#/board) and read the fix catalogue: FX-1 to FX-8, what each costs and what it risks.",
+      "Pick Functional Planner and send the prompt below.",
+      "Check that every acceptance case in your PRD lands on a work item, and that every work item names one fix.",
+      "Check that each control from your security or RAI backlog handoff sits on the work item it constrains.",
+      "Mark FX-7 and FX-8 as policy and process items with an owner outside the code. Keep the plan as a file: nothing is created in GitHub today."
+    ],
+    "prompts": [
+      {
+        "label": "Plan the work items",
+        "text": "Plan a GitHub issue hierarchy for zava-silent-night from `docs/project-planning/zava-silent-night-prd.md`. Also read the backlog handoffs in `.copilot-tracking/security-plans/zava-silent-night/` and `.copilot-tracking/rai-plans/zava-silent-night/`. Map each work item to one fix from `data/fixes.json` (FX-1 to FX-8) and carry its acceptance cases. FX-7 and FX-8 are policy and process work. Write the handoff under `.copilot-tracking/github-issues/prds/` and don't create anything in GitHub."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Which work item has no acceptance case yet?",
+      "Which security or RAI control would stop this fix from shipping?",
+      "Who owns FX-8 after the workshop ends?"
+    ],
+    "mistakes": [
+      "Splitting one fix into work items so small nobody can test them",
+      "Dropping the security and RAI items because they aren't code",
+      "Running `/backlog-execute` and creating real issues"
+    ],
+    "step_in": [
+      "When a table's plan has several work items per acceptance case"
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Check every table has a PRD and at least one backlog handoff. A table without one borrows a neighbour's.",
+      "Open the Investment Board on the trainer's screen with the budget at €150,000."
+    ],
+    "run": [
+      {
+        "at": "13:15",
+        "minutes": 10,
+        "do": "Show the fix catalogue: the eight fixes cost €295,000 together against a €150,000 budget."
+      },
+      {
+        "at": "13:25",
+        "minutes": 40,
+        "do": "Tables run Functional Planner. At 13:45, check FX-7 and FX-8 are in every plan."
+      },
+      {
+        "at": "14:05",
+        "minutes": 10,
+        "do": "Each table names one work item and its acceptance cases."
+      }
+    ],
+    "good_answer": "One work item per fix, each carrying its acceptance cases: for FX-1, the reference run's AC-001 to AC-003. Security control 8 (keep the exemption anchored to `defrost_until`) and RAI item WI-RAI-001 (remove the assistant's defrost-mode reassurance) sit on the fixes they constrain. FX-7 and FX-8 appear as policy items with owners in regional IT and store operations.",
+    "watch_for": [
+      "Plans that leave out FX-6 because the assistant feels optional",
+      "Work items that copy the fix catalogue without the PRD's acceptance cases"
+    ],
+    "demo": "Point at the five failure chips on the Investment Board and ask which failure has no fix on any table's plan."
+  },
+  "done_when": [
+    "A handoff file exists under `.copilot-tracking/github-issues/prds/`",
+    "Every acceptance case in your PRD appears on a work item",
+    "Every work item names one of FX-1 to FX-8",
+    "No issues were created in GitHub"
+  ],
+  "stuck": [
+    {
+      "if": "Functional Planner asks which tracker to use",
+      "then": "Answer GitHub, and tell it to plan only."
+    },
+    {
+      "if": "Your PRD covers only one failure",
+      "then": "Plan work items for that failure and list the other fixes from `data/fixes.json` as placeholders."
+    }
+  ],
+  "handoff": {
+    "to": "07",
+    "note": "Sprint planning reads the work-item plan, and each table picks one item for Day 3."
+  },
+  "loops": [],
+  "references": [
+    {
+      "label": "Decomposition stage",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/decomposition"
+    },
+    {
+      "label": "Fix catalogue",
+      "target": "data/fixes.json"
+    }
+  ]
+}

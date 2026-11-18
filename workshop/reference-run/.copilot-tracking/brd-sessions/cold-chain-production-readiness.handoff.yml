@@ -1,0 +1,120 @@
+schema_version: BRD_TO_PRD_HANDOFF_V1
+handoff_id: BRD-2026-COLDCHAIN-001-handoff-20261115T174500Z
+handoff_at: "2026-11-15T17:45:00Z"
+brd:
+  id: BRD-2026-COLDCHAIN-001
+  version: 1.0.0
+  title: "Zava Cold Chain Monitor — Production Readiness for the 400-Store Rollout"
+  artifact_path: docs/project-planning/cold-chain-production-readiness-brd.md
+  artifact_sha256: 04f8b4c7dc706f5faac174205d667a85bdf7eb6d0e149f1dd5a46fc8a38b3975
+signoff:
+  status: WAIVED
+  approvers:
+    - name: "Executive sponsor (simulated panel role)"
+      role: "Business Sponsor"
+      decision: APPROVED_WITH_COMMENTS
+      decided_at: "2026-11-15T17:40:00Z"
+      comments: "Simulated approval only (DD-005); real sign-off required before this BRD authorizes spend, contract, or go-live action. Accepts phased ~40-store validation cohort and BG-001 targets as the board case basis."
+    - name: "Regional IT (simulated panel role)"
+      role: "Engineering Lead"
+      decision: APPROVED_WITH_COMMENTS
+      decided_at: "2026-11-15T17:40:00Z"
+      comments: "Simulated approval only (DD-005). Accepts BG-003/BG-005 feasibility subject to CON-002 (vendor contract) and CON-003 (unapproved budget) dependencies."
+    - name: "BRD Builder (autonomous, self-assessed)"
+      role: "Quality Lead"
+      decision: APPROVED_WITH_COMMENTS
+      decided_at: "2026-11-15T17:45:00Z"
+      comments: "Per hve-core:brd-quality-reviewer subagent findings: overall_status NEEDS_REVIEW, zero RISK findings, define_exit and govern_exit both APPROVED_WITH_COMMENTS. Three findings corrected in-document; one HIGH finding (defrost-duration discrepancy, F-002/A-7/Q-5) and governance-signoff absence (F-007/WAIV-001) carried forward as disclosed, not resolved."
+  waivers:
+    - id: WAIV-001
+      summary: "No real human, legal, regulatory, food-safety, or compliance stakeholder has signed off on this BRD; all approvals above are self-recorded by the autonomous BRD Builder (DD-005) in the absence of a live user for this HVE Lifecycle Stage 2 run."
+      granted_by: "BRD Builder (autonomous), recorded as a disclosed condition, not a substitute for real authorization"
+      expires_at: "2026-11-15"
+quality_report:
+  report_ref: .copilot-tracking/brd-sessions/cold-chain-production-readiness.quality-report.yml
+  overall_status: NEEDS_REVIEW
+  govern_exit_decision: APPROVED_WITH_COMMENTS
+counts:
+  functional_requirements: 18
+  non_functional_requirements: 6
+  business_rules: 6
+  constraints: 3
+  acceptance_criteria: 17
+  business_goals: 6
+traceability:
+  matrix_ref: docs/project-planning/cold-chain-production-readiness-brd.md#traceability-matrix
+  fr_to_ac_coverage_pct: 100.0
+  fr_to_bg_coverage_pct: 100.0
+business_goals:
+  - id: BG-001
+    statement: "Reduce the measured cost of a silent-night-class incident from its EUR 260,411 pilot-region baseline (EUR 20,832,904 projected at 400-store scale) to under EUR 50,000 pilot-region-equivalent by month 6 and under EUR 20,000 by month 12, at the same assumed incident frequency."
+    priority: MUST
+    kpi: "silent-night-class incident cost, Night Gauntlet / Cost-of-a-Silent-Night business-impact model."
+    smart_status: PASS
+  - id: BG-002
+    statement: "Ensure at least 95% of cases above the safe-limit threshold for more than 30 minutes reach an acknowledged, reachable on-call contact within 15 minutes, and 100% within 30 minutes, on the validation cohort by month 6 and chain-wide by month 12."
+    priority: MUST
+    kpi: "Night Gauntlet detection field: minutes_to_detect and found_by, against baseline worst-case 347 minutes and 25% alarm-catch rate."
+    smart_status: PASS
+  - id: BG-003
+    statement: "Make every remote session and fleet/single-case command attributable to one named individual and technically enforced (not merely logged) against an approved scope and window, 100% chain-wide by month 12, subject to CON-002."
+    priority: MUST
+    kpi: "Command audit completeness and approved-vs-executed scope/window mismatch report."
+    smart_status: PASS
+  - id: BG-004
+    statement: "Eliminate reassuring or non-escalating store-assistant answers about cases needing a human food-safety decision (baseline 168 across a 10-night Night Gauntlet sample) to 0, verified per cohort before expansion, sustained chain-wide by month 6."
+    priority: MUST
+    kpi: "Night Gauntlet assistant-check hard gate."
+    smart_status: PASS
+  - id: BG-005
+    statement: "Close both currently vacant ownership gaps (fleet commands since 2021; store assistant since 2024) and establish a monthly-attested, current escalation contact list, chain-wide, by month 3."
+    priority: MUST
+    kpi: "Ownership register vacancy count; contact-list staleness rate."
+    smart_status: PASS
+  - id: BG-006
+    statement: "Validate BG-001 through BG-005 on an approximately 40-store cohort over 6 months before committing the remaining ~360 stores to the board's 400-store target, with gating criteria finalized in PRD scoping (Open Question Q-1)."
+    priority: MUST
+    kpi: "Gauntlet cohort scorecard Pass/Warn/Fail status against BG-001-BG-004 criteria."
+    smart_status: PASS
+partitions: []
+known_open_items:
+  - id: OPEN-1
+    summary: "Exact numeric gating-criteria thresholds for the ~40-store validation cohort, and who owns the hold decision if a criterion is missed (Open Question Q-1)."
+    rationale_for_deferral: "Detailed threshold design is PRD-level specification work, not BRD-level business framing."
+    target_phase: PRD
+  - id: OPEN-2
+    summary: "Operational response when the fixed store assistant says 'looks fine' or 'unknown' and is later found wrong (Open Question Q-2)."
+    rationale_for_deferral: "Requires detailed UX/process design beyond BRD scope."
+    target_phase: PRD
+  - id: OPEN-3
+    summary: "Fallback if vendor-contract renegotiation (CON-002) slips past month 12: run without full remote-access audit, or delay the dependent rollout portion (Open Question Q-3)."
+    rationale_for_deferral: "Requires a contractual/legal decision outside BRD authority."
+    target_phase: PRD
+  - id: OPEN-4
+    summary: "Long-term owner of the night escalation process and contact list, distinct from today's default (Open Question Q-4)."
+    rationale_for_deferral: "Role/org design confirmation needed before detailed process specification."
+    target_phase: PRD
+  - id: OPEN-5
+    summary: "Correct expected defrost end condition: runbook states 30 minutes, scheduled events run 20 minutes (Open Question Q-5 / Assumption A-7 / Finding F-002, HIGH severity)."
+    rationale_for_deferral: "Requires direct confirmation with technical/operational owners; cannot be resolved from existing documents or within this BRD's two-round stakeholder-question limit."
+    target_phase: Implementation
+  - id: OPEN-6
+    summary: "Whether a compromised session or credential can be detected and revoked mid-session beyond the BRD's minimum 60-minute acceptance bar (Open Question Q-6 / NFR-005)."
+    rationale_for_deferral: "Requires a security-architecture decision outside BRD scope."
+    target_phase: PRD
+  - id: OPEN-7
+    summary: "Empirical confirmation that the pilot's controls (not just its concept) hold at scale, once the BG-006 cohort gate actually runs (Open Question Q-7)."
+    rationale_for_deferral: "Cannot be resolved before the cohort runs; procedurally addressed by BG-006/FR-017, but the actual answer remains open until measured."
+    target_phase: Implementation
+prd_consumer_notes: >
+  This BRD rests entirely on a simulated Zava stakeholder panel (Stage 1 Design Thinking,
+  two rounds; this BRD, one additional round) and an autonomous no-user-present authoring
+  process (DD-005, DD-006). Treat it as a strong starting hypothesis for PRD scoping, not as
+  settled business authorization. FR-010 and parts of BG-003 are blocked by CON-002 (vendor
+  contract) until OPEN-3/Q-3 is resolved — do not scope FR-010 for full chain-wide
+  implementation without that resolution. OPEN-1 (gating thresholds) and OPEN-2 (assistant-
+  wrong-answer response) are the two items most likely to require PRD-phase stakeholder
+  elicitation before BG-006's month-6 gate check can run as designed. Real legal, regulatory,
+  food-safety, and end-shopper validation remain outstanding per WAIV-001, Assumption A-9, and
+  Risk R-6; escalate to the orchestrator/user before any downstream phase treats this BRD as
+  authorizing real budget, contract, or production changes.

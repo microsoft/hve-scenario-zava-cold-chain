@@ -1,0 +1,179 @@
+{
+  "id": "02",
+  "slug": "setup",
+  "title": "Setup",
+  "short": "Setup",
+  "hve": {
+    "stage": 1,
+    "name": "Setup",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/setup"
+  },
+  "minutes": 45,
+  "scenario": "Before anyone can change the monitor, every laptop has to run it, pass its tests and have HVE Core ready in GitHub Copilot Chat.",
+  "why": "Every later chapter writes files under the same project slug, `zava-silent-night`, on your table's branch. If setup differs between laptops, the tools write to places the Workshop Journey can't find.",
+  "objective": "Run the monitor and its tests from the repo root, install HVE Core, confirm Session Target says Copilot, and work on your table's branch.",
+  "needs": [],
+  "produces": [
+    "setup-check"
+  ],
+  "monitor": [
+    {
+      "label": "System health",
+      "route": "health"
+    },
+    {
+      "label": "How to read the monitor",
+      "route": "guide"
+    }
+  ],
+  "tools": [
+    {
+      "name": "hve-core-installer",
+      "open": "/hve-core-installer",
+      "for": "Installs HVE Core's agents and skills into this workspace if you haven't installed the hve-core plugin"
+    },
+    {
+      "name": "git-setup",
+      "open": "/git-setup",
+      "for": "Checks your git identity and settings, and helps you make your table's branch"
+    }
+  ],
+  "words": [
+    {
+      "term": "agent",
+      "meaning": "A chat mode with its own instructions and tools, for example DT Coach or BRD Builder. You pick one, then talk to it."
+    },
+    {
+      "term": "agent picker",
+      "meaning": "The drop-down in Copilot Chat where you choose an agent. When a chapter says pick BRD Builder, it means here."
+    },
+    {
+      "term": "skill",
+      "meaning": "A packaged procedure an agent can follow, such as rpi-research or pull-request. You start one with its slash command."
+    },
+    {
+      "term": "slash command",
+      "meaning": "Text that starts with `/` in the chat box, for example `/rpi-research`. It starts a skill."
+    },
+    {
+      "term": "prompt",
+      "meaning": "What you type or paste into the chat. Each chapter has prompts you can copy. Change the table number or fix before you send."
+    },
+    {
+      "term": "Session Target",
+      "meaning": "The button below the chat input that says where the chat runs. For this workshop it must say Copilot."
+    },
+    {
+      "term": "`.copilot-tracking/`",
+      "meaning": "The folder where HVE Core agents save their working files: sessions, research, plans and reviews. The Workshop Journey checks it to see what your table has made."
+    },
+    {
+      "term": "project slug",
+      "meaning": "The short name the tools put in file paths. Everyone uses `zava-silent-night`, so files land where the Journey looks for them."
+    },
+    {
+      "term": "RPI",
+      "meaning": "Research, Plan, Implement, then Review: HVE Core's way of making a code change. The RPI Agent runs the phases and can stop after each one for you to check."
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Clone the repo and open its folder in VS Code. Run every command from the repo root: the package isn't installed, so `python -m zava_cold_chain` only works there.",
+      "Run `python -m unittest` and check that every test passes. If `python` isn't found, use `python3` on macOS and Linux or `py` on Windows.",
+      "Start the monitor with `python -m zava_cold_chain serve` and open [System health](/#/health).",
+      "Install HVE Core: install the hve-core plugin, or type `/hve-core-installer` in Copilot Chat. Then open the agent picker and check that DT Coach and RPI Agent are listed.",
+      "Open a new chat and check that the Session Target button below the chat input says Copilot.",
+      "Run `/git-setup`, then create and switch to your table's branch, for example `zava-silent-night/table-3`."
+    ],
+    "prompts": [
+      {
+        "label": "Install HVE Core",
+        "text": "/hve-core-installer Install HVE Core for this workspace. We use the project slug zava-silent-night, so later agents write under `.copilot-tracking/` and `docs/project-planning/`. Don't change any files under `zava_cold_chain/`, `data/` or `nights/`."
+      },
+      {
+        "label": "Set up git and the branch",
+        "text": "/git-setup Check my git identity and settings for this repo. Then create the branch `zava-silent-night/table-3` from `main` and switch to it. Our table's work for zava-silent-night goes on that branch."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Does `python -m unittest` pass on every laptop at the table?",
+      "Which branch are you on?",
+      "What does the Session Target button say?"
+    ],
+    "mistakes": [
+      "Running commands from a subfolder, so `python -m zava_cold_chain` isn't found",
+      "Working on `main` instead of the table's branch",
+      "Session Target set to something other than Copilot"
+    ],
+    "step_in": [
+      "When one laptop at a table still fails setup after ten minutes. Pair that person with a neighbour and move on."
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Send the pre-work a week ahead: clone the repo, run `python -m unittest`, install HVE Core.",
+      "Decide table numbers and the branch pattern, for example `zava-silent-night/table-3`."
+    ],
+    "run": [
+      {
+        "at": "10:00",
+        "minutes": 10,
+        "do": "Everyone runs `python -m unittest` from the repo root and raises a hand when it passes."
+      },
+      {
+        "at": "10:10",
+        "minutes": 20,
+        "do": "Tables install HVE Core and check the agent picker and Session Target. Coaches help laptops that fail."
+      },
+      {
+        "at": "10:30",
+        "minutes": 15,
+        "do": "Tables run `/git-setup` and make their branch. Read the Words list aloud."
+      }
+    ],
+    "good_answer": "On every laptop: 61 tests pass, the monitor opens at `http://127.0.0.1:8740`, the agent picker lists DT Coach and RPI Agent, Session Target says Copilot, and `git branch --show-current` shows the table's branch.",
+    "watch_for": [
+      "Laptops where a corporate proxy blocks the HVE Core install. Pair them for today and fix it after.",
+      "Someone editing code on `main`"
+    ],
+    "demo": "On the trainer's laptop, show the agent picker, the Session Target button and the empty `.copilot-tracking/` folder that later chapters fill."
+  },
+  "done_when": [
+    "`python -m unittest` passes from the repo root",
+    "The monitor opens at `http://127.0.0.1:8740`",
+    "The agent picker lists DT Coach, BRD Builder and RPI Agent",
+    "Session Target says Copilot",
+    "`git branch --show-current` shows your table's branch"
+  ],
+  "stuck": [
+    {
+      "if": "`python` isn't found",
+      "then": "Use `python3` on macOS and Linux or `py` on Windows. You need Python 3.9 or later."
+    },
+    {
+      "if": "Port 8740 is already in use",
+      "then": "Run `python -m zava_cold_chain serve --port 8741`."
+    },
+    {
+      "if": "HVE Core won't install",
+      "then": "Pair with a neighbour for now and install the hve-core plugin from VS Code's Agent Customizations editor at the break."
+    }
+  ],
+  "handoff": {
+    "to": "03",
+    "note": "Design Thinking needs Copilot Chat with DT Coach in the agent picker, and the monitor running for the interviews."
+  },
+  "loops": [],
+  "references": [
+    {
+      "label": "HVE Core setup stage",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/setup"
+    },
+    {
+      "label": "Repo quick start",
+      "target": "README.md"
+    }
+  ]
+}

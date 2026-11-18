@@ -1,0 +1,111 @@
+{
+  "projectSlug": "cold-chain-production-readiness",
+  "raiPlanFile": ".copilot-tracking/rai-plans/cold-chain-production-readiness/rai-plan.md",
+  "currentPhase": 6,
+  "entryMode": "from-security-plan",
+  "preflight": {
+    "templates": [],
+    "assessmentContentFile": null
+  },
+  "disclaimerShownAt": "2026-11-15T18:15:00Z",
+  "noticeLog": [
+    { "noticeType": "session-start-disclaimer", "shownAt": "2026-11-15T18:15:00Z", "source": "disclaimer-language skill, RAI Planning section", "details": { "reason": "new-state" } },
+    { "noticeType": "framework-attribution", "shownAt": "2026-11-15T18:15:00Z", "source": "agent startup announcement", "details": { "text": "NIST AI Risk Management Framework 1.0 (default, replaceDefaultFramework=false)" } },
+    { "noticeType": "exit-reminder", "shownAt": "2026-11-15T18:55:00Z", "source": "rai-plan.md Phase 6", "details": { "reason": "phase6-handoff-success-path" } },
+    { "noticeType": "handoff-disclaimer", "shownAt": "2026-11-15T18:55:00Z", "source": "backlog-templates skill, Disclaimer-Block Placement Convention", "details": { "artifactPath": ".copilot-tracking/rai-plans/cold-chain-production-readiness/ado-backlog-handoff.md" } },
+    { "noticeType": "handoff-disclaimer", "shownAt": "2026-11-15T18:55:00Z", "source": "backlog-templates skill, Disclaimer-Block Placement Convention", "details": { "artifactPath": ".copilot-tracking/rai-plans/cold-chain-production-readiness/github-backlog-handoff.md" } }
+  ],
+  "securityPlanRef": ".copilot-tracking/security-plans/cold-chain-production-readiness/state.json",
+  "assessmentDepth": "comprehensive",
+  "standardsMapped": true,
+  "securityModelAnalysisStarted": true,
+  "raiThreatCount": 30,
+  "impactAssessmentGenerated": true,
+  "evidenceRegisterComplete": true,
+  "handoffGenerated": { "ado": false, "github": false },
+  "phaseGates": {
+    "phase1": { "gate": "summary-and-advance" },
+    "phase2": { "gate": "hard", "confirmedAt": "2026-11-15T18:20:00Z" },
+    "phase3": { "gate": "hard", "confirmedAt": "2026-11-15T18:30:00Z" },
+    "phase4": { "gate": "summary-and-advance" },
+    "phase5": { "gate": "summary-and-advance" },
+    "phase6": { "gate": "hard", "confirmedAt": "2026-11-15T18:55:00Z" }
+  },
+  "gateResults": {
+    "prohibitedUsesGate": {
+      "status": "passed",
+      "sourceFrameworks": ["nist-ai-rmf"],
+      "notes": "Food-safety decision-support and operational-forecast assistant; not a prohibited-use category (no social scoring, biometric categorization, manipulation, or exploitation-of-vulnerability use identified)."
+    }
+  },
+  "riskClassification": {
+    "framework": {
+      "id": "nist-ai-rmf",
+      "name": "NIST AI Risk Management Framework",
+      "version": "1.0",
+      "source": ".github/skills/rai/rai-standards/SKILL.md",
+      "replaceDefaultIndicators": false,
+      "replaceDefaultFramework": false
+    },
+    "indicators": {
+      "safety_reliability": {
+        "method": "binary",
+        "nistSource": ["MS-2.5", "MS-2.6"],
+        "activated": true,
+        "observation": "Confirmed incident (ZFW-297) plus a second, code-confirmed path (defrost-mode blanket reassurance) where the assistant asserts a case is safe/normal independent of actual temperature.",
+        "result": "activated"
+      },
+      "rights_fairness_privacy": {
+        "method": "categorical",
+        "nistSource": ["MS-2.8", "MS-2.10", "MS-2.11"],
+        "activated": true,
+        "observation": "Unredacted free-text notes enter the assistant's answer-forming context and are re-displayed to any dashboard reader; note authors (technician, vendor) were not told the note could feed an automated safety-adjacent answer.",
+        "result": "privacy and procedural-transparency concern; no demographic-fairness decisioning identified"
+      },
+      "security_explainability": {
+        "method": "continuous",
+        "nistSource": ["MS-2.7", "MS-2.9"],
+        "activated": true,
+        "observation": "STEER keyword-denylist guardrail is bypassable (carried from Security Plan T-AI-004); customer-impact prediction is shown on primary dashboard screens with no stated methodology, confidence, or owner (product's own in-app content names this gap).",
+        "result": "high"
+      }
+    },
+    "activatedCount": 3,
+    "riskScore": 3,
+    "suggestedDepthTier": "comprehensive"
+  },
+  "runningObservations": [
+    { "phase": 1, "observation": "Four AI/ML-relevant components identified: store assistant (assistant.py), customer-impact prediction (impact.py), explainable cost model (business.py, contrast exemplar), and the Gauntlet assistant_check TEVV harness (gauntlet.py).", "flagLevel": "noted" },
+    { "phase": 1, "observation": "Two of three safety-adjacent decision points (discard/hold/keep; new-channel sign-off) already have a named accountable human role in code or requirements; one (who owns the customer-impact prediction) has no owner anywhere in roster.json.", "flagLevel": "critical" }
+  ],
+  "principleTracker": {
+    "validReliable": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 2, "controlsEvaluated": 1, "nistSubcat": "MS-2.5", "openObservations": ["Defrost-mode blanket reassurance (T-RAI-025) independent of note-steering", "Gauntlet TEVV coverage does not test phrasing-variant adversarial steering (T-RAI-028)"] },
+    "safe": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 2, "controlsEvaluated": 1, "nistSubcat": "MS-2.6", "openObservations": ["T-AI-001 note-steering (carried)", "T-RAI-025 defrost-mode reassurance (new)"] },
+    "secureResilient": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 1, "controlsEvaluated": 1, "nistSubcat": "MS-2.7", "openObservations": ["T-AI-004 regex-only guardrail (carried)"] },
+    "accountableTransparent": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 3, "controlsEvaluated": 2, "nistSubcat": "MS-2.8", "openObservations": ["Store assistant owner vacant since 2024 (ZFW-297)", "Customer-impact prediction has no owner anywhere in roster.json", "FR-013 pre-production review gate does not exist yet; ZFW-288/ZFW-331 shipped without it"] },
+    "explainableInterpretable": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 1, "controlsEvaluated": 1, "nistSubcat": "MS-2.9", "openObservations": ["impact.py shown without methodology/confidence on primary dashboard surfaces; business.py is the in-repo positive exemplar"] },
+    "privacyEnhanced": { "suggestedStatus": "gap-identified", "mappedInPhase3": true, "threatsIdentified": 2, "controlsEvaluated": 1, "nistSubcat": "MS-2.10", "openObservations": ["build_context() concatenates full note history verbatim with no redaction/minimization (T-AI-002, T-RAI-029)"] },
+    "fairBiasManaged": { "suggestedStatus": "partial", "mappedInPhase3": true, "threatsIdentified": 1, "controlsEvaluated": 0, "nistSubcat": "MS-2.11", "openObservations": ["forecast.json buy-rate assumptions applied uniformly across all five stores with no per-store/representativeness validation ahead of 400-store scale (T-RAI-030)"] }
+  },
+  "referencesProcessed": [],
+  "nextActions": [
+    "A qualified RAI/compliance reviewer must confirm this assessment's risk classification, threat ratings, and backlog items before any item is actually created in a tracker.",
+    "Confirm regulatory jurisdiction (BRD Open Question A-9, still open) before any EU AI Act risk-tier classification is treated as more than a flagged consideration.",
+    "No Mural board was created in this autonomous session; offer remains open for a live follow-up session (Phase 2 exit).",
+    "Recommend ADR Creator (from-planner-handoff) to record the layered-guardrail design decision and the two-tier food-safety sign-off model once a real production assistant design is selected.",
+    "Full external regulatory/legal research (rpi-research) was not run in this autonomous session; jurisdiction and EU AI Act applicability remain open items, not resolved findings."
+  ],
+  "signingRequested": false,
+  "signingManifestPath": null,
+  "userPreferences": {
+    "autonomyTier": "partial",
+    "outputDetailLevel": "standard",
+    "targetSystem": "both",
+    "audienceProfile": "mixed",
+    "includeOptionalArtifacts": {
+      "transparencyNote": false,
+      "monitoringSummary": false,
+      "artifactSigning": false
+    }
+  }
+}

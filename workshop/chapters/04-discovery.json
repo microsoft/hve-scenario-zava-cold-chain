@@ -1,0 +1,138 @@
+{
+  "id": "04",
+  "slug": "discovery",
+  "title": "Discovery and business requirements",
+  "short": "Discovery",
+  "hve": {
+    "stage": 2,
+    "name": "Discovery",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/discovery"
+  },
+  "minutes": 120,
+  "scenario": "The room knows why nothing alarmed. Now it has to agree what a better night is worth, in euros, and who owns each number.",
+  "why": "A fix without a measure can't be funded on Day 3. The BRD turns the problem statement into a business goal the Investment Board can judge.",
+  "objective": "Write a BRD with a measurable goal, its owners, what is in and out of scope, and what must not change.",
+  "needs": [
+    "dt-handoff",
+    "scenario"
+  ],
+  "produces": [
+    "brd"
+  ],
+  "monitor": [
+    {
+      "label": "Business impact",
+      "route": "business"
+    }
+  ],
+  "tools": [
+    {
+      "name": "BRD Builder",
+      "open": "agent picker",
+      "for": "Runs Discover, Define and Govern, and saves its session so you can resume"
+    },
+    {
+      "name": "rpi-research",
+      "open": "/rpi-research",
+      "for": "Only when a claim in the handoff needs checking against the code"
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Open GitHub Copilot Chat and pick BRD Builder in the agent picker.",
+      "Start with the prompt below.",
+      "Answer its Discover questions from [Business impact](/#/business). Move the sliders before you agree a target, and write down who owns each one.",
+      "Before Govern, check that the BRD names what must not change."
+    ],
+    "prompts": [
+      {
+        "label": "Start the BRD",
+        "text": "Create a BRD for zava-silent-night. Start from `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. The outcome is the Cost of a Silent Night on the Business impact screen. Save the BRD to `docs/project-planning/zava-silent-night-brd.md`."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Which of these figures would the CFO sign?",
+      "Who owns the shelf-value assumption?",
+      "What would make this goal look met when it isn't?"
+    ],
+    "mistakes": [
+      "Writing a fix as the goal, for example \"add a defrost alarm\"",
+      "Copying the €260,411 without asking where it comes from"
+    ],
+    "step_in": [
+      "When a table has written requirements before it has a goal with a number"
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Replay silent-night to 08:00 on the trainer's screen so Business impact shows the whole night",
+      "Reset the sliders"
+    ],
+    "run": [
+      {
+        "at": "14:45",
+        "minutes": 15,
+        "do": "Show the euro figure. Ask the room which of these numbers they would sign."
+      },
+      {
+        "at": "15:00",
+        "minutes": 60,
+        "do": "Tables run BRD Builder. Walk the room at 15:20 and 15:40."
+      },
+      {
+        "at": "16:00",
+        "minutes": 15,
+        "do": "Each table reads its business goal aloud. Write them on the wall."
+      },
+      {
+        "at": "16:15",
+        "minutes": 30,
+        "do": "Checkpoint: executives agree the outcome, how it's measured and who owns each assumption behind it."
+      }
+    ],
+    "good_answer": "A goal with a number, a date and a measure. The reference run's BG-001: bring the Cost of a Silent Night from €260,411 to under €50,000 by month 6.",
+    "watch_for": [
+      "A goal with no owner for its assumptions",
+      "A table that writes a fix as its goal. Send them back to the problem statement."
+    ],
+    "demo": "Move the shelf-value slider and watch the chain-wide figure change. That's the conversation about who owns the number."
+  },
+  "done_when": [
+    "`docs/project-planning/zava-silent-night-brd.md` exists",
+    "It has at least one business goal with a number and a date",
+    "Every assumption behind the goal has an owner",
+    "It states what must not change: a scheduled defrost that ends on time raises no alarm"
+  ],
+  "stuck": [
+    {
+      "if": "BRD Builder asks questions the table can't answer",
+      "then": "Answer from Business impact and `data/business.json`, and mark the rest as assumptions"
+    },
+    {
+      "if": "The table runs out of time",
+      "then": "Open the reference run's BRD, agree its goal BG-001 as the table's goal and move on"
+    }
+  ],
+  "handoff": {
+    "to": "05",
+    "note": "Product definition reads the BRD's goals, rules and what must not change"
+  },
+  "loops": [
+    {
+      "to": "06",
+      "when": "TPMs can skip the PRD when the BRD is enough"
+    }
+  ],
+  "references": [
+    {
+      "label": "BRD and PRD Builders",
+      "target": "https://microsoft.github.io/hve-core/docs/agents/project-planning/brd-prd-builders/"
+    },
+    {
+      "label": "Business model",
+      "target": "data/business.json"
+    }
+  ]
+}

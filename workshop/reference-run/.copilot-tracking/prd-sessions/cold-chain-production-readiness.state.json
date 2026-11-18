@@ -1,0 +1,93 @@
+{
+  "prdFile": "docs/project-planning/cold-chain-production-readiness-prd.md",
+  "prdFileSha256": "e0f412b052ac9c2e3ee89a6f719c4f1e3c369cbb315ac45ce689cea0e34f8815",
+  "lastAccessed": "2026-11-15T18:50:00Z",
+  "currentPhase": "Finalize",
+  "disclaimerShownAt": "2026-11-15T18:50:00Z",
+  "phaseSkillsLoaded": [
+    "prd-author#assess",
+    "prd-author#discover",
+    "prd-author#create",
+    "prd-author#build",
+    "prd-author#integrate",
+    "prd-author#validate",
+    "prd-author#finalize"
+  ],
+  "extensionsLoaded": [],
+  "proposalResponseArtifacts": [],
+  "sourceBrdHandoff": ".copilot-tracking/brd-sessions/cold-chain-production-readiness.handoff.yml",
+  "feasibilityHandoff": null,
+  "questionsAsked": [
+    "product-name", "core-problem", "solution-approach", "product-type", "target-users"
+  ],
+  "answeredQuestions": {
+    "product-name": "Zava Cold Chain Monitor — production readiness (derived directly from the approved BRD, no live user present)",
+    "core-problem": "Five evidence-backed trust-by-familiarity gaps (alarm triage/escalation, command approval-vs-enforcement, assistant steering with no accountable owner, vacant ownership, unproven scale assumption) must become trust-by-design controls before the board's 400-store, 12-month commitment, per BRD-2026-COLDCHAIN-001.",
+    "solution-approach": "Decompose BG-001-BG-006 into 19 product-level FRs across five domains (alarm/escalation, command/identity, assistant, ownership, scale-gating), sequence delivery with exactly one P0 slice (FR-001, prototyped and measured this session), and hand off identity/vendor and RAI-depth work to Security Planner and RAI Planner respectively.",
+    "product-type": "Production-readiness hardening of an existing prototype application (not a new product); scope bounded to BRD-2026-COLDCHAIN-001's six business goals.",
+    "target-users": "Night store manager / regional night cover, refrigeration technician, Regional IT, vendor support, food-safety officer, executive sponsor / Investment Board (carried from BRD Stakeholders and Stage 1 Design Thinking personas)."
+  },
+  "referencesProcessed": [
+    {
+      "file": "docs/project-planning/cold-chain-production-readiness-brd.md",
+      "status": "analyzed",
+      "timestamp": "2026-11-15T18:50:00Z",
+      "keyFindings": "6 business goals, 18 FR, 6 NFR, 3 CON, 6 BR, 17 AC, 100% FR-to-AC and FR-to-BG traceability; 7 open questions (Q-1 gating thresholds, Q-2 assistant-wrong-answer response, Q-3 vendor-contract fallback, Q-4 escalation-list ownership, Q-5 defrost-duration discrepancy, Q-6 mid-session revocation, Q-7 empirical scale validation) deferred to PRD/Implementation.",
+      "integratedSections": ["Product Goals", "Functional Requirements", "Constraints", "Design Decisions", "Risks and Assumptions"],
+      "conflicts": [],
+      "pendingActions": ["Q-3, Q-4, Q-6, Q-7 remain open at PRD exit; carried to Security Planner / implementation per Handoff section."]
+    },
+    {
+      "file": ".copilot-tracking/brd-sessions/cold-chain-production-readiness.handoff.yml",
+      "status": "analyzed",
+      "timestamp": "2026-11-15T18:50:00Z",
+      "keyFindings": "BRD_TO_PRD_HANDOFF_V1 payload validated: govern_exit_decision APPROVED_WITH_COMMENTS, overall_status NEEDS_REVIEW, fr_to_ac_coverage_pct 100.0, fr_to_bg_coverage_pct 100.0, WAIV-001 (no real human sign-off) active.",
+      "integratedSections": ["Provenance note", "Design Decisions", "Risks and Assumptions"],
+      "conflicts": [],
+      "pendingActions": []
+    },
+    {
+      "file": ".copilot-tracking/dt/cold-chain-production-readiness/problem-space-handoff.md",
+      "status": "analyzed",
+      "timestamp": "2026-11-15T18:50:00Z",
+      "keyFindings": "Five evidence clusters and nine HMW statements from Stage 1; used for Users and Personas section quotes and rationale.",
+      "integratedSections": ["Users and Personas"],
+      "conflicts": [],
+      "pendingActions": []
+    },
+    {
+      "file": "zava_cold_chain/alarms.py, zava_cold_chain/commands.py, zava_cold_chain/simulator.py, zava_cold_chain/business.py, zava_cold_chain/gauntlet.py, zava_cold_chain/notify.py, zava_cold_chain/assistant.py",
+      "status": "analyzed",
+      "timestamp": "2026-11-15T18:50:00Z",
+      "keyFindings": "ALM-07 exempts any case.mode == 'defrost' from alarms regardless of duration; case.defrost_until is None for indefinite defrosts and auto-reverts mode to normal when set. Direct physics measurement: 20-min defrost peaks at -13.0C (no breach), 25-min at -11.3C (breach), 40-min at -6.5C (breach) against the -12.0C freezer limit.",
+      "integratedSections": ["Executive Summary", "Design Decisions", "Functional Requirements FR-001", "MVP and Release Framing"],
+      "conflicts": [],
+      "pendingActions": []
+    },
+    {
+      "file": "tests/test_baseline.py, tests/test_business.py, tests/test_operations.py",
+      "status": "analyzed",
+      "timestamp": "2026-11-15T18:50:00Z",
+      "keyFindings": "tests/test_business.py already contains a helper _alarm_in_any_mode documented as 'a stand-in for change 1' that fully removes the ALM-07 exemption; measured directly in a disposable prototype to false-page the 40-minute approved vendor maintenance defrost (peak -6.5C). A targeted prototype fix (exempt only while case.defrost_until is not None) was applied to a discarded /tmp copy of the repository, never committed: python -m unittest showed 7 failures + 1 error in tests that encode the undetected-case gap as expected behavior (test_silent_freezers_are_found_by_staff_not_alarms, test_an_earlier_door_alarm_does_not_count_for_a_later_silent_defrost, test_detecting_sooner_costs_less, test_leaderboard_ranks_against_the_baseline_for_the_same_seed, test_the_alarms_that_fire_are_not_for_the_freezers_that_fail, test_products_at_risk_are_grouped, test_mass_defrost_predicts_shoppers_in_every_store, test_pulling_stock_moves_shoppers_to_empty_shelves); python -m zava_cold_chain gauntlet --seed 2026 showed total_eur 768013 -> 454371.",
+      "integratedSections": ["MVP and Release Framing", "Risks and Assumptions (R-007, R-008)"],
+      "conflicts": [],
+      "pendingActions": ["RPI implementation pass must update these specific tests as part of the P0 slice."]
+    }
+  ],
+  "nextActions": [
+    "Dispatch RPI (research-plan-implement-review) for the P0 slice (FR-001) exactly as scoped in MVP and Release Framing.",
+    "Re-run python -m unittest and python -m zava_cold_chain gauntlet --seed 2026 after the real implementation to confirm this PRD's prototyped figures.",
+    "Dispatch Security Planner for FR-006/FR-009/NFR-004/CON-002 per the Handoff section.",
+    "Dispatch RAI Planner for FR-010-FR-014/Risk R-003 per the Handoff section.",
+    "Run a real hve-core:prd-quality-reviewer pass and real human review before treating Finalize status as settled (see Handoff Readiness)."
+  ],
+  "qualityChecks": [
+    "goals-defined", "scope-clarified", "fr-to-ac-coverage-100pct", "fr-to-goal-coverage-100pct",
+    "brd-fr-coverage-100pct-of-18", "p0-slice-single-and-measured", "must-not-change-behavior-preserved-in-ac",
+    "failure-case-present-per-fr"
+  ],
+  "userPreferences": {
+    "detail-level": "comprehensive",
+    "question-style": "autonomous-decide-and-record (no live user present; stakeholder questions deferred unless genuinely blocking, per orchestrator instructions)"
+  }
+}

@@ -1,0 +1,234 @@
+schema_version: BRD_STANDARD_FINDINGS_V1
+mode: plan
+brd_id: "BRD-2026-COLDCHAIN-001"
+brd_version: "1.0.0"
+reviewed_path: "docs/project-planning/cold-chain-production-readiness-brd.md"
+reviewer: "hve-core:brd-quality-reviewer (subagent dispatch, 2026-11-15)"
+taxonomy_in_force:
+  fr: "FR"
+  ac: "AC"
+  nfr: "NFR"
+  con: "CON"
+  br: "BR"
+  business_goal_namespace: "BG"
+standard:
+  name: "brd-author consolidated requirements rubric"
+  spec_version: "reconstructed from embedded reviewer contract description; authoritative brd-standard-findings-v1.md / brd-quality-report-v1.md files were not resolvable from the reviewer subagent's own sandboxed read tools during this invocation"
+
+partition:
+  business_goals: ["BG-001", "BG-002", "BG-003", "BG-004", "BG-005", "BG-006"]
+  functional_requirements_count: 18
+  acceptance_criteria_count: 17
+  non_functional_requirements_count: 6
+  constraints_count: 3
+  business_rules_count: 6
+  identifier_integrity: "No malformed, duplicated, or cross-namespace identifiers detected; all IDs use 3-digit suffixes (FR-001..FR-018, AC-001..AC-017, NFR-001..NFR-006, CON-001..CON-003, BR-001..BR-006, BG-001..BG-006)."
+
+iso_29148_attributes:
+  sample_requirements: ["FR-001", "FR-006", "FR-011", "FR-017", "NFR-005"]
+  scale: "0=absent, 1=weak, 2=adequate, 3=strong"
+  scores:
+    necessary: 3.0
+    appropriate: 3.0
+    unambiguous: 2.4
+    complete: 2.2
+    singular: 2.0
+    feasible: 2.8
+    verifiable: 2.6
+    correct: 2.8
+    conforming: 3.0
+  notes: >
+    Unambiguous/Complete/Correct are depressed mainly by the unresolved defrost-duration
+    discrepancy affecting FR-001/BR-001 (A-7/Q-5) and NFR-005's explicitly deferred security
+    mechanism (Q-6, now with a 60-minute minimum acceptance bar applied post-review). Singular
+    is the weakest attribute: several FRs (FR-003, FR-005, FR-006, FR-011, FR-015, FR-017)
+    bundle 2-3 distinct shall-clauses in a single statement.
+
+iso_25010_categories:
+  functional_suitability: true
+  performance_efficiency: true
+  compatibility: false
+  usability: true
+  reliability: true
+  security: true
+  maintainability: true
+  portability: false
+  notes: >
+    Compatibility and Portability are explicitly and transparently scoped out by the BRD
+    ("Not a material concern at BRD scope... Deferred to PRD") rather than silently omitted;
+    treated as NOT_APPLICABLE findings, not gaps.
+
+smart_business_goals:
+  - {id: "BG-001", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS"}
+  - {id: "BG-002", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS"}
+  - {id: "BG-003", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS", note: "Achievable target is explicitly conditioned on CON-002 (vendor-contract) resolution; disclosed, not hidden."}
+  - {id: "BG-004", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS"}
+  - {id: "BG-005", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS"}
+  - {id: "BG-006", specific: true, measurable: true, achievable: true, relevant: true, time_bound: true, overall: "PASS", note: "Measurable attribute only partially satisfied at BRD level: numeric gating thresholds are explicitly deferred to PRD scoping (Open Question Q-1); baseline and Pass/Warn/Fail structure are present."}
+
+fr_ac_coverage:
+  total_fr: 18
+  fr_with_ac: 18
+  coverage_pct: 100.0
+  threshold_pct: 80.0
+  meets_threshold: true
+
+fr_bg_traceability:
+  total_fr: 18
+  fr_with_bg: 18
+  coverage_pct: 100.0
+  threshold_pct: 100.0
+  meets_threshold: true
+  all_bg_referenced: true
+
+findings:
+  - finding_id: "F-001"
+    section: "Executive Summary / Non-Functional Requirements"
+    requirement_id: null
+    description: "Executive Summary originally stated 'seven non-functional requirements' against six assigned NFR-### IDs."
+    status: "RESOLVED"
+    severity: "LOW"
+    recommendation: "Corrected post-review: Executive Summary now states six NFRs with Compatibility/Portability explicitly scoped out."
+
+  - finding_id: "F-002"
+    section: "Functional Requirements / Business Rules"
+    requirement_id: "FR-001"
+    description: >
+      FR-001's defrost exemption (BR-001) depends on "scheduled, on-time defrost," but Assumption
+      A-7 / Open Question Q-5 shows an unresolved internal contradiction: the runbook states
+      defrosts "always end after 30 minutes" while scheduled defrost events in the data run
+      exactly 20 minutes. This affects the Unambiguous, Complete, and Correct attributes of a
+      MUST, hard-gate-adjacent requirement.
+    status: "CAUTION"
+    severity: "HIGH"
+    recommendation: "Resolve the 20-vs-30-minute defrost duration with the refrigeration technician lead and Store Systems team before FR-001's exemption threshold is finalized in implementation scoping (already targeted by Q-5; cannot be resolved without a further stakeholder round beyond this BRD's two-round limit, so it is correctly carried forward rather than invented)."
+
+  - finding_id: "F-003"
+    section: "Functional Requirements"
+    requirement_id: "FR-011"
+    description: >
+      Recurring Singular-attribute weakness: FR-003, FR-005, FR-006, FR-011, FR-015, and FR-017
+      each bundle two or three distinct shall-clauses into a single requirement statement.
+    status: "CAUTION"
+    severity: "MEDIUM"
+    recommendation: "Decompose multi-clause FRs into atomic, independently verifiable requirements during PRD-level refinement; each clause already has an implicit AC mapping that would split cleanly."
+
+  - finding_id: "F-004"
+    section: "Non-Functional Requirements / Security"
+    requirement_id: "NFR-005"
+    description: >
+      NFR-005 originally left the security mechanism fully unspecified and unverifiable at BRD
+      level.
+    status: "RESOLVED"
+    severity: "MEDIUM"
+    recommendation: "Corrected post-review: NFR-005 now states a minimum BRD-level acceptance bar (60-minute compromised-credential revocation) independent of the specific mechanism, which remains deferred to Q-6/PRD scoping."
+
+  - finding_id: "F-005"
+    section: "Business Rules / Constraints"
+    requirement_id: "BR-003"
+    description: >
+      BR-003 originally read as an unqualified prohibition on shared accounts, in apparent
+      direct tension with CON-002 (vendor contract requires a single shared service account),
+      with the reconciliation living only in FR-010's dependency note and Risk R-2/Q-3.
+    status: "RESOLVED"
+    severity: "MEDIUM"
+    recommendation: "Corrected post-review: BR-003's own rule text now carries an explicit 'subject to CON-002' carve-out so the rule is self-contained."
+
+  - finding_id: "F-006"
+    section: "Business Goals"
+    requirement_id: "BG-006"
+    description: >
+      BG-006's target explicitly defers numeric gating-criteria thresholds to PRD scoping
+      (Open Question Q-1), so the Measurable SMART attribute is only partially satisfied at
+      BRD level despite a defined baseline and Pass/Warn/Fail structure.
+    status: "CAUTION"
+    severity: "LOW"
+    recommendation: "No action required before Govern exit (already disclosed as Q-1); ensure PRD scoping closes Q-1 before the month-6 gate check actually runs."
+
+  - finding_id: "F-007"
+    section: "Sign-Off / Waivers"
+    requirement_id: null
+    description: >
+      No real human, legal, or compliance sign-off exists for this BRD (Sign-Off section,
+      WAIV-001); approvals are self-recorded by the autonomous BRD Builder under DD-005. The
+      waiver is explicit, dated, and self-expiring on first real-world use.
+    status: "CAUTION"
+    severity: "MEDIUM"
+    recommendation: "Carry WAIV-001 forward unchanged into PRD/Govern handoff; do not treat any budget, contract, or go-live action as authorized until real sign-off is obtained, per the waiver's own expiration condition."
+
+  - finding_id: "F-008"
+    section: "Constraints"
+    requirement_id: "CON-002"
+    description: >
+      CON-002's vendor-contract renewal date ("Q3 next year") is explicitly unconfirmed as
+      falling inside or outside the 12-month board window, affecting FR-010/BG-003 schedule
+      certainty.
+    status: "CAUTION"
+    severity: "LOW"
+    recommendation: "Confirm the actual renewal date with procurement/legal per Open Question Q-3 before the validation cohort's vendor-dependent gates are evaluated (already correctly scoped by the BRD)."
+
+  - finding_id: "F-009"
+    section: "Traceability Matrix / FR-to-AC"
+    requirement_id: null
+    description: "FR-to-AC coverage is 100.0% (18/18), exceeding the declared 80.0% threshold; no FR lacks an AC link."
+    status: "COVERED"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-010"
+    section: "Traceability Matrix / FR-to-BG"
+    requirement_id: null
+    description: "FR-to-BG coverage is 100.0% (18/18), meeting the BRD's stated 100.0% target; every BG-001..BG-006 is referenced by at least one FR."
+    status: "COVERED"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-011"
+    section: "Business Goals"
+    requirement_id: null
+    description: "All six Business Goals (BG-001..BG-006) pass a five-attribute SMART evaluation; the BRD's own self-assessment caveat ('a real reviewer must re-confirm') is appropriately disclosed."
+    status: "COVERED"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-012"
+    section: "Constraints"
+    requirement_id: null
+    description: "CON-001, CON-002, and CON-003 each correctly state an imposing source, affected boundary, non-negotiability condition, and category; none is misclassified as desired functionality, a quality target, or a standing business rule."
+    status: "COVERED"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-013"
+    section: "Identifier Integrity"
+    requirement_id: null
+    description: "No malformed, duplicated, missing, or cross-namespace identifiers detected across FR/AC/NFR/CON/BR/BG namespaces; no orphaned FR lacking a BG or AC link."
+    status: "COVERED"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-014"
+    section: "Non-Functional Requirements / ISO 25010"
+    requirement_id: null
+    description: "Compatibility is explicitly and transparently scoped out at BRD level ('Not a material concern... Deferred to PRD')."
+    status: "NOT_APPLICABLE"
+    severity: "N/A"
+    recommendation: null
+
+  - finding_id: "F-015"
+    section: "Non-Functional Requirements / ISO 25010"
+    requirement_id: null
+    description: "Portability is explicitly and transparently scoped out at BRD level ('Not a material concern... Deferred to PRD')."
+    status: "NOT_APPLICABLE"
+    severity: "N/A"
+    recommendation: null
+
+summary_counts:
+  RISK: 0
+  CAUTION: 5
+  RESOLVED: 3
+  COVERED: 5
+  NOT_APPLICABLE: 2
+  total: 15
+
+overall_status: "NEEDS_REVIEW"

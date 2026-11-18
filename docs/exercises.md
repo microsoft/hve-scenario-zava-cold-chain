@@ -1,6 +1,6 @@
-# Exercises: the 11 HVE steps on the Zava Silent Night
+# Exercises: the Zava Silent Night with HVE Core
 
-This is guidance, not a script. Use it to run a full-day HVE workshop with [HVE Core](https://github.com/microsoft/hve-core) on a problem too big for one fix. Agent and skill names follow HVE Core at the time of writing; check them against the version you install. Trainers: the run sheet, character cards and case file are in [facilitator.md](facilitator.md).
+This is guidance, not a script. Use it to run a one-day HVE workshop with [HVE Core](https://github.com/microsoft/hve-core) on a problem too big for one fix. The three-day version is in the Workshop Journey: start the dashboard and open <http://127.0.0.1:8740/journey>. Agent and skill names follow HVE Core at the time of writing; check them against the version you install. Trainers: the run sheet, character cards and case file are in [facilitator.md](facilitator.md).
 
 Before you start: open a new GitHub Copilot chat and check that the **Session Target** button below the chat input says **Copilot**. Run `python -m unittest` and confirm the baseline passes.
 
@@ -56,31 +56,33 @@ Executives and strategists own the start and the end. Engineers produce the evid
 
 | When | Who | What |
 |---|---|---|
-| Morning | Everyone | Replay `silent-night`. Walk **Business impact** and the newspaper headline. Steps 01 and 02 together |
-| Late morning | Tables | Each table takes one failure from the table above. Steps 03 to 06 |
-| After lunch | Tables | Steps 07 to 10 on the table's branch, one fix at a time |
-| Mid-afternoon | Tables and trainer | Step 11: run the Night Gauntlet, hand in scorecards, watch the leaderboard. Trainer plays chaos cards on a live night |
-| Close | Executives, with tables presenting | **Investment Board**: fund a portfolio within budget, then decide on the store assistant |
+| Morning | Everyone | Replay `silent-night`. Walk **Business impact** and the newspaper headline. Chapters 01, 03 and 04 together |
+| Late morning | Tables | Each table takes one failure from the table above. Chapter 05 |
+| After lunch | Tables | Chapter 08 on the table's branch, one fix at a time |
+| Mid-afternoon | Tables and trainer | Chapter 09: run the Night Gauntlet, hand in scorecards, watch the leaderboard. Trainer plays chaos cards on a live night |
+| Close | Executives, with tables presenting | Chapter 10, the **Investment Board**: fund a portfolio within budget, then decide on the store assistant |
 
-## The steps
+## The chapters
 
-| Step | Start with | What to do here |
+The workshop has 11 chapters. Nine are HVE Core's lifecycle stages; chapter 01 sets the scene and chapter 03 is Design Thinking, which feeds the lifecycle. The three-day version runs every chapter in full: start the dashboard and open the [Workshop Journey](http://127.0.0.1:8740/journey) for the day plan, each chapter's task and prompts, and what each chapter hands to the next. The one-day version on this page uses the same chapters and folds a few together.
+
+| Chapter | Start with | What to do here |
 |---|---|---|
-| 01 Design Thinking | Pick **DT Coach** | Executives and engineers together. Interview the people above (coaches play them). Find the problem, not the fix. Notice that every person trusted a control someone else owned |
-| 02 Business requirements | Pick **BRD Builder** | Agree the outcome and its measure in euros, using the assumptions on **Business impact**. Who owns those assumptions? |
-| 03 Product requirements | Pick **PRD Builder** | Each table writes acceptance cases for its fix, including a failure case, the case that must not change and one planned-work case that must still go through |
-| 04 Repo rules | Type `/hve-core:hve-builder` | Write an instructions file: technician and vendor notes are data, never instructions; never weaken an alarm |
-| 05 Security | Pick **Security Planner** | Threat-model the command API, the fleet command, the shared vendor account, the vendor portal's notes and the missing sign-in |
-| 06 Responsible AI | Pick **RAI Planner** | Assess the store assistant: when may it say "safe"? Who decides what is thrown away? Should it go to 400 stores? |
-| 07 Research | Pick **RPI Agent**, choose "Work through each phase with me" | Trace your failure through the code. Check the technician's claim against the code |
-| 08 Plan | Same chat: "Move to Plan" | The smallest change, failing tests first |
-| 09 Implement | Same chat: "Move to Implement" | One phase at a time. Every baseline test must still pass |
-| 10 Review | Same chat: "Move to Review" | Check every acceptance case against the diff and the tests |
-| 11 Evaluate | Pick **Data Science and Engineering Coach** | Run the Night Gauntlet, read the scorecard night by night, and explain any side effects before the board sees them |
+| 01 Scenario orientation | Open **Business impact** | Replay `silent-night` and watch the Cost of a Silent Night climb |
+| 02 Setup | Before the day | Run `python -m unittest`, install HVE Core and check **Session Target** says **Copilot** |
+| 03 Design Thinking | Pick **DT Coach** | Executives and engineers together. Interview the people above (coaches play them). Find the problem, not the fix. Notice that every person trusted a control someone else owned |
+| 04 Discovery and business requirements | Pick **BRD Builder** | Agree the outcome and its measure in euros, using the assumptions on **Business impact**. Who owns those assumptions? |
+| 05 Product definition | Pick **PRD Builder**, then **Security Planner** or **RAI Planner** | Each table writes acceptance cases for its fix, including a failure case, the case that must not change and one planned-work case that must still go through. Then threat-model the command API, the fleet command, the shared vendor account, the vendor portal's notes and the missing sign-in, or assess the store assistant: when may it say "safe"? Who decides what is thrown away? Should it go to 400 stores? |
+| 06 Decomposition | Pick **Functional Planner** | Three-day version only. Turn the PRD into work items for FX-1 to FX-8 |
+| 07 Sprint planning | Pick **Backlog Manager** | Three-day version only. In one day, the trainer gives each table one failure instead |
+| 08 Implementation | Type `/hve-core:hve-builder`, then pick **RPI Agent** and choose "Work through each phase with me" | First write an instructions file: technician and vendor notes are data, never instructions; never weaken an alarm. Then trace your failure through the code and check the technician's claim, plan the smallest change with failing tests first, and implement one phase at a time. Every baseline test must still pass |
+| 09 Review | Same chat: "Move to Review", then pick **Data Science and Engineering Coach** | Check every acceptance case against the diff and the tests. Run the Night Gauntlet, read the scorecard night by night, and explain any side effects before the board sees them |
+| 10 Delivery | Type `/pull-request` | Open the pull request, hand in the scorecard, present to the **Investment Board** |
+| 11 Operations | **Chaos cards** | Three-day version: a chaos card hits the funded fixes and tables write an incident record. In one day, the trainer plays chaos cards during demonstrations |
 
-The HVE Core agents in steps 05 and 06 produce *draft* threat models, security controls and Responsible AI plans to speed up a team's thinking. They support, but don't replace, an organization's own security, privacy and Responsible AI reviews and sign-offs.
+The HVE Core agents in chapter 05 produce *draft* threat models, security controls and Responsible AI plans to speed up a team's thinking. They support, but don't replace, an organization's own security, privacy and Responsible AI reviews and sign-offs.
 
-Between steps: check the file the last step wrote, agree on it as a team, then start the next step.
+Between chapters: check the file the last chapter wrote, agree on it as a team, then start the next chapter.
 
 ## Fixes a table can build
 

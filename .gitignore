@@ -46,6 +46,9 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+# HVE Core rpi-review writes its records to .copilot-tracking/reviews/logs/; keep them
+!.copilot-tracking/reviews/logs/
+!workshop/reference-run/.copilot-tracking/reviews/logs/
 
 # Build results on 'Bin' directories
 **/[Bb]in/*

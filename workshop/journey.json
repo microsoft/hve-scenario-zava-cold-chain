@@ -1,0 +1,853 @@
+{
+  "version": 1,
+  "about": "Workshop Journey content. The page at /journey reads this file and workshop/chapters/*.json. Ticks people make are keyed to the position of each done_when item, so rewording keeps them and reordering resets them. Zava, Inc. is fictitious and all figures are synthetic: see docs/synthetic-data.md.",
+  "hve_core_checked": "2026-11-18",
+  "hve_core_sources": [
+    "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/",
+    "https://microsoft.github.io/hve-core/docs/design-thinking/",
+    "https://microsoft.github.io/hve-core/docs/design-thinking/dt-rpi-integration/",
+    "https://microsoft.github.io/hve-core/docs/rpi/",
+    "https://microsoft.github.io/hve-core/docs/agents/project-planning/brd-prd-builders/"
+  ],
+  "project_slug": "zava-silent-night",
+  "delivery_start": null,
+  "outcome": {
+    "title": "The Silent Night, in three days",
+    "story": "One morning every freezer in Zava's five pilot stores is warm, and the only alarms all night were for other cases. Over three days your team finds out why, decides what to fix, builds it with HVE Core and proves it on nights nobody has seen.",
+    "statement": "Cut the Cost of a Silent Night without breaking routine operations.",
+    "measure": "Euros protected on hidden nights in the Night Gauntlet, against the trainer's baseline for the same seed.",
+    "must_not_change": "A scheduled defrost that ends on time raises no alarm.",
+    "figures": [
+      {
+        "label": "tonight in the pilot region",
+        "value": "€260,411"
+      },
+      {
+        "label": "the same night across all 400 stores",
+        "value": "about €20.8M"
+      },
+      {
+        "label": "Night Gauntlet baseline at seed 2026",
+        "value": "€768,013"
+      }
+    ]
+  },
+  "landing": {
+    "kicker": "Zava, five pilot stores, one night",
+    "headline": "Fifteen freezers went warm overnight. Not one of them raised an alarm.",
+    "sub": "Staff found them when they opened the doors. The five chillers that went warm did alarm, and the night cover fixed every one.",
+    "trace": {
+      "case": "ZF-118/F-12",
+      "label": "Freezer F-12, store ZF-118",
+      "setpoint": -20,
+      "limit": -12,
+      "start": "22:00",
+      "step_minutes": 10,
+      "temps": [
+        -20.0,
+        -19.9,
+        -19.9,
+        -19.9,
+        -19.7,
+        -19.8,
+        -19.5,
+        -16.0,
+        -13.3,
+        -15.9,
+        -17.6,
+        -18.6,
+        -19.2,
+        -19.6,
+        -19.8,
+        -19.9,
+        -20.0,
+        -20.0,
+        -20.0,
+        -19.9,
+        -16.7,
+        -13.4,
+        -10.2,
+        -7.1,
+        -4.0,
+        -1.2,
+        1.6,
+        4.2,
+        6.8,
+        9.3,
+        11.8,
+        14.0,
+        16.2,
+        18.1,
+        20.3,
+        22.2,
+        24.1,
+        26.0,
+        27.7,
+        29.4,
+        31.0,
+        32.5,
+        34.0,
+        35.4,
+        36.7,
+        38.0,
+        39.3,
+        40.6,
+        41.5,
+        42.8,
+        44.0,
+        44.9,
+        45.7,
+        46.7,
+        47.7,
+        48.6,
+        49.4,
+        50.2,
+        51.1,
+        51.7,
+        52.4
+      ],
+      "note": "Readings from the simulator's silent-night replay, one every 10 minutes."
+    },
+    "cost": {
+      "count": 260411,
+      "label": "what the night cost the pilot region",
+      "chain": "about €20.8M if the same night reached all 400 stores"
+    },
+    "activity": {
+      "title": "Everything did its job",
+      "lines": [
+        "Every alarm rule ran exactly as it was written.",
+        "Every alarm that fired was answered.",
+        "The vendor's overnight change had an approved ticket.",
+        "The store assistant answered every question staff asked it.",
+        "Nobody on the night shift broke a rule in the runbook."
+      ],
+      "outcome": "And the night still cost the pilot region €260,411.",
+      "activity_label": "Activity",
+      "outcome_label": "Outcome"
+    },
+    "pairs": {
+      "title": "You ship outputs. The business pays for outcomes.",
+      "intro": "Each line on the left is something an engineer can finish in a day. Each line on the right is what Zava is trying to buy.",
+      "left": "What you ship",
+      "right": "What the business buys",
+      "rows": [
+        {
+          "output": "An alarm rule",
+          "outcome": "A warm freezer found in minutes, before the stock is lost"
+        },
+        {
+          "output": "A merged pull request",
+          "outcome": "A cheaper night, measured on nights nobody has seen yet"
+        },
+        {
+          "output": "A threat model",
+          "outcome": "No command can reach every store without someone checking it"
+        },
+        {
+          "output": "A store assistant that answers",
+          "outcome": "An answer the food-safety officer is willing to sign"
+        },
+        {
+          "output": "A dashboard",
+          "outcome": "A decision the board can make about 400 stores"
+        }
+      ]
+    },
+    "numbers": {
+      "title": "Six numbers the board will ask about",
+      "intro": "From the Silent Night replay. Every figure is synthetic, and every assumption behind it is on the Business impact screen.",
+      "items": [
+        {
+          "prefix": "€",
+          "count": 260411,
+          "suffix": "",
+          "label": "What one silent night cost the pilot region",
+          "goal": "Lower, on nights nobody has seen"
+        },
+        {
+          "prefix": "about €",
+          "count": 20.8,
+          "decimals": 1,
+          "suffix": "M",
+          "label": "The same night across all 400 stores",
+          "goal": "The reason the board cares"
+        },
+        {
+          "prefix": "",
+          "count": 15,
+          "suffix": " of 15",
+          "label": "Warm freezers that raised no alarm",
+          "goal": "None"
+        },
+        {
+          "prefix": "",
+          "count": 346,
+          "format": "duration",
+          "label": "Longest wait before anyone knew a case was warm",
+          "goal": "Minutes"
+        },
+        {
+          "prefix": "",
+          "count": 20,
+          "suffix": "",
+          "label": "Times the store assistant reassured staff about warm stock",
+          "goal": "Zero"
+        },
+        {
+          "prefix": "",
+          "count": 0,
+          "suffix": "",
+          "label": "Alarms on a normal night today",
+          "goal": "Still zero after the fix"
+        }
+      ]
+    },
+    "world": {
+      "title": "Outside the workshop, the numbers are real",
+      "intro": "Zava is fictitious. The problem it stands for is not.",
+      "items": [
+        {
+          "count": 12,
+          "suffix": "%",
+          "text": "of the world's food production, 526 million tonnes in 2017, was lost because the cold chain wasn't there to keep it.",
+          "source": "UNEP and FAO, Sustainable Food Cold Chains (2022), citing the International Institute of Refrigeration",
+          "url": "https://www.unep.org/resources/report/sustainable-food-cold-chains-opportunities-challenges-and-way-forward"
+        },
+        {
+          "prefix": "up to ",
+          "count": 50,
+          "suffix": "%",
+          "text": "of vaccines may be wasted globally each year, much of it through failures in temperature control and logistics.",
+          "source": "World Health Organization estimate, reported by the World Economic Forum (2018)",
+          "url": "https://www.weforum.org/stories/health-and-healthcare-systems/the-biggest-hurdle-to-universal-vaccination-might-just-be-a-fridge"
+        },
+        {
+          "count": 13.2,
+          "decimals": 1,
+          "suffix": "%",
+          "text": "of food is lost between harvest and the shop, and another 19% is wasted in shops, restaurants and homes.",
+          "source": "FAO, citing its own loss estimate and UNEP's Food Waste Index (2024)",
+          "url": "https://www.fao.org/policy-support/policy-themes/food-loss-and-food-waste/fao-policy-series--food-loss---food-waste/"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Three days to move those numbers",
+      "text": "Find out why it happened, decide what is worth fixing, build it with HVE Core, and prove it on nights nobody has seen.",
+      "button": "Start the journey"
+    }
+  },
+  "days": [
+    {
+      "n": 1,
+      "theme": "Find the real problem",
+      "checkpoint": {
+        "what": "The outcome, how it's measured and who owns each assumption behind it",
+        "who": "Executives with every table"
+      }
+    },
+    {
+      "n": 2,
+      "theme": "Decide what to build",
+      "checkpoint": {
+        "what": "Every table has one work item, a branch, repo rules and research marked ready",
+        "who": "Facilitator with each table"
+      }
+    },
+    {
+      "n": 3,
+      "theme": "Build, prove and ship it",
+      "checkpoint": {
+        "what": "A funded portfolio within budget, and a decision on the store assistant",
+        "who": "Investment Board"
+      }
+    }
+  ],
+  "tracks": {
+    "three-day": [
+      {
+        "day": 1,
+        "start": "09:00",
+        "minutes": 60,
+        "chapter": "01",
+        "kind": "session",
+        "what": "Replay silent-night at ×60 and walk Business impact. Stop on the newspaper at 08:00."
+      },
+      {
+        "day": 1,
+        "start": "10:00",
+        "minutes": 45,
+        "chapter": "02",
+        "kind": "session",
+        "what": "Check the pre-work: tests pass, HVE Core is installed, Session Target says Copilot, each table has a branch."
+      },
+      {
+        "day": 1,
+        "start": "10:45",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 1,
+        "start": "11:00",
+        "minutes": 90,
+        "chapter": "03",
+        "kind": "session",
+        "what": "Methods 1 and 2: scope the problem, then interview the five characters."
+      },
+      {
+        "day": 1,
+        "start": "12:30",
+        "minutes": 45,
+        "chapter": null,
+        "kind": "lunch",
+        "what": "Lunch"
+      },
+      {
+        "day": 1,
+        "start": "13:15",
+        "minutes": 75,
+        "chapter": "03",
+        "kind": "session",
+        "what": "Method 3: synthesis, the problem statement and the exit 1 handoff."
+      },
+      {
+        "day": 1,
+        "start": "14:30",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 1,
+        "start": "14:45",
+        "minutes": 90,
+        "chapter": "04",
+        "kind": "session",
+        "what": "BRD Builder: Discover, Define and Govern."
+      },
+      {
+        "day": 1,
+        "start": "16:15",
+        "minutes": 30,
+        "chapter": "04",
+        "kind": "checkpoint",
+        "what": "Executives agree the outcome, how it's measured and who owns each assumption."
+      },
+      {
+        "day": 2,
+        "start": "09:00",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "recap",
+        "what": "Recap: each table reads its business goal aloud."
+      },
+      {
+        "day": 2,
+        "start": "09:15",
+        "minutes": 90,
+        "chapter": "05",
+        "kind": "session",
+        "what": "PRD Builder: acceptance cases for each failure, including the case that must not change."
+      },
+      {
+        "day": 2,
+        "start": "10:45",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 2,
+        "start": "11:00",
+        "minutes": 90,
+        "chapter": "05",
+        "kind": "session",
+        "what": "Security Planner and RAI Planner, split by table."
+      },
+      {
+        "day": 2,
+        "start": "12:30",
+        "minutes": 45,
+        "chapter": null,
+        "kind": "lunch",
+        "what": "Lunch"
+      },
+      {
+        "day": 2,
+        "start": "13:15",
+        "minutes": 60,
+        "chapter": "06",
+        "kind": "session",
+        "what": "functional-planner: from the PRD to work items."
+      },
+      {
+        "day": 2,
+        "start": "14:15",
+        "minutes": 45,
+        "chapter": "07",
+        "kind": "session",
+        "what": "backlog-manager: each table commits to one fix and makes its branch."
+      },
+      {
+        "day": 2,
+        "start": "15:00",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 2,
+        "start": "15:15",
+        "minutes": 75,
+        "chapter": "08",
+        "kind": "session",
+        "what": "Repo rules with hve-builder, then rpi-research on the table's fix."
+      },
+      {
+        "day": 2,
+        "start": "16:30",
+        "minutes": 15,
+        "chapter": "08",
+        "kind": "checkpoint",
+        "what": "Every table has research marked ready."
+      },
+      {
+        "day": 3,
+        "start": "09:00",
+        "minutes": 90,
+        "chapter": "08",
+        "kind": "session",
+        "what": "rpi-plan with its critique. Failing tests first."
+      },
+      {
+        "day": 3,
+        "start": "10:30",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 3,
+        "start": "10:45",
+        "minutes": 75,
+        "chapter": "08",
+        "kind": "session",
+        "what": "rpi-implement, one phase at a time. Every existing test still passes."
+      },
+      {
+        "day": 3,
+        "start": "12:00",
+        "minutes": 45,
+        "chapter": null,
+        "kind": "lunch",
+        "what": "Lunch"
+      },
+      {
+        "day": 3,
+        "start": "12:45",
+        "minutes": 60,
+        "chapter": "09",
+        "kind": "session",
+        "what": "rpi-review and code-review. Then the trainer announces the seed and tables run the Night Gauntlet."
+      },
+      {
+        "day": 3,
+        "start": "13:45",
+        "minutes": 60,
+        "chapter": "10",
+        "kind": "session",
+        "what": "Pull requests, scorecards and the leaderboard, then the Investment Board."
+      },
+      {
+        "day": 3,
+        "start": "14:45",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break"
+      },
+      {
+        "day": 3,
+        "start": "15:00",
+        "minutes": 60,
+        "chapter": "11",
+        "kind": "session",
+        "what": "A chaos card hits the funded portfolio. Incident record, runbook change and a hotfix if needed."
+      },
+      {
+        "day": 3,
+        "start": "16:00",
+        "minutes": 45,
+        "chapter": null,
+        "kind": "debrief",
+        "what": "Debrief and case file reveal."
+      }
+    ],
+    "one-day": [
+      {
+        "day": 1,
+        "start": "09:00",
+        "minutes": 20,
+        "chapter": "01",
+        "kind": "session",
+        "what": "Replay silent-night at ×60 and let the room watch the Cost of a Silent Night climb. Stop at 08:00 on the newspaper."
+      },
+      {
+        "day": 1,
+        "start": "09:20",
+        "minutes": 55,
+        "chapter": "03",
+        "kind": "session",
+        "what": "Interviews with the five characters. Find the problem, not the fix."
+      },
+      {
+        "day": 1,
+        "start": "10:15",
+        "minutes": 30,
+        "chapter": "04",
+        "kind": "session",
+        "what": "Agree the outcome and its measure. Executives move the assumption sliders."
+      },
+      {
+        "day": 1,
+        "start": "10:45",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break. Form one table per failure: alarms, commands, identity, assistant, ownership. This replaces chapters 06 and 07."
+      },
+      {
+        "day": 1,
+        "start": "11:00",
+        "minutes": 90,
+        "chapter": "05",
+        "kind": "session",
+        "what": "Each table: acceptance cases with PRD Builder, then Security Planner or RAI Planner for its failure."
+      },
+      {
+        "day": 1,
+        "start": "12:30",
+        "minutes": 45,
+        "chapter": null,
+        "kind": "lunch",
+        "what": "Lunch"
+      },
+      {
+        "day": 1,
+        "start": "13:15",
+        "minutes": 90,
+        "chapter": "08",
+        "kind": "session",
+        "what": "Repo rules, then rpi-research, rpi-plan and rpi-implement on each table's branch."
+      },
+      {
+        "day": 1,
+        "start": "14:45",
+        "minutes": 15,
+        "chapter": "09",
+        "kind": "session",
+        "what": "rpi-review against the table's acceptance cases."
+      },
+      {
+        "day": 1,
+        "start": "15:00",
+        "minutes": 45,
+        "chapter": "09",
+        "kind": "session",
+        "what": "Announce the seed. Tables run the Night Gauntlet and hand in scorecards."
+      },
+      {
+        "day": 1,
+        "start": "15:45",
+        "minutes": 15,
+        "chapter": null,
+        "kind": "break",
+        "what": "Break. The trainer checks every scorecard qualified or knows why not."
+      },
+      {
+        "day": 1,
+        "start": "16:00",
+        "minutes": 40,
+        "chapter": "10",
+        "kind": "session",
+        "what": "Investment Board: three minutes per table, then fund, then the store assistant decision. Play chaos cards during demonstrations: this is chapter 11 in the one-day format."
+      },
+      {
+        "day": 1,
+        "start": "16:40",
+        "minutes": 20,
+        "chapter": null,
+        "kind": "debrief",
+        "what": "Debrief and case file reveal."
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "scenario",
+      "name": "Cost of a Silent Night baseline",
+      "chapter": "01",
+      "made_by": "Ships with the repo",
+      "kind": "repo",
+      "path": "data/business.json",
+      "reads": [],
+      "reference": null
+    },
+    {
+      "id": "setup-check",
+      "name": "Setup check",
+      "chapter": "02",
+      "made_by": "Each attendee",
+      "kind": "outside",
+      "path": null,
+      "reads": [],
+      "reference": null
+    },
+    {
+      "id": "dt-handoff",
+      "name": "Problem-space handoff",
+      "chapter": "03",
+      "made_by": "DT Coach",
+      "kind": "create",
+      "path": ".copilot-tracking/dt/zava-silent-night/problem-space-handoff.md",
+      "reads": [
+        "scenario"
+      ],
+      "reference": ".copilot-tracking/dt/cold-chain-production-readiness/problem-space-handoff.md"
+    },
+    {
+      "id": "brd",
+      "name": "Business requirements",
+      "chapter": "04",
+      "made_by": "BRD Builder",
+      "kind": "create",
+      "path": "docs/project-planning/zava-silent-night-brd.md",
+      "reads": [
+        "dt-handoff",
+        "scenario"
+      ],
+      "reference": "docs/project-planning/cold-chain-production-readiness-brd.md"
+    },
+    {
+      "id": "prd",
+      "name": "Product requirements",
+      "chapter": "05",
+      "made_by": "PRD Builder",
+      "kind": "create",
+      "path": "docs/project-planning/zava-silent-night-prd.md",
+      "reads": [
+        "brd"
+      ],
+      "reference": "docs/project-planning/cold-chain-production-readiness-prd.md"
+    },
+    {
+      "id": "security-plan",
+      "name": "Security plan",
+      "chapter": "05",
+      "made_by": "Security Planner",
+      "kind": "create",
+      "path": ".copilot-tracking/security-plans/zava-silent-night/security-plan.md",
+      "reads": [
+        "brd",
+        "prd"
+      ],
+      "reference": ".copilot-tracking/security-plans/cold-chain-production-readiness/security-plan.md"
+    },
+    {
+      "id": "rai-plan",
+      "name": "Responsible AI plan",
+      "chapter": "05",
+      "made_by": "RAI Planner",
+      "kind": "create",
+      "path": ".copilot-tracking/rai-plans/zava-silent-night/rai-plan.md",
+      "reads": [
+        "brd",
+        "prd"
+      ],
+      "reference": ".copilot-tracking/rai-plans/cold-chain-production-readiness/rai-plan.md"
+    },
+    {
+      "id": "adr",
+      "name": "Architecture decision",
+      "chapter": "05",
+      "made_by": "ADR Creator",
+      "kind": "create",
+      "path": "docs/planning/adrs/*.md",
+      "reads": [
+        "prd"
+      ],
+      "reference": null,
+      "optional": true
+    },
+    {
+      "id": "work-items",
+      "name": "Work items",
+      "chapter": "06",
+      "made_by": "Functional Planner",
+      "kind": "create",
+      "path": ".copilot-tracking/github-issues/prds/*/*.md",
+      "reads": [
+        "prd",
+        "security-plan",
+        "rai-plan"
+      ],
+      "reference": null
+    },
+    {
+      "id": "sprint-plan",
+      "name": "Sprint plan",
+      "chapter": "07",
+      "made_by": "Backlog Manager",
+      "kind": "create",
+      "path": ".copilot-tracking/github-issues/sprint/*/*.md",
+      "reads": [
+        "work-items"
+      ],
+      "reference": null
+    },
+    {
+      "id": "repo-rules",
+      "name": "Repo rules for coding agents",
+      "chapter": "08",
+      "made_by": "hve-builder",
+      "kind": "create",
+      "path": ".github/instructions/zava-cold-chain.instructions.md",
+      "reads": [
+        "security-plan",
+        "rai-plan"
+      ],
+      "reference": ".github/instructions/zava-cold-chain.instructions.md"
+    },
+    {
+      "id": "rpi-research",
+      "name": "Research",
+      "chapter": "08",
+      "made_by": "rpi-research",
+      "kind": "create",
+      "path": ".copilot-tracking/research/*/*-research.md",
+      "reads": [
+        "sprint-plan",
+        "prd",
+        "dt-handoff"
+      ],
+      "reference": ".copilot-tracking/research/2026-11-15/fr-001-defrost-alarm-gap-research.md"
+    },
+    {
+      "id": "rpi-plan",
+      "name": "Plan and critique",
+      "chapter": "08",
+      "made_by": "rpi-plan",
+      "kind": "create",
+      "path": ".copilot-tracking/plans/*/*-plan.md",
+      "reads": [
+        "rpi-research",
+        "repo-rules"
+      ],
+      "reference": ".copilot-tracking/plans/2026-11-15/fr-001-defrost-alarm-gap-plan.md"
+    },
+    {
+      "id": "rpi-changes",
+      "name": "Code, tests and changes record",
+      "chapter": "08",
+      "made_by": "rpi-implement",
+      "kind": "create",
+      "path": ".copilot-tracking/changes/*/*-changes.md",
+      "reads": [
+        "rpi-plan",
+        "repo-rules"
+      ],
+      "reference": ".copilot-tracking/changes/2026-11-15/fr-001-defrost-alarm-gap-changes.md"
+    },
+    {
+      "id": "rpi-review",
+      "name": "Review record",
+      "chapter": "09",
+      "made_by": "rpi-review",
+      "kind": "create",
+      "path": ".copilot-tracking/reviews/logs/*/*-review.md",
+      "reads": [
+        "rpi-changes",
+        "rpi-plan",
+        "prd"
+      ],
+      "reference": ".copilot-tracking/reviews/logs/2026-11-15/fr-001-defrost-alarm-gap-review.md"
+    },
+    {
+      "id": "scorecard",
+      "name": "Night Gauntlet scorecard",
+      "chapter": "09",
+      "made_by": "python -m zava_cold_chain gauntlet",
+      "kind": "create",
+      "path": "scorecards/*.json",
+      "reads": [
+        "rpi-changes",
+        "scenario"
+      ],
+      "reference": ".copilot-tracking/hve-lifecycle/2026-11-15/gauntlet-after.json"
+    },
+    {
+      "id": "pull-request",
+      "name": "Pull request",
+      "chapter": "10",
+      "made_by": "pull-request skill",
+      "kind": "outside",
+      "path": null,
+      "reads": [
+        "rpi-review",
+        "scorecard"
+      ],
+      "reference": null
+    },
+    {
+      "id": "board-pack",
+      "name": "Investment Board decision",
+      "chapter": "10",
+      "made_by": "Executives on the Investment Board",
+      "kind": "outside",
+      "path": null,
+      "reads": [
+        "scorecard",
+        "pull-request"
+      ],
+      "reference": null
+    },
+    {
+      "id": "runbook",
+      "name": "Night cover runbook",
+      "chapter": "11",
+      "made_by": "Ships with the repo; tables change it",
+      "kind": "repo",
+      "path": "data/runbook.md",
+      "reads": [],
+      "reference": null
+    },
+    {
+      "id": "incident-record",
+      "name": "Incident record",
+      "chapter": "11",
+      "made_by": "incident-response skill",
+      "kind": "create",
+      "path": "docs/incident-response/*.md",
+      "reads": [
+        "board-pack",
+        "runbook"
+      ],
+      "reference": null
+    }
+  ],
+  "debrief": [
+    "Which failure would you have found first without the case file? Which one last?",
+    "Where did a control get in the way of work, and what did that cost on the scorecard?",
+    "The Cost of a Silent Night shows its working, and the customer-impact prediction doesn't. What changed in how the room treated each?",
+    "Which chapter changed a table's mind, and what did it produce?",
+    "What would you need before trusting any of these figures in a real business case?"
+  ]
+}

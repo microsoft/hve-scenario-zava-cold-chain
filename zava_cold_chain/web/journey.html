@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- Copyright (c) Microsoft Corporation. Licensed under the MIT license. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141c23" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<title>Workshop Journey · Zava</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="journey.css">
+</head>
+<body>
+<a class="skip" href="#jv">Skip to content</a>
+<div class="mbar">
+  <button type="button" id="navbtn" aria-controls="nav" aria-expanded="false">Chapters</button>
+  <span id="mwhere" aria-live="polite"></span>
+</div>
+<nav class="nav" id="nav" aria-label="Workshop journey">
+  <a class="mark" href="#/"><span class="mark-t">Workshop Journey</span><span class="mark-s">The Silent Night, with HVE Core</span></a>
+  <fieldset class="role" id="role">
+    <legend>View as</legend>
+    <label><input type="radio" name="role" value="attendee"><span>Attendee</span></label>
+    <label><input type="radio" name="role" value="coach"><span>Coach</span></label>
+    <label><input type="radio" name="role" value="facilitator"><span>Facilitator</span></label>
+  </fieldset>
+  <div id="line"></div>
+  <div class="nav-foot">
+    <a href="#/artifacts" data-nav="artifacts">Artifacts</a>
+    <a href="/#/overview">Open the monitor</a>
+  </div>
+</nav>
+<div class="scrim" id="scrim" hidden></div>
+<main id="jv" tabindex="-1"><p class="loading">Loading the workshop…</p></main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<noscript><p class="noscript">The Workshop Journey needs JavaScript. The same material is in <code>docs/exercises.md</code> and <code>docs/facilitator.md</code>.</p></noscript>
+<script src="journey.js"></script>
+</body>
+</html>

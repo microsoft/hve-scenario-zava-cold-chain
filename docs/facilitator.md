@@ -23,19 +23,23 @@ For trainers and coaches. The participant guide is [exercises.md](exercises.md).
 
 4. Agree how tables hand in scorecards: a shared folder, a chat channel or a USB stick. Each scorecard is one small JSON file that you copy into `scorecards/`.
 5. Print the character cards below for the coaches.
+6. Read the reference run in `workshop/reference-run/`: one complete pass of the lifecycle on this repo, with a BRD, a PRD, security and Responsible AI plans and a reviewed fix. Its README explains what it covers. It gives away the answer, so keep it from tables until the debrief.
 
-## Run sheet
+## Run sheet: the one-day version
+
+This is the one-day version. For three days, start the dashboard and open the Day view in the Workshop Journey at <http://127.0.0.1:8740/journey#/day/1>: it has every session, break and checkpoint, and what to prepare the night before.
+
 
 | Time | Who | What | On screen |
 |---|---|---|---|
 | 09:00 | Everyone | Open on the money. Replay `silent-night` at ×60 and let the room watch the Cost of a Silent Night climb. Stop at 08:00 on the newspaper | Business impact |
-| 09:20 | Executives and engineers | Step 01: interviews with the five characters. Find the problem, not the fix | Live feed, Known issues |
-| 10:15 | Executives and engineers | Step 02: agree the outcome and its measure. Executives move the assumption sliders and decide which figures they would put their name to | Business impact |
+| 09:20 | Executives and engineers | Chapter 03: interviews with the five characters. Find the problem, not the fix | Live feed, Known issues |
+| 10:15 | Executives and engineers | Chapter 04: agree the outcome and its measure. Executives move the assumption sliders and decide which figures they would put their name to | Business impact |
 | 10:45 | Break | Form one table per failure: alarms, commands, identity, assistant, ownership | |
-| 11:00 | Tables | Steps 03 to 06 | |
+| 11:00 | Tables | Chapter 05: acceptance cases, then security or Responsible AI | |
 | 12:30 | Lunch | | |
-| 13:15 | Tables | Steps 07 to 10 on each table's branch | |
-| 15:00 | Tables and trainer | Step 11: announce the seed. Tables run the Gauntlet and hand in scorecards. Keep the leaderboard on the big screen | Night Gauntlet |
+| 13:15 | Tables | Chapter 08 on each table's branch, then rpi-review | |
+| 15:00 | Tables and trainer | Chapter 09: announce the seed. Tables run the Gauntlet and hand in scorecards. Keep the leaderboard on the big screen | Night Gauntlet |
 | 15:45 | Break | Trainer checks every scorecard qualified or knows why not | |
 | 16:00 | Executives, tables presenting | Investment Board: three minutes per table, then fund, then the assistant decision | Investment Board |
 | 16:40 | Everyone | Debrief and case file reveal | |
@@ -44,7 +48,7 @@ For a half day, keep 09:00 to 10:45 and 15:00 to 16:40, and give tables one prep
 
 ## Character cards
 
-Coaches play these people in step 01. Each has something they know, something they believe, something they won't say unless asked well, and a line to use. Stay in role; answer only what is asked.
+Coaches play these people in chapter 03. Each has something they know, something they believe, something they won't say unless asked well, and a line to use. Stay in role; answer only what is asked.
 
 ### Night store manager
 
@@ -126,7 +130,7 @@ If time allows, merge the funded fixes into one branch, run the Gauntlet as `--t
 * Which failure would you have found first without the case file? Which one last?
 * Where did a control get in the way of work, and what did that cost on the scorecard?
 * The Cost of a Silent Night shows its working, and the customer-impact prediction doesn't. What changed in how the room treated each?
-* Which HVE step changed a table's mind, and what did it produce?
+* Which chapter changed a table's mind, and what did it produce?
 * What would you need before trusting any of these figures in a real business case?
 
 ---

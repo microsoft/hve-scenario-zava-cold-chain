@@ -1,0 +1,133 @@
+{
+  "id": "07",
+  "slug": "sprint-planning",
+  "title": "Sprint planning",
+  "short": "Sprint",
+  "hve": {
+    "stage": 5,
+    "name": "Sprint Planning",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/sprint-planning"
+  },
+  "minutes": 45,
+  "scenario": "Day 3 has about four hours of build time. Each table can ship one fix, and the board funds only what it can see working.",
+  "why": "A table that commits to two fixes usually finishes neither. Committing now gives tomorrow's RPI work one target and gives the room a portfolio to fund.",
+  "objective": "Commit your table to one fix, record it in a sprint plan, and agree who argues for FX-7 and FX-8 at the board.",
+  "needs": [
+    "work-items"
+  ],
+  "produces": [
+    "sprint-plan"
+  ],
+  "monitor": [
+    {
+      "label": "Investment Board",
+      "route": "board"
+    },
+    {
+      "label": "Workshop issue map",
+      "route": "workshop"
+    }
+  ],
+  "tools": [
+    {
+      "name": "Backlog Manager",
+      "open": "agent picker",
+      "for": "Triages the work-item plan and writes the sprint plan"
+    },
+    {
+      "name": "backlog-management",
+      "open": "/backlog-management",
+      "for": "The planning conventions Backlog Manager loads. You rarely need to type it"
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Pick Backlog Manager and send the prompt below.",
+      "Choose one fix your table can research, plan, build and test by 12:00 on Day 3. Agree it with the facilitator so two tables don't take the same one.",
+      "Write down the acceptance cases you will be checked against in chapter 09.",
+      "Agree which table speaks for FX-7 and FX-8 at the Investment Board. The Gauntlet can't measure them, so build the argument from your interview notes and [Known issues](/#/issues).",
+      "Check you are on your table's branch with `git branch --show-current`."
+    ],
+    "prompts": [
+      {
+        "label": "Plan the sprint",
+        "text": "Plan a one-day sprint for zava-silent-night from the work-item handoff under `.copilot-tracking/github-issues/prds/`. We are Table 3 and commit to one fix: FX-2 (change this to yours). List its work items and acceptance cases in priority order, the tests we'll write first, and what we'll drop if time runs out. Write the sprint plan under `.copilot-tracking/github-issues/sprint/` and don't create or change anything in GitHub."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Can you build and test this by noon tomorrow?",
+      "Which acceptance case will you drop first if time runs short?",
+      "What evidence in the tickets supports FX-7?"
+    ],
+    "mistakes": [
+      "Committing to two fixes",
+      "Choosing FX-4 without asking who approves fleet commands at night",
+      "Arguing for FX-7 or FX-8 from opinion with no evidence"
+    ],
+    "step_in": [
+      "When two tables want the same fix. Give one of them the next fix for the same failure."
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Prepare a table-to-fix list on a flipchart, one row per table.",
+      "Decide which failures must be covered. With five or more tables, aim for at least one fix per failure."
+    ],
+    "run": [
+      {
+        "at": "14:15",
+        "minutes": 10,
+        "do": "Explain the rule: one fix per table. Show the Workshop issue map's suggested sets."
+      },
+      {
+        "at": "14:25",
+        "minutes": 25,
+        "do": "Tables run Backlog Manager and claim a fix on the list."
+      },
+      {
+        "at": "14:50",
+        "minutes": 10,
+        "do": "Read the table-to-fix list aloud and name who argues for FX-7 and FX-8."
+      }
+    ],
+    "good_answer": "Each table names one fix, two to four acceptance cases and its first failing test. FX-7 is argued from the vendor session that opened at 00:40 on the shared `svc-vendor` account, 80 minutes before the approved window, with nothing to stop it. FX-8 is argued from the door-alarm SMS that went to a technician who left in 2024.",
+    "watch_for": [
+      "No table on an alarm or command fix: the Gauntlet will barely move",
+      "FX-6 left unclaimed, so the assistant decision on Day 3 has no evidence"
+    ],
+    "demo": "Open the Workshop issue map, show the suggested sets for a table, and circle one problem on screen so the room sees what a fix has to change."
+  },
+  "done_when": [
+    "A sprint plan exists under `.copilot-tracking/github-issues/sprint/`",
+    "It names one fix for your table and that fix's acceptance cases",
+    "Your table's fix is on the facilitator's table-to-fix list",
+    "`git branch --show-current` shows your table's branch"
+  ],
+  "stuck": [
+    {
+      "if": "Backlog Manager offers to create issues",
+      "then": "Say no. Keep it as a plan file for today."
+    },
+    {
+      "if": "Your table can't agree on a fix",
+      "then": "Pick the fix whose acceptance cases you wrote in chapter 05."
+    }
+  ],
+  "handoff": {
+    "to": "08",
+    "note": "Implementation starts research from the sprint plan, the PRD and the problem-space handoff."
+  },
+  "loops": [],
+  "references": [
+    {
+      "label": "Sprint Planning stage",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/sprint-planning"
+    },
+    {
+      "label": "Fix catalogue",
+      "target": "data/fixes.json"
+    }
+  ]
+}

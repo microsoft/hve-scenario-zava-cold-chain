@@ -1,0 +1,150 @@
+{
+  "id": "10",
+  "slug": "delivery",
+  "title": "Delivery",
+  "short": "Delivery",
+  "hve": {
+    "stage": 8,
+    "name": "Delivery",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/delivery"
+  },
+  "minutes": 60,
+  "scenario": "Every table has a scored fix. The board has €150,000, and the eight fixes together cost €295,000.",
+  "why": "A fix that isn't in a pull request with its evidence can't be funded or merged. The board turns scorecards into a decision, including whether the store assistant goes to 400 stores.",
+  "objective": "Open a pull request with your review and scorecard, then make the case for your fix in three minutes using the leaderboard's figures.",
+  "needs": [
+    "rpi-review",
+    "scorecard"
+  ],
+  "produces": [
+    "pull-request",
+    "board-pack"
+  ],
+  "monitor": [
+    {
+      "label": "Investment Board",
+      "route": "board"
+    },
+    {
+      "label": "Night Gauntlet",
+      "route": "gauntlet"
+    }
+  ],
+  "tools": [
+    {
+      "name": "git-commit",
+      "open": "/git-commit",
+      "for": "Writes a commit message from your staged changes"
+    },
+    {
+      "name": "pull-request",
+      "open": "/pull-request",
+      "for": "Writes the pull request description from your branch and its records"
+    },
+    {
+      "name": "git-merge",
+      "open": "/git-merge",
+      "for": "Used by the facilitator to merge the funded branches for chapter 11"
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Commit your work with `/git-commit`. Leave `scorecards/` out: git ignores it.",
+      "Run `/pull-request` with the prompt below. Check the description quotes your scorecard and links your review record.",
+      "Prepare three minutes: the failure, the fix, the scorecard and its side effects. Quote the leaderboard on the trainer's screen, not your own estimate.",
+      "Present at the [Investment Board](/#/board) and answer the executives' questions.",
+      "Watch what the board funds and which failures stay uncovered, then hear its decision on the store assistant: go, fix first or pull."
+    ],
+    "prompts": [
+      {
+        "label": "Commit",
+        "text": "/git-commit Commit the zava-silent-night changes on this branch: the code, the tests and the records under `.copilot-tracking/`. Don't add anything under `scorecards/`."
+      },
+      {
+        "label": "Open the pull request",
+        "text": "/pull-request Create a pull request from this branch into `main` for zava-silent-night. Summarise the fix, link the review record under `.copilot-tracking/reviews/logs/`, and quote the euros protected, false pages and blocked commands from `scorecards/table-3.json`. List the acceptance cases from `docs/project-planning/zava-silent-night-prd.md` and how each was checked."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Which number on the leaderboard would an executive question first?",
+      "What does your fix cost the night cover?",
+      "If the board funds only one fix, why yours?"
+    ],
+    "mistakes": [
+      "Quoting the table's own estimate instead of the leaderboard",
+      "Hiding a side effect until an executive finds it",
+      "A pull request with no link to the review record"
+    ],
+    "step_in": [
+      "When a presentation runs past three minutes"
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Copy every scorecard into `scorecards/` and refresh the leaderboard.",
+      "Set the budget on the Investment Board to €150,000, or lower for a harder choice.",
+      "Check Reveal the hidden nights works on the trainer's screen before the room arrives."
+    ],
+    "run": [
+      {
+        "at": "13:45",
+        "minutes": 10,
+        "do": "Tables commit and open pull requests."
+      },
+      {
+        "at": "13:55",
+        "minutes": 5,
+        "do": "Show the leaderboard and the baseline for the seed. The eight fixes cost €295,000 together; the budget is €150,000."
+      },
+      {
+        "at": "14:00",
+        "minutes": 30,
+        "do": "Three minutes per table: the failure, the fix, the scorecard, the side effects. Executives fund on screen. Point at the five failure chips: which are still uncovered, and is that acceptable? Ask: which of these numbers would you sign, and who owns the assumptions?"
+      },
+      {
+        "at": "14:30",
+        "minutes": 15,
+        "do": "Select Reveal the hidden nights: the store assistant reassured staff about warm stock on nights nobody has seen. The pilot team wants it in 400 stores this quarter. Ask: go, fix first or pull? Record the decision and print the board pack if the room wants one."
+      }
+    ],
+    "good_answer": "A funded portfolio within €150,000 that covers the alarm and command failures, a named owner for FX-7 and FX-8 even if unfunded, and an assistant decision tied to evidence. The reference run found the assistant still gave 168 reassuring answers about warm stock after its alarm fix, which argues for fix first.",
+    "watch_for": [
+      "A board that funds on presentation style instead of scorecards",
+      "Two funded fixes that protect the same euros. Fixes overlap, so the combined result is less than the sum."
+    ],
+    "demo": "Fund fixes on the Investment Board and watch the budget and the uncovered failure chips change, then select Reveal the hidden nights."
+  },
+  "done_when": [
+    "Your table's pull request is open against `main`",
+    "Its description quotes your scorecard and links your review record",
+    "Your table presented in three minutes or less",
+    "The board's funded fixes and its store assistant decision are recorded on the Investment Board"
+  ],
+  "stuck": [
+    {
+      "if": "`/pull-request` can't reach GitHub",
+      "then": "Ask it to print the description in chat, and show that with your scorecard at the board."
+    },
+    {
+      "if": "Your scorecard isn't on the leaderboard",
+      "then": "Check the trainer has your file. Its name comes from your `--team` value, for example `scorecards/table-3.json`."
+    }
+  ],
+  "handoff": {
+    "to": "11",
+    "note": "Operations runs the funded portfolio on a live night, plays a chaos card and records what happens."
+  },
+  "loops": [],
+  "references": [
+    {
+      "label": "Delivery stage",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/delivery"
+    },
+    {
+      "label": "Night Gauntlet and leaderboard",
+      "target": "README.md"
+    }
+  ]
+}

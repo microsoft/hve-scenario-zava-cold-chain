@@ -15,7 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from . import __version__, assistant, business, commands, gauntlet, impact, notify, ops
+from . import __version__, assistant, business, commands, gauntlet, impact, journey, notify, ops
 from .simulator import DATA, World, available_nights, clock, minutes
 
 WEB = Path(__file__).resolve().parent / "web"
@@ -144,13 +144,26 @@ def make_handler(sim: Simulation):
             return origin is None or origin in (f"http://127.0.0.1:{port}", f"http://localhost:{port}")
 
         def _static(self, path: str) -> bool:
-            name = "index.html" if path in ("/", "/index.html") else path.lstrip("/")
+            name = {"/": "index.html", "/journey": "journey.html", "/journey/": "journey.html"}.get(path, path.lstrip("/"))
             file = (WEB / name).resolve()
             if WEB.resolve() not in file.parents or not file.is_file():
                 return False
             ctype = mimetypes.guess_type(file.name)[0] or "application/octet-stream"
             self._send(200, file.read_bytes(), ctype + ("; charset=utf-8" if ctype.startswith("text") else ""))
             return True
+
+        def _journey(self, path: str, url) -> None:
+            try:
+                if path == "/api/journey":
+                    return self._send(200, journey.content())
+                if path == "/api/journey/status":
+                    return self._send(200, journey.status())
+                if path == "/api/journey/preview":
+                    found = journey.preview(_q(url, "id"), _q(url, "which") or "reference")
+                    return self._send(200, found) if found else self._send(404, {"error": "nothing to preview"})
+            except journey.ContentError as e:
+                return self._send(500, {"error": "content", "path": e.path, "detail": e.detail})
+            return self._send(404, {"error": "not found"})
 
         def _stream(self) -> None:
             self.send_response(200)
@@ -184,6 +197,8 @@ def make_handler(sim: Simulation):
                 return self._stream()
             if not path.startswith("/api/"):
                 return None if self._static(path) else self._send(404, {"error": "not found"})
+            if path.startswith("/api/journey"):
+                return self._journey(path, url)
             if path == "/api/leaderboard":
                 return self._send(200, gauntlet.leaderboard(gauntlet.load_scorecards(sim.scorecards), sim.live_card, _overrides(url)))
             if path == "/api/gauntlet":

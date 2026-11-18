@@ -1,0 +1,67 @@
+{
+  "projectSlug": "cold-chain-production-readiness",
+  "securityPlanFile": ".copilot-tracking/security-plans/cold-chain-production-readiness/security-plan.md",
+  "currentPhase": 6,
+  "entryMode": "from-prd",
+  "disclaimerShownAt": "2026-11-15T18:09:02Z",
+  "noticeLog": [
+    { "noticeType": "session-start-disclaimer", "shownAt": "2026-11-15T18:09:02Z", "source": "disclaimer-language skill, Security Planning section", "details": { "reason": "new-state" } },
+    { "noticeType": "framework-attribution", "shownAt": "2026-11-15T18:09:02Z", "source": "agent startup announcement", "details": { "text": "OWASP ASVS • OWASP Top 10 • NIST SSDF" } },
+    { "noticeType": "exit-reminder", "shownAt": "2026-11-15T18:09:02Z", "source": "security-plan.md Phase 6", "details": { "reason": "phase6-handoff-success-path" } }
+  ],
+  "phaseGates": {
+    "phase1": { "gate": "hard", "confirmedAt": "2026-11-15T18:09:02Z", "confirmedBy": "autonomous (HVE Lifecycle Stage 4, no live user present; decided and recorded per orchestrator instruction)" },
+    "phase2": { "gate": "summary-and-advance" },
+    "phase3": { "gate": "summary-and-advance" },
+    "phase4": { "gate": "hard", "confirmedAt": "2026-11-15T18:09:02Z", "confirmedBy": "autonomous (HVE Lifecycle Stage 4, no live user present; decided and recorded per orchestrator instruction)" },
+    "phase5": { "gate": "summary-and-advance" },
+    "phase6": { "gate": "hard", "confirmedAt": "2026-11-15T18:09:02Z", "confirmedBy": "autonomous (HVE Lifecycle Stage 4, no live user present; decided and recorded per orchestrator instruction) -- REQUIRES REAL SECURITY REVIEWER SIGN-OFF BEFORE ANY BACKLOG SUBMISSION" }
+  },
+  "bucketsCompleted": ["identity/auth", "web/UI/reporting", "data", "messaging", "infra", "devops/platform-ops", "ai-ml"],
+  "standardsMapped": ["identity/auth", "web/UI/reporting", "data", "messaging", "infra", "devops/platform-ops", "ai-ml"],
+  "riskSurfaceStarted": true,
+  "handoffGenerated": { "ado": false, "github": false },
+  "context": {
+    "techStack": ["Python 3.9 standard library", "http.server.ThreadingHTTPServer", "in-memory dataclasses (no DB)", "Server-Sent Events", "static HTML/CSS/JS dashboard"],
+    "deploymentModel": "today: single-process, local-only (127.0.0.1), one store/pilot host; production target per PRD/BRD: distributed multi-store (~400 locations) rollout within 12 months, store-network reachable, vendor remote-access channel",
+    "dataClassification": "restricted (highest: named-individual auth/session credentials once FR-006/FR-009 land; technician/vendor free-text notes; recall-cost financial model inputs)",
+    "complianceTargets": ["OWASP ASVS", "OWASP Top 10 (2025)", "OWASP Top 10 for LLM Applications (2025)", "NIST SSDF", "NIST SP 800-53", "CIS Critical Security Controls v8", "food-safety/recall exposure (no named external regulator confirmed -- BRD Open Question A-9 gap)"]
+  },
+  "referencesProcessed": [
+    { "filePath": "docs/project-planning/cold-chain-production-readiness-prd.md", "type": "prd", "processedInPhase": 1, "sourceDescription": "Stage 3 PRD, Handoff to Security Planner section", "status": "processed" },
+    { "filePath": "docs/project-planning/cold-chain-production-readiness-brd.md", "type": "brd", "processedInPhase": 1, "sourceDescription": "Stage 2 BRD, business goals/constraints/risks", "status": "processed" },
+    { "filePath": "zava_cold_chain/server.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "API/dashboard: host/origin checks, no sign-in", "status": "processed" },
+    { "filePath": "zava_cold_chain/commands.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "Fleet command service: no range check, no actor recorded", "status": "processed" },
+    { "filePath": "zava_cold_chain/assistant.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "Store assistant: notes in model context, steerable", "status": "processed" },
+    { "filePath": "zava_cold_chain/simulator.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "World/vendor session/note ingestion", "status": "processed" },
+    { "filePath": "zava_cold_chain/notify.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "Alarm notification/escalation", "status": "processed" },
+    { "filePath": "zava_cold_chain/alarms.py", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "ALM-07 defrost exemption (FR-001, pre-existing fix)", "status": "processed" },
+    { "filePath": "data/issues.json", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "ZFW backlog: ZFW-203/231/246/259/274/288/297/305/319/327/331", "status": "processed" },
+    { "filePath": "data/roster.json", "type": "security-plan", "processedInPhase": 2, "sourceDescription": "Ownership register and pager contact list (stale entry)", "status": "processed" },
+    { "filePath": "README.md", "type": "security-plan", "processedInPhase": 1, "sourceDescription": "Scenario framing, local-only/no-network constraint", "status": "processed" }
+  ],
+  "nextActions": [
+    "Dispatch RAI Planner (from-security-plan, securityPlanRef = this state.json) for FR-010-FR-014, Risk R-003, assistant guardrail design depth -- recommendation shown, not yet dispatched (no live user to start the handoff).",
+    "Recommend SSSC Planner (from-security-plan) for case-controller firmware currency (ZFW-319) and any future build/dependency pipeline for the production service.",
+    "Recommend ADR Creator (from-planner-handoff) to record the named-identity/session-binding architecture decision (FR-006/FR-009) and the CON-002 interim vendor-session fallback once a real identity provider is selected.",
+    "A qualified human security reviewer must confirm all phase gates, threats, and backlog items before any ADO/GitHub item is actually created.",
+    "No current-state VULN_REPORT_V1 evidence was found under .copilot-tracking/security/; implementation drift was not assessed."
+  ],
+  "userPreferences": { "autonomyTier": "partial", "diagramStyle": "mermaid", "includeOptionalArtifacts": { "artifactSigning": false } },
+  "raiEnabled": true,
+  "raiScope": "delegated",
+  "raiTier": "standard",
+  "raiRecommendationShown": true,
+  "raiPlannerDispatched": false,
+  "aiComponents": ["rule-based-assistant-stand-in-for-llm", "context-injection-via-free-text-notes", "vendor-portal-note-channel"],
+  "dataClassificationScheme": "public taxonomy",
+  "overlayConfigPath": null,
+  "completenessReview": {
+    "status": "INCOMPLETE",
+    "gaps": [
+      "RGAP-02: data flows are documented in the Phase 4 text-based template, not as schema-backed data_flows[] entries with ordinal/transport/encryption/authentication/authorization/data_sensitivity fields.",
+      "RGAP-04/RGAP-05: no formal abuse_cases[]/security_test_cases[] structures were authored; abuse narratives are embedded in threat descriptions and backlog items instead.",
+      "RGAP-08: N/A -- no authored TM7 base was supplied or generated in this session."
+    ]
+  }
+}

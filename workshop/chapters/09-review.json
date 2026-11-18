@@ -1,0 +1,165 @@
+{
+  "id": "09",
+  "slug": "review",
+  "title": "Review",
+  "short": "Review",
+  "hve": {
+    "stage": 7,
+    "name": "Review",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/review"
+  },
+  "minutes": 60,
+  "scenario": "Each branch has a fix and passing tests. Now it faces the acceptance cases, a code review, and nights nobody at the table has seen.",
+  "why": "Passing tests prove the code does what you planned. The Gauntlet shows what the fix is worth in euros on hidden nights, and what it costs in false pages and blocked work.",
+  "objective": "Review your change against every acceptance case, run the Night Gauntlet on the announced seed, and explain the scorecard night by night.",
+  "needs": [
+    "rpi-changes",
+    "rpi-plan",
+    "prd",
+    "scenario"
+  ],
+  "produces": [
+    "rpi-review",
+    "scorecard"
+  ],
+  "monitor": [
+    {
+      "label": "Night Gauntlet",
+      "route": "gauntlet"
+    }
+  ],
+  "tools": [
+    {
+      "name": "rpi-review",
+      "open": "/rpi-review",
+      "for": "Checks the changes against the plan and acceptance cases and writes a review record"
+    },
+    {
+      "name": "Code Review",
+      "open": "agent picker",
+      "for": "Reviews your branch's diff for bugs and logic errors"
+    },
+    {
+      "name": "Data Science and Engineering Coach",
+      "open": "agent picker",
+      "for": "Helps you read the scorecard night by night and explain side effects"
+    }
+  ],
+  "attendee": {
+    "steps": [
+      "Type `/rpi-review` with the first prompt. Fix anything it marks as a defect, or loop back to chapter 08.",
+      "Pick Code Review and ask it to review your branch's diff against `main`.",
+      "When the trainer announces the seed, run `python -m zava_cold_chain gauntlet --seed 2026 --team \"Table 3\" --fixes FX-1,FX-2`, with the trainer's seed in place of 2026, your table name and the fixes you built.",
+      "Read the gates in the printed summary: every night runs to 08:00, `normal` and `vendor-maintenance` raise no alarm, and if you claim FX-6 the assistant never reassures staff about a case that needs a decision.",
+      "Open [Night Gauntlet](/#/gauntlet) and go night by night. Write down each false page and each blocked planned command: both are priced against you.",
+      "Hand `scorecards/table-3.json` (named after your team) to the trainer the way they asked."
+    ],
+    "prompts": [
+      {
+        "label": "Review the change",
+        "text": "/rpi-review Review the zava-silent-night changes on this branch. Check every acceptance case for our fix in `docs/project-planning/zava-silent-night-prd.md` against the diff and the tests, using the plan under `.copilot-tracking/plans/` and the changes record under `.copilot-tracking/changes/`. Write the review record under `.copilot-tracking/reviews/logs/`."
+      },
+      {
+        "label": "Code review",
+        "text": "Review the diff between this branch and `main` for zava-silent-night. Look for bugs, logic errors, and anything that weakens an alarm or acts on text from a note. The changes record is under `.copilot-tracking/changes/`. Report findings in chat and don't change files."
+      },
+      {
+        "label": "Read the scorecard",
+        "text": "Read `scorecards/table-3.json` for zava-silent-night. For each night, explain the euros protected against the baseline, any false page and any blocked planned command, and which change on our branch caused it. Don't change any files."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "Which acceptance case has no test?",
+      "Which hidden night cost you the most, and why?",
+      "What does your fix cost the people who run the stores at night?"
+    ],
+    "mistakes": [
+      "Quoting the total without reading the nights",
+      "Claiming FX-6 in `--fixes` without building it, which switches on the assistant gate",
+      "Running the Gauntlet on `main` instead of the table's branch"
+    ],
+    "step_in": [
+      "When a scorecard says NOT QUALIFIED. Help the table find the failed gate before the board."
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Have the secret seed ready, and check `scorecards/baseline.json` was made on the untouched code with that seed.",
+      "Keep `python -m zava_cold_chain serve --scorecards scorecards` running on the trainer's screen for the leaderboard."
+    ],
+    "run": [
+      {
+        "at": "12:45",
+        "minutes": 25,
+        "do": "Tables run `/rpi-review` and Code Review."
+      },
+      {
+        "at": "13:10",
+        "minutes": 5,
+        "do": "Announce the seed and write it where everyone can see it."
+      },
+      {
+        "at": "13:15",
+        "minutes": 20,
+        "do": "Tables run the Gauntlet and read their scorecards. Copy each scorecard into `scorecards/` as it arrives."
+      },
+      {
+        "at": "13:35",
+        "minutes": 10,
+        "do": "Check every scorecard qualified, or that the table can name its failed gate."
+      }
+    ],
+    "good_answer": "The reference run's FR-001 at seed 2026: €768,013 to €454,371 (40.8% lower), warm cases found by an alarm from 14 of 60 to 59 of 60, routine-night alarms 0, false pages 0, blocked work 0. Its review found no defect in scope and one Medium residual item, RV-001.",
+    "watch_for": [
+      "A table that edited `nights/` or the scoring code",
+      "A large euro gain with an alarm on `vendor-maintenance`. It won't qualify."
+    ],
+    "demo": "Show the leaderboard filling as scorecards arrive, and point at the baseline row: every table is measured against the same seed."
+  },
+  "done_when": [
+    "A review record exists under `.copilot-tracking/reviews/logs/`",
+    "The review marks every acceptance case as passed or gives it a follow-up",
+    "Your team's scorecard, for example `scorecards/table-3.json`, exists for the announced seed",
+    "The scorecard says QUALIFIED for the Investment Board, or your table can name the failed gate"
+  ],
+  "stuck": [
+    {
+      "if": "The review finds a defect",
+      "then": "Go back to chapter 08 for one more phase, then run the review again."
+    },
+    {
+      "if": "The scorecard isn't qualified",
+      "then": "Read the failed gate in the printed summary. An alarm on a routine night usually means the fix pages planned work."
+    },
+    {
+      "if": "It's 13:35 and you're still not done",
+      "then": "Hand in the scorecard as it is and explain the failed gate at the board."
+    }
+  ],
+  "handoff": {
+    "to": "10",
+    "note": "Delivery takes the review record and the scorecard into a pull request and the Investment Board."
+  },
+  "loops": [
+    {
+      "to": "08",
+      "when": "rework"
+    }
+  ],
+  "references": [
+    {
+      "label": "Review stage",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/review"
+    },
+    {
+      "label": "Night Gauntlet",
+      "target": "README.md"
+    },
+    {
+      "label": "Qualification rules",
+      "target": "docs/exercises.md"
+    }
+  ]
+}

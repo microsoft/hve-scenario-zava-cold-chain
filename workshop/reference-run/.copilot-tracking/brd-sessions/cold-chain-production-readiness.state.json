@@ -1,0 +1,61 @@
+{
+  "brdFile": "docs/project-planning/cold-chain-production-readiness-brd.md",
+  "lastAccessed": "2026-11-15T17:45:00Z",
+  "currentPhase": "Govern-complete",
+  "disclaimerShownAt": "2026-11-15T17:40:00Z",
+  "phaseSkillsLoaded": ["brd-author#discover", "brd-author#define", "brd-author#govern"],
+  "extensionsLoaded": [],
+  "proposalResponseArtifacts": [],
+  "brdToPrdHandoff": ".copilot-tracking/brd-sessions/cold-chain-production-readiness.handoff.yml",
+  "questionsAsked": [
+    "rollout-budget-beyond-pilot-fix-catalogue",
+    "phased-vs-single-cutover-rollout",
+    "cost-of-silent-night-target",
+    "named-owner-for-vacant-roles",
+    "vendor-contract-renegotiation-timeline",
+    "food-safety-governance-model",
+    "night-manager-escalation-time-target"
+  ],
+  "answeredQuestions": {
+    "rollout-budget-beyond-pilot-fix-catalogue": "Executive sponsor (simulated): ~EUR 500k-800k capital, EUR 200k-300k/year operating; not yet board-approved.",
+    "phased-vs-single-cutover-rollout": "Executive sponsor (simulated): accepts phased rollout, ~40-store validation cohort over 6 months, then gated expansion months 7-12.",
+    "cost-of-silent-night-target": "Executive sponsor (simulated): Cost of a Silent Night < EUR 50,000 (pilot-region-equivalent) by month 6, < EUR 20,000 by month 12, same incident frequency.",
+    "named-owner-for-vacant-roles": "Regional IT (simulated): propose new 'store platform engineer' role for fleet commands; separate AI/data-platform owner role for the store assistant.",
+    "vendor-contract-renegotiation-timeline": "Regional IT / vendor support (simulated): renewal due Q3 next year, outside the 12-month window; renegotiation owned by procurement/legal.",
+    "food-safety-governance-model": "Food-safety officer (simulated): two-tier model - explicit sign-off for food-safety-record entries; traceable-origin-only for staff-facing draft answers.",
+    "night-manager-escalation-time-target": "Night store manager (simulated): any case over its limit for more than 30 minutes must reach a real person who can act."
+  },
+  "referencesProcessed": [
+    {"file": ".copilot-tracking/dt/cold-chain-production-readiness/problem-space-handoff.md", "status": "analyzed", "keyFindings": "Five insight clusters (alarm/escalation, command/approval, AI steering, ownership vacancy, untested scale); nine HMWs; stakeholder map; assumptions log."},
+    {"file": "data/business.json", "status": "analyzed", "keyFindings": "Cost-of-a-Silent-Night model assumptions: chain_stores=400, nights_per_year=2, hold_after_minutes=30, recall_cost_eur=250000."},
+    {"file": "data/fixes.json", "status": "analyzed", "keyFindings": "FX-1..FX-8 fix catalogue, EUR 150,000 pilot budget, code-fix scope only."},
+    {"file": "Night Gauntlet run (seed 2026, team brd-probe)", "status": "analyzed", "keyFindings": "10-night pilot-region total EUR 768,013; silent-night EUR 260,411; 168 reassuring assistant answers (hard-gate warning)."},
+    {"file": "zava_cold_chain.business.night_cost() direct call (silent-night, seed 2026)", "status": "analyzed", "keyFindings": "worst_minutes_to_detect=347; found_by_alarm=5 of 20; chain projection EUR 20,832,904; annual EUR 41,665,808."}
+  ],
+  "nextActions": [
+    "Real stakeholder and governance validation of this BRD before it authorizes spend, contract, or go-live decisions (R-6, A-10)",
+    "PRD Builder to decompose BG-003/BG-005 mechanisms and resolve Open Questions Q-1, Q-2, Q-3, Q-6",
+    "Resolve FR-001/BR-001 defrost-duration discrepancy (F-002, HIGH) with refrigeration technician lead before FR-001 implementation"
+  ],
+  "brdQualityFindings": ".copilot-tracking/brd-sessions/cold-chain-production-readiness.quality-findings.yml",
+  "brdQualityReport": ".copilot-tracking/brd-sessions/cold-chain-production-readiness.quality-report.yml",
+  "brdArtifactSha256": "04f8b4c7dc706f5faac174205d667a85bdf7eb6d0e149f1dd5a46fc8a38b3975",
+  "governDecision": {
+    "overall_status": "NEEDS_REVIEW",
+    "define_exit": "APPROVED_WITH_COMMENTS",
+    "govern_exit": "APPROVED_WITH_COMMENTS",
+    "signoff_status": "WAIVED",
+    "waiver_id": "WAIV-001"
+  },
+  "qualityChecks": [
+    "business-goals-defined-with-baseline-and-target",
+    "scope-clarified-in-out-of-scope",
+    "stakeholders-mapped-mendelow",
+    "fr-to-ac-coverage-100pct",
+    "fr-to-bg-coverage-100pct",
+    "executive-sponsor-timeline-tension-recorded"
+  ],
+  "userPreferences": {"detail-level": "comprehensive", "question-style": "structured"},
+  "rpiInvocations": [],
+  "researchReceipts": []
+}

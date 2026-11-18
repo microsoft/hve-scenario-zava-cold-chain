@@ -1,0 +1,134 @@
+{
+  "id": "01",
+  "slug": "scenario",
+  "title": "Scenario orientation",
+  "short": "Scenario",
+  "hve": {
+    "stage": null,
+    "name": "Workshop framing",
+    "docs": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/"
+  },
+  "minutes": 60,
+  "scenario": "One morning every freezer in Zava's five pilot stores is warm, and the only alarms all night were for other cases. The night costs the pilot region €260,411, and the same night across 400 stores would cost about €20.8M.",
+  "why": "Everyone in the room needs to see the same night and the same money before anyone talks about fixes. The Cost of a Silent Night is the figure the Investment Board judges on Day 3.",
+  "objective": "Say what the Silent Night cost, where that figure comes from on Business impact, and what must not change.",
+  "needs": [],
+  "produces": [
+    "scenario"
+  ],
+  "monitor": [
+    {
+      "label": "Business impact",
+      "route": "business"
+    },
+    {
+      "label": "Chain overview",
+      "route": "overview"
+    },
+    {
+      "label": "Tour and stories",
+      "route": "story"
+    }
+  ],
+  "tools": [],
+  "attendee": {
+    "steps": [
+      "Watch the trainer's screen as silent-night replays at ×60. If the monitor already runs on your laptop, follow along on [Business impact](/#/business).",
+      "Note each alarm as it fires: the time, the case and the store. Write down anything that surprises you.",
+      "At 08:00, read the newspaper headline and the Cost of a Silent Night by component.",
+      "Move one assumption slider, for example how many stores the chain has, and watch the chain-wide figure change. Put it back afterwards.",
+      "Write one sentence on what must not change: a scheduled defrost that ends on time raises no alarm."
+    ],
+    "prompts": [
+      {
+        "label": "Explain the cost model",
+        "text": "For project zava-silent-night, explain how `data/business.json` and `zava_cold_chain/business.py` price one night. List each cost component and the assumption behind it, and say which assumptions are shown as sliders on Business impact. Don't change any files."
+      }
+    ]
+  },
+  "coach": {
+    "ask": [
+      "What did you expect to see on the screen at 02:00 that you didn't?",
+      "Which of these numbers would you put your name to?",
+      "In your own company, who would be first to know a freezer was warm?"
+    ],
+    "mistakes": [
+      "Jumping to a fix before the night has finished replaying",
+      "Treating the €20.8M as a forecast when it is a what-if built from the sliders"
+    ],
+    "step_in": [
+      "When a table starts naming a culprit. Steer them back to what each person on shift could see."
+    ]
+  },
+  "facilitator": {
+    "before": [
+      "Pick a secret seed for the hidden nights, any whole number. Don't use 2026: participants can run that one themselves.",
+      "On the untouched code, score the baseline with `python -m zava_cold_chain gauntlet --seed 2026 --baseline`, putting your secret seed in place of 2026. It writes `scorecards/baseline.json`.",
+      "Start `python -m zava_cold_chain serve --scorecards scorecards` on the trainer's screen and leave it running.",
+      "Agree how tables hand in scorecards: a shared folder, a chat channel or a USB stick.",
+      "Print the character cards from [docs/facilitator.md](docs/facilitator.md) for the coaches, one card per coach and never the case file."
+    ],
+    "run": [
+      {
+        "at": "09:00",
+        "minutes": 10,
+        "do": "Welcome the room. State the outcome: cut the Cost of a Silent Night without breaking routine operations, measured on hidden nights on Day 3."
+      },
+      {
+        "at": "09:10",
+        "minutes": 30,
+        "do": "Replay silent-night at ×60 on Business impact. Pause at 01:15 and 02:00 and ask what each person on shift could see at that moment."
+      },
+      {
+        "at": "09:40",
+        "minutes": 10,
+        "do": "Stop at 08:00 on the newspaper. Read the headline aloud, then show €260,411 for the pilot region and about €20.8M chain-wide."
+      },
+      {
+        "at": "09:50",
+        "minutes": 10,
+        "do": "Form tables and give each one a coach. Point everyone to chapter 02."
+      }
+    ],
+    "good_answer": "Someone at each table can say, without notes, that the night cost €260,411 in the pilot region and about €20.8M across 400 stores, and that a scheduled defrost which ends on time must not raise an alarm.",
+    "watch_for": [
+      "Executives leaving before the euro figure lands at 08:00",
+      "Anyone who has read the case file naming the cause early. Ask them to keep it to themselves."
+    ],
+    "demo": "Replay silent-night at ×60 and stop at 08:00 on the newspaper. Then move the chain size slider so the room sees the chain-wide figure move with one assumption."
+  },
+  "done_when": [
+    "Your table has written down the pilot-region cost: €260,411",
+    "Your table has written down what must not change: a scheduled defrost that ends on time raises no alarm",
+    "Your table has a list of the questions the night raised, with no fixes on it"
+  ],
+  "stuck": [
+    {
+      "if": "The monitor doesn't run on your laptop yet",
+      "then": "Watch the trainer's screen. You set up your laptop in chapter 02."
+    },
+    {
+      "if": "Business impact shows a different figure from the trainer's",
+      "then": "Pick silent-night, select Replay and let it run to 08:00. Reset any sliders you moved."
+    }
+  ],
+  "handoff": {
+    "to": "02",
+    "note": "Setup gets every laptop running the same monitor and tests, so the night you just watched can be replayed and changed."
+  },
+  "loops": [],
+  "references": [
+    {
+      "label": "HVE Core lifecycle",
+      "target": "https://microsoft.github.io/hve-core/docs/hve-guide/lifecycle/"
+    },
+    {
+      "label": "Participant guide",
+      "target": "docs/exercises.md"
+    },
+    {
+      "label": "Business model",
+      "target": "data/business.json"
+    }
+  ]
+}
