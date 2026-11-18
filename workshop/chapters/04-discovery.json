@@ -40,15 +40,15 @@
   "attendee": {
     "steps": [
       "Open GitHub Copilot Chat and pick BRD Builder in the agent picker.",
-      "Start with the prompt below.",
+      {
+        "text": "Start with this prompt.",
+        "prompt": {
+          "label": "Start the BRD",
+          "text": "Create a BRD for zava-silent-night. Start from `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. The outcome is the Cost of a Silent Night on the Business impact screen. Save the BRD to `docs/project-planning/zava-silent-night-brd.md`."
+        }
+      },
       "Answer its Discover questions from [Business impact](/#/business). Move the sliders before you agree a target, and write down who owns each one.",
       "Before Govern, check that the BRD names what must not change."
-    ],
-    "prompts": [
-      {
-        "label": "Start the BRD",
-        "text": "Create a BRD for zava-silent-night. Start from `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. The outcome is the Cost of a Silent Night on the Business impact screen. Save the BRD to `docs/project-planning/zava-silent-night-brd.md`."
-      }
     ]
   },
   "coach": {

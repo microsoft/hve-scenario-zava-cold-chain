@@ -15,7 +15,26 @@ const J = {doc: null, ch: {}, art: {}, order: [], status: {}, statusOk: null, ro
 
 /* ---------- text ---------- */
 // Content allows `code` and [label](target) only. Everything else is escaped.
+// The first use of an abbreviation on each page gets its meaning: a tooltip on hover, focus or tap, and text for screen readers.
+// Text inside code, links, buttons and existing abbreviations is left alone.
+function abbr(html) {
+  if (!J.abbrRe) return html;
+  let skip = 0;
+  return html.split(/(<[^>]+>)/).map(part => {
+    if (part.charAt(0) === "<") { const m = /^<(\/?)(code|a|pre|kbd|abbr|button)\b/i.exec(part); if (m) skip += m[1] ? -1 : 1; return part; }
+    if (skip > 0) return part;
+    return part.replace(J.abbrRe, w => {
+      if (J.abbrSeen.has(w)) return w;
+      J.abbrSeen.add(w);
+      const tip = esc(J.doc.abbreviations[w]);
+      return '<abbr class="ab" tabindex="0" data-tip="' + tip + '">' + w + '<span class="sr"> (' + tip + ")</span></abbr>";
+    });
+  }).join("");
+}
 function md(s) {
+  return abbr(mdRaw(s));
+}
+function mdRaw(s) {
   return esc(s)
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, target) => label === target && !/^(https:\/\/|\/?#\/)/.test(target) ? "`" + target + "`" : m)
     .replace(/`([^`]+)`/g, '<code translate="no">$1</code>')
@@ -96,6 +115,7 @@ const afterRender = {};
 function route() {
   if (!J.doc) return;
   J.r = parse();
+  J.abbrSeen = new Set(); promptN = 0;
   const {view, id} = J.r;
   const v = {landing: viewLanding, overview: viewOverview, day: viewDay, ch: viewChapter, artifacts: viewArtifacts}[view] || notFound;
   const el = $("jv");
@@ -195,7 +215,7 @@ function viewLanding() {
     + pr.rows.map((r, i) => '<div class="prow reveal" role="row" style="--d:' + (i * 110) + 'ms"><span role="cell" class="po">' + esc(r.output) + '</span><span role="cell" class="pc">' + esc(r.outcome) + "</span></div>").join("") + "</div></section>"
 
     + '<section class="lsec" aria-labelledby="nuh"><h2 id="nuh" class="reveal">' + esc(nu.title) + '</h2><p class="lintro reveal">' + esc(nu.intro) + '</p><ul class="nums">'
-    + nu.items.map((it, i) => '<li class="reveal" style="--d:' + (i * 90) + 'ms"><b class="big num">' + countHtml(it) + "</b><span>" + esc(it.label) + '</span><span class="goal">Goal: ' + esc(it.goal) + "</span></li>").join("") + "</ul></section>"
+    + nu.items.map((it, i) => '<li class="reveal" style="--d:' + (i * 90) + 'ms"><b class="big num">' + countHtml(it) + "</b><span>" + esc(it.label) + '</span><span class="ngoal">Goal: ' + esc(it.goal) + "</span></li>").join("") + "</ul></section>"
 
     + '<section class="lsec world" aria-labelledby="woh"><h2 id="woh" class="reveal">' + esc(wo.title) + '</h2><p class="lintro reveal">' + esc(wo.intro) + '</p><ul class="wl">'
     + wo.items.map((it, i) => '<li class="reveal" style="--d:' + (i * 120) + 'ms"><b class="big num">' + countHtml(it) + "</b><p>" + esc(it.text) + '</p><a class="src" href="' + esc(it.url) + '" target="_blank" rel="noopener">' + esc(it.source) + "</a></li>").join("") + "</ul></section>"
@@ -312,12 +332,15 @@ function viewDay(id, q) {
 }
 
 /* ---------- chapter ---------- */
-function prompts(c, open) {
-  const ps = (c.attendee || {}).prompts || [];
-  return ps.map((p, i) => '<figure class="prompt"><figcaption><span>' + esc(p.label) + '</span><button type="button" class="copy" data-copy="pr-' + i + '" aria-label="Copy prompt: ' + esc(p.label) + '">Copy</button></figcaption><pre translate="no" id="pr-' + i + '">' + esc(p.text) + "</pre></figure>").join("");
-}
+// A step is plain text, or {text, prompt} when it asks the attendee to send a prompt.
+const stepText = s => typeof s === "string" ? s : s.text;
+const stepPrompts = c => ((c.attendee || {}).steps || []).filter(s => s && s.prompt).map(s => s.prompt);
+let promptN = 0;
+const promptFig = p => { const i = promptN++; return '<figure class="prompt"><figcaption><span>' + esc(p.label) + '</span><button type="button" class="copy" data-copy="pr-' + i + '" aria-label="Copy prompt: ' + esc(p.label) + '">Copy</button></figcaption><pre translate="no" id="pr-' + i + '">' + esc(p.text) + "</pre></figure>"; };
+const prompts = c => stepPrompts(c).map(promptFig).join("");
+const stepsHtml = steps => steps && steps.length ? '<ol class="steps">' + steps.map(s => "<li>" + md(stepText(s)) + (s.prompt ? promptFig(s.prompt) : "") + "</li>").join("") + "</ol>" : "";
 function toolsHtml(c) {
-  return c.tools && c.tools.length ? '<dl class="tools">' + c.tools.map(t => '<div><dt><b translate="no">' + esc(t.name) + '</b><kbd translate="no">' + esc(t.open) + "</kbd></dt><dd>" + md(t.for) + "</dd></div>").join("") + "</dl>" : "";
+  return c.tools && c.tools.length ? '<dl class="tools">' + c.tools.map(t => '<div><dt><b translate="no">' + abbr(esc(t.name)) + '</b><kbd translate="no">' + esc(t.open) + "</kbd></dt><dd>" + md(t.for) + "</dd></div>").join("") + "</dl>" : "";
 }
 function artBlock(id) {
   const a = J.art[id]; if (!a) return "";
@@ -345,19 +368,19 @@ function viewChapter(id) {
       + ((f.run || []).length ? '<h3>In the room</h3><ol class="run">' + f.run.map(r => '<li><span class="t num">' + esc(r.at) + '</span><span class="len">' + esc(dur(r.minutes)) + "</span><p>" + md(r.do) + "</p></li>").join("") + "</ol>" : "")
       + (f.demo ? '<h3>Show on screen</h3><p>' + md(f.demo) + "</p>" : "")
       + (toolsHtml(c) ? "<h3>Tools tables use</h3>" + toolsHtml(c) : "")
-      + ((a.prompts || []).length ? '<details class="fold"><summary>The prompts tables start with</summary>' + prompts(c) + "</details>" : "");
+      + (stepPrompts(c).length ? '<details class="fold"><summary>The prompts tables use</summary>' + prompts(c) + "</details>" : "");
   } else if (role === "coach") {
     primary = '<h2>Ask this</h2>' + list(co.ask, "ul", "asks")
       + ((co.step_in || []).length ? "<h3>Step in when</h3>" + list(co.step_in) : "")
       + ((co.mistakes || []).length ? "<h3>Mistakes tables make</h3>" + list(co.mistakes) : "")
       + ((co.character || []).length ? '<details class="fold"><summary>The five character cards</summary>' + co.character.map(x => '<div class="cardlet"><h4>' + esc(x.role) + '</h4><dl><dt>Knows</dt><dd>' + md(x.knows) + "</dd><dt>Believes</dt><dd>" + md(x.believes) + "</dd><dt>Won’t volunteer</dt><dd>" + md(x.wont_volunteer) + "</dd><dt>Line</dt><dd>" + md(x.line) + "</dd></dl></div>").join("") + "</details>" : "");
   } else {
-    primary = '<h2>Your task</h2><p class="goal">' + md(c.objective) + "</p>" + list(a.steps, "ol", "steps") + prompts(c)
+    primary = '<h2>Your task</h2><p class="goal">' + md(c.objective) + "</p>" + stepsHtml(a.steps)
       + (toolsHtml(c) ? "<h3>Tools</h3>" + toolsHtml(c) : "")
       + ((c.words || []).length ? '<details class="fold"><summary>Words used in this workshop</summary><dl class="words">' + c.words.map(w => '<dt translate="no">' + md(w.term) + "</dt><dd>" + md(w.meaning) + "</dd>").join("") + "</dl></details>" : "");
   }
   const done = '<section class="block" id="done"><h2>Done when <span class="count" id="donecount">' + doneN + " of " + t.length + "</span></h2>"
-    + '<ul class="checks">' + (c.done_when || []).map((x, k) => '<li><label><input type="checkbox" data-tick="' + k + '"' + (t[k] ? " checked" : "") + "><span>" + md(x) + "</span></label></li>").join("") + "</ul>"
+    + '<ul class="checks">' + (c.done_when || []).map((x, k) => '<li><label><input type="checkbox" data-tick="' + k + '"' + (t[k] ? " checked" : "") + "><span>" + mdRaw(x) + "</span></label></li>").join("") + "</ul>"
     + (role === "facilitator" && f.good_answer ? '<p class="answer"><b>A good answer.</b> ' + md(f.good_answer) + "</p>" : "")
     + '<p class="small">Ticks stay in this browser. <button type="button" class="link" data-reset>Clear them</button></p></section>';
   const stuckItems = (c.stuck || []).map(s => "<dt>" + md(s.if) + "</dt><dd>" + md(s.then) + "</dd>").join("");
@@ -374,7 +397,7 @@ function viewChapter(id) {
     + ((c.references || []).length ? '<div class="m"><h2>Read more</h2><ul>' + c.references.map(r => "<li>" + md("[" + r.label + "](" + r.target + ")") + "</li>").join("") + "</ul></div>" : "")
     + "</aside>";
   const h = c.handoff || {};
-  const nextBlock = next ? '<a class="next" href="#/ch/' + next + '"><span class="nl">Next</span><span class="nt"><span class="nn">' + next + "</span> " + esc(J.ch[next].title) + "</span>" + (h.note ? '<span class="nd">' + md(h.note).replace(/<a [^>]*>|<\/a>/g, "") + "</span>" : "") + "</a>"
+  const nextBlock = next ? '<a class="next" href="#/ch/' + next + '"><span class="nl">Next</span><span class="nt"><span class="nn">' + next + "</span> " + esc(J.ch[next].title) + "</span>" + (h.note ? '<span class="nd">' + mdRaw(h.note).replace(/<a [^>]*>|<\/a>/g, "") + "</span>" : "") + "</a>"
     : '<a class="next" href="#/day/3"><span class="nl">That’s the journey</span><span class="nt">Back to Day 3 and the debrief</span></a>';
   return '<article class="page chapter">'
     + '<header class="hero"><p class="kicker">' + chSpans(id).map(s => esc(s.text)).join(" and ") + '<span class="sep" aria-hidden="true"></span>' + (c.hve && c.hve.docs ? '<a href="' + esc(c.hve.docs) + '" target="_blank" rel="noopener">' + esc(hveLabel(c)) + "</a>" : esc(hveLabel(c))) + "</p>"
@@ -554,6 +577,8 @@ async function load() {
     d.chapters.forEach(c => { J.ch[c.id] = c; });
     d.artifacts.forEach(a => { J.art[a.id] = a; });
     J.order = d.chapters.map(c => c.id);
+    const ab = Object.keys(d.abbreviations || {});
+    J.abbrRe = ab.length ? new RegExp("\\b(" + ab.join("|") + ")\\b", "g") : null;
   } catch (e) {
     const where = e && e.path ? "<code translate=\"no\">" + esc(e.path) + "</code>, " + esc(e.detail) : "the server didn’t answer";
     $("jv").innerHTML = '<div class="page narrow"><h1>The workshop content didn’t load</h1><p class="lede">Problem: ' + where + '.</p><p>Run <code translate="no">python -m unittest tests.test_journey</code> from the repo folder to see what’s wrong, fix the file, then reload this page.</p></div>';

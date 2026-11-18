@@ -50,22 +50,26 @@
     "steps": [
       "Watch the trainer's screen while an event plays into the running night. You see only its consequences.",
       "Triage from [Alarms and incidents](/#/alarms) and the case charts: what is warm, who was told, and what night cover should do now.",
-      "Run `/incident-response` with the first prompt. Fill in triage, diagnosis, mitigation and root cause, and skip its Azure steps: this app runs on your laptop.",
-      "Pick Documentation and update `data/runbook.md` so night cover would act correctly next time. Keep the synthetic label in its first lines.",
-      "If the root cause is a gap in the code, decide on a hotfix and take it through RPI Agent as in chapter 08."
-    ],
-    "prompts": [
       {
-        "label": "Write the incident record",
-        "text": "/incident-response For zava-silent-night: during tonight's run of the Board portfolio branch, (describe what you saw, with times from Alarms and incidents). Phase is triage. This is a local training app, so skip the Azure tooling and use only the triage, diagnosis, mitigation and root-cause structure. Write the incident record to `docs/incident-response/zava-silent-night-chaos-1.md`."
+        "text": "Run `/incident-response` with this prompt. Fill in triage, diagnosis, mitigation and root cause, and skip its Azure steps: this app runs on your laptop.",
+        "prompt": {
+          "label": "Write the incident record",
+          "text": "/incident-response For zava-silent-night: during tonight's run of the Board portfolio branch, (describe what you saw, with times from Alarms and incidents). Phase is triage. This is a local training app, so skip the Azure tooling and use only the triage, diagnosis, mitigation and root-cause structure. Write the incident record to `docs/incident-response/zava-silent-night-chaos-1.md`."
+        }
       },
       {
-        "label": "Update the runbook",
-        "text": "Update `data/runbook.md` for zava-silent-night so the night cover steps match how the funded fixes behave, based on the incident record at `docs/incident-response/zava-silent-night-chaos-1.md`. Keep the synthetic label in the first lines and keep the runbook short."
+        "text": "Pick Documentation and send this prompt to update `data/runbook.md` so night cover would act correctly next time. Keep the synthetic label in its first lines.",
+        "prompt": {
+          "label": "Update the runbook",
+          "text": "Update `data/runbook.md` for zava-silent-night so the night cover steps match how the funded fixes behave, based on the incident record at `docs/incident-response/zava-silent-night-chaos-1.md`. Keep the synthetic label in the first lines and keep the runbook short."
+        }
       },
       {
-        "label": "Start a hotfix",
-        "text": "Start a hotfix for zava-silent-night from the incident record at `docs/incident-response/zava-silent-night-chaos-1.md`. Work through each phase with me. Write the research under `.copilot-tracking/research/`, write failing tests first, and keep every existing test passing."
+        "text": "If the root cause is a gap in the code, decide on a hotfix and start it in RPI Agent with this prompt, as in chapter 08.",
+        "prompt": {
+          "label": "Start a hotfix",
+          "text": "Start a hotfix for zava-silent-night from the incident record at `docs/incident-response/zava-silent-night-chaos-1.md`. Work through each phase with me. Write the research under `.copilot-tracking/research/`, write failing tests first, and keep every existing test passing."
+        }
       }
     ]
   },

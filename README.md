@@ -31,11 +31,13 @@ The workshop has three parts: frame the business problem, follow the journey cha
   python -m unittest
   ```
 
-* Start the dashboard and leave it running. Use `python3` on macOS and Linux, or `py` on Windows, if `python` isn't found.
+* Start the dashboard and leave the terminal open. Use `python3` on macOS and Linux, or `py` on Windows, if `python` isn't found.
 
   ```bash
   python -m zava_cold_chain serve
   ```
+
+* The terminal prints two links, the Workshop Journey and the dashboard. Open them in whichever browser you like; nothing opens on its own. Press Ctrl+C in the terminal to stop.
 
 ### 2. Frame the problem (everyone together, about 30 minutes)
 
@@ -99,7 +101,7 @@ You need Python 3.9 or later. Nothing to install. Run the commands from the repo
 python -m zava_cold_chain serve
 ```
 
-The dashboard opens in your browser at <http://127.0.0.1:8740>. A simulated night (22:00 to 08:00) runs at 10 simulated minutes per second. Pick a night and select **Replay**; use **×10**, **×60**, **×300**, **Pause** and **Jump** (for example `01:10`) to control the clock. On a narrow screen, open the other screens with **Menu**.
+The terminal prints the links to open: the dashboard at <http://127.0.0.1:8740> and the Workshop Journey at <http://127.0.0.1:8740/journey>. Open them in any browser; the server keeps running until you press Ctrl+C. A simulated night (22:00 to 08:00) runs at 10 simulated minutes per second. Pick a night and select **Replay**; use **×10**, **×60**, **×300**, **Pause** and **Jump** (for example `01:10`) to control the clock. On a narrow screen, open the other screens with **Menu**.
 
 `serve` takes these options:
 
@@ -108,7 +110,7 @@ The dashboard opens in your browser at <http://127.0.0.1:8740>. A simulated nigh
 | `--port` | `8740` | Port to listen on, on 127.0.0.1 |
 | `--night` | `normal` | Night to start with: `normal`, `door-open`, `mass-defrost`, `vendor-maintenance` or `silent-night` |
 | `--speed` | `10` | Simulated minutes per second |
-| `--no-browser` | off | Don't open a browser window |
+| `--open` | off | Also open the Workshop Journey in your default browser |
 | `--scorecards` | `scorecards` | Folder the Night Gauntlet leaderboard reads scorecards from |
 
 Other commands:

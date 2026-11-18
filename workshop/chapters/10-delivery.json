@@ -49,21 +49,23 @@
   ],
   "attendee": {
     "steps": [
-      "Commit your work with `/git-commit`. Leave `scorecards/` out: git ignores it.",
-      "Run `/pull-request` with the prompt below. Check the description quotes your scorecard and links your review record.",
+      {
+        "text": "Commit your work with `/git-commit` and this prompt. Leave `scorecards/` out: git ignores it.",
+        "prompt": {
+          "label": "Commit",
+          "text": "/git-commit Commit the zava-silent-night changes on this branch: the code, the tests and the records under `.copilot-tracking/`. Don't add anything under `scorecards/`."
+        }
+      },
+      {
+        "text": "Run `/pull-request` with this prompt and check the description quotes your scorecard and links your review record. Opening it on GitHub needs a fork, or a repository your table can push to. Without one, use the description it writes when you present.",
+        "prompt": {
+          "label": "Open the pull request",
+          "text": "/pull-request Create a pull request from this branch into `main` for zava-silent-night. Summarise the fix, link the review record under `.copilot-tracking/reviews/logs/`, and quote the euros protected, false pages and blocked commands from `scorecards/table-3.json`. List the acceptance cases from `docs/project-planning/zava-silent-night-prd.md` and how each was checked."
+        }
+      },
       "Prepare three minutes: the failure, the fix, the scorecard and its side effects. Quote the leaderboard on the trainer's screen, not your own estimate.",
       "Present at the [Investment Board](/#/board) and answer the executives' questions.",
       "Watch what the board funds and which failures stay uncovered, then hear its decision on the store assistant: go, fix first or pull."
-    ],
-    "prompts": [
-      {
-        "label": "Commit",
-        "text": "/git-commit Commit the zava-silent-night changes on this branch: the code, the tests and the records under `.copilot-tracking/`. Don't add anything under `scorecards/`."
-      },
-      {
-        "label": "Open the pull request",
-        "text": "/pull-request Create a pull request from this branch into `main` for zava-silent-night. Summarise the fix, link the review record under `.copilot-tracking/reviews/logs/`, and quote the euros protected, false pages and blocked commands from `scorecards/table-3.json`. List the acceptance cases from `docs/project-planning/zava-silent-night-prd.md` and how each was checked."
-      }
     ]
   },
   "coach": {

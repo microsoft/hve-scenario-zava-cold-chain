@@ -10,6 +10,17 @@
     "https://microsoft.github.io/hve-core/docs/agents/project-planning/brd-prd-builders/"
   ],
   "project_slug": "zava-silent-night",
+  "abbreviations": {
+    "BRD": "Business requirements document: the business case. Goals with numbers, who owns each assumption, what is in and out of scope. Written in chapter 04 with BRD Builder.",
+    "PRD": "Product requirements document: what the product must do, as requirements and acceptance cases you can test. Written in chapter 05 with PRD Builder.",
+    "RAI": "Responsible AI: checking that an AI feature is fair, safe, transparent and has a person accountable for it. Here, the store assistant.",
+    "RPI": "Research, plan, implement and review: HVE Core's workflow for making a code change with evidence at every step. Chapter 08.",
+    "ADR": "Architecture decision record: a short note of one design decision, the options considered and why this one was chosen.",
+    "DT": "Design Thinking: finding the real problem by talking to the people who have it, before deciding on a fix. Chapter 03.",
+    "HVE": "Hypervelocity Engineering: Microsoft's approach to AI-assisted software delivery. HVE Core is its open-source set of agents and skills for GitHub Copilot.",
+    "TPM": "Technical program manager.",
+    "PR": "Pull request: a proposed change on a branch, opened for review before it is merged into main."
+  },
   "delivery_start": null,
   "outcome": {
     "title": "The Silent Night, in three days",

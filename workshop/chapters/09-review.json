@@ -47,26 +47,30 @@
   ],
   "attendee": {
     "steps": [
-      "Type `/rpi-review` with the first prompt. Fix anything it marks as a defect, or loop back to chapter 08.",
-      "Pick Code Review and ask it to review your branch's diff against `main`.",
+      {
+        "text": "Type `/rpi-review` with this prompt. Fix anything it marks as a defect, or loop back to chapter 08.",
+        "prompt": {
+          "label": "Review the change",
+          "text": "/rpi-review Review the zava-silent-night changes on this branch. Check every acceptance case for our fix in `docs/project-planning/zava-silent-night-prd.md` against the diff and the tests, using the plan under `.copilot-tracking/plans/` and the changes record under `.copilot-tracking/changes/`. Write the review record under `.copilot-tracking/reviews/logs/`."
+        }
+      },
+      {
+        "text": "Pick Code Review and send this prompt to review your branch's diff against `main`.",
+        "prompt": {
+          "label": "Code review",
+          "text": "Review the diff between this branch and `main` for zava-silent-night. Look for bugs, logic errors, and anything that weakens an alarm or acts on text from a note. The changes record is under `.copilot-tracking/changes/`. Report findings in chat and don't change files."
+        }
+      },
       "When the trainer announces the seed, run `python -m zava_cold_chain gauntlet --seed 2026 --team \"Table 3\" --fixes FX-1,FX-2`, with the trainer's seed in place of 2026, your table name and the fixes you built.",
       "Read the gates in the printed summary: every night runs to 08:00, `normal` and `vendor-maintenance` raise no alarm, and if you claim FX-6 the assistant never reassures staff about a case that needs a decision.",
-      "Open [Night Gauntlet](/#/gauntlet) and go night by night. Write down each false page and each blocked planned command: both are priced against you.",
+      {
+        "text": "Open [Night Gauntlet](/#/gauntlet) and go night by night. Write down each false page and each blocked planned command: both are priced against you. To understand a result, paste this prompt.",
+        "prompt": {
+          "label": "Read the scorecard",
+          "text": "Read `scorecards/table-3.json` for zava-silent-night. For each night, explain the euros protected against the baseline, any false page and any blocked planned command, and which change on our branch caused it. Don't change any files."
+        }
+      },
       "Hand `scorecards/table-3.json` (named after your team) to the trainer the way they asked."
-    ],
-    "prompts": [
-      {
-        "label": "Review the change",
-        "text": "/rpi-review Review the zava-silent-night changes on this branch. Check every acceptance case for our fix in `docs/project-planning/zava-silent-night-prd.md` against the diff and the tests, using the plan under `.copilot-tracking/plans/` and the changes record under `.copilot-tracking/changes/`. Write the review record under `.copilot-tracking/reviews/logs/`."
-      },
-      {
-        "label": "Code review",
-        "text": "Review the diff between this branch and `main` for zava-silent-night. Look for bugs, logic errors, and anything that weakens an alarm or acts on text from a note. The changes record is under `.copilot-tracking/changes/`. Report findings in chat and don't change files."
-      },
-      {
-        "label": "Read the scorecard",
-        "text": "Read `scorecards/table-3.json` for zava-silent-night. For each night, explain the euros protected against the baseline, any false page and any blocked planned command, and which change on our branch caused it. Don't change any files."
-      }
     ]
   },
   "coach": {
