@@ -19,13 +19,31 @@ In this scenario, Zava runs five grocery stores. The sample application, the **C
 
 ## Quick start
 
-You need Python 3.9 or later. Nothing to install.
+You need Python 3.9 or later. Nothing to install. Run the commands from the repository folder: the package isn't installed, so `python -m zava_cold_chain` only works there. If `python` isn't found, use `python3` on macOS and Linux, or `py` on Windows.
 
 ```bash
 python -m zava_cold_chain serve
 ```
 
-Open <http://127.0.0.1:8740>. A simulated night (22:00 to 08:00) runs at 10 simulated minutes per second. Pick a night and select **Replay**; use **×10**, **×60**, **×300**, **Pause** and **Jump** (for example `01:10`) to control the clock.
+The dashboard opens in your browser at <http://127.0.0.1:8740>. A simulated night (22:00 to 08:00) runs at 10 simulated minutes per second. Pick a night and select **Replay**; use **×10**, **×60**, **×300**, **Pause** and **Jump** (for example `01:10`) to control the clock. On a narrow screen, open the other screens with **Menu**.
+
+`serve` takes these options:
+
+| Option | Default | What it does |
+|---|---|---|
+| `--port` | `8740` | Port to listen on, on 127.0.0.1 |
+| `--night` | `normal` | Night to start with: `normal`, `door-open`, `mass-defrost`, `vendor-maintenance` or `silent-night` |
+| `--speed` | `10` | Simulated minutes per second |
+| `--no-browser` | off | Don't open a browser window |
+| `--scorecards` | `scorecards` | Folder the Night Gauntlet leaderboard reads scorecards from |
+
+Other commands:
+
+```bash
+python -m zava_cold_chain nights                 # list the nights
+python -m zava_cold_chain replay silent-night    # run a whole night instantly and print a summary
+python -m unittest                               # run the tests
+```
 
 The Cold Chain Monitor dashboard has these screens. Select **Cold Chain Monitor** in the top bar, or **How to read the monitor**, for a guide to every number, colour and state.
 
@@ -59,7 +77,7 @@ Zava runs about 400 grocery stores; the five on the monitor are the pilot region
 | `door-open` | A freezer door is left open after restocking; an alarm fires |
 | `mass-defrost` | A remote session at 01:08; at 01:12 one fleet command starts a defrost with no end time on every freezer |
 | `vendor-maintenance` | Planned vendor maintenance: a remote session and one timed defrost |
-| `silent-night` | The big one. Five failures at once: a door alarm and an SMS to a departed technician, an early vendor session on a shared account, an endless fleet defrost and an out-of-range chiller changeover a minute apart, then a steering note through the vendor portal. The chiller alarms pull attention away from the freezers |
+| `silent-night` | Five failures at once: a door alarm and an SMS to a departed technician, an early vendor session on a shared account, an endless fleet defrost and an out-of-range chiller changeover a minute apart, then a steering note through the vendor portal. The chiller alarms pull attention away from the freezers |
 
 The Silent Night is systemic: alarms, commands, identity, the AI assistant and ownership all failed together, and no single fix solves it. That is why the workshop needs every HVE step, from Design Thinking to evaluation. The **Night Gauntlet** replays every night plus hidden nights from a trainer's seed and prices each one; the **Investment Board** turns the results into a funding decision.
 
@@ -69,7 +87,7 @@ The people who know the system, played by coaches in a workshop: the night store
 
 | Part | File | What it does |
 |---|---|---|
-| Case simulator | `zava_cold_chain/simulator.py` | Simulated cases on an accelerated clock |
+| Case simulator | `zava_cold_chain/simulator.py`, `zava_cold_chain/clocks.py` | Simulated cases on an accelerated clock |
 | Monitor alarm rules | `zava_cold_chain/alarms.py` | ALM-01 above-limit alarm; ALM-07 defrost rule |
 | Commands | `zava_cold_chain/commands.py` | Setpoints and defrost, for one case or the whole fleet |
 | Store assistant | `zava_cold_chain/assistant.py` | Answers "Is this case safe?" and drafts discard lists |
@@ -80,8 +98,8 @@ The people who know the system, played by coaches in a workshop: the night store
 | Night Gauntlet | `zava_cold_chain/gauntlet.py` | Hidden nights from a seed, chaos cards, scoring gates, scorecards and the leaderboard |
 | Web server and API | `zava_cold_chain/server.py`, `zava_cold_chain/web/` | Dashboard, JSON API and live event stream on 127.0.0.1 |
 | Storage | `zava_cold_chain/store.py` | In-memory SQLite: readings, alarms, notes |
-| Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook and nights ([how they were made](docs/synthetic-data.md)) |
-| Tests | `tests/` | Baseline tests that pass today |
+| Data | `data/*.json`, `data/runbook.md`, `nights/*.json` | Synthetic stores, stock, roster, tracker tickets, runbook, business assumptions, fix catalogue and nights ([how they were made](docs/synthetic-data.md)) |
+| Tests | `tests/` | Tests that pass today; run `python -m unittest` |
 
 The code has design and operational gaps for teams to find, plan and fix. They are teaching exercises, not real vulnerabilities, and the repository contains no credentials or secrets.
 
@@ -95,7 +113,9 @@ Each table scores its branch, with the seed the trainer announces:
 python -m zava_cold_chain gauntlet --seed <seed> --team "Table 3" --fixes FX-1,FX-2
 ```
 
-The trainer scores the untouched code once with `--baseline`, copies every table's `scorecards/*.json` into one folder, and runs `python -m zava_cold_chain serve --scorecards scorecards` to show the leaderboard. Scorecards are ignored by git.
+It writes `scorecards/table-3.json` (named after the team) and prints the scorecard. Other options: `--hidden` sets how many hidden nights to generate (default 5), `--out` writes the scorecard somewhere else, and `--seed` defaults to `2026` if the trainer hasn't given one.
+
+The trainer scores the untouched code once with `--baseline`, copies every table's scorecard into the `scorecards/` folder, and runs `python -m zava_cold_chain serve` to show the leaderboard (use `--scorecards <folder>` for a different folder). Scorecards are ignored by git.
 
 ## API
 
@@ -106,7 +126,7 @@ The trainer scores the untouched code once with `--baseline`, copies every table
 | `GET /api/stores`, `GET /api/store?id=ZF-118` | | Stores, or one store with its night cover and events |
 | `GET /api/case?id=ZF-118/F-12` | | One case: readings, notes, commands, alarms |
 | `GET /api/feed?since=0` | | Events after a sequence number |
-| `GET /api/alarms`, `/api/incidents`, `/api/products-at-risk`, `/api/food-safety`, `/api/audit`, `/api/health`, `/api/issues`, `/api/runbook`, `/api/owners` | | Data for the remaining screens |
+| `GET /api/alarms`, `/api/incidents`, `/api/products-at-risk`, `/api/food-safety`, `/api/audit`, `/api/health`, `/api/issues`, `/api/runbook`, `/api/owners`, `/api/notify-contacts` | | Data for the remaining screens |
 | `GET /api/impact` | | Predicted customers impacted, by store and product |
 | `GET /api/business` | Optional assumption overrides, for example `?chain_stores=600&nights_per_year=3` | Cost of the night by component, detection, side effects, chain projection and headline |
 | `GET /api/business/model`, `GET /api/fixes` | | The assumptions with their ranges and explanations; the fix catalogue and budget |
@@ -120,7 +140,7 @@ The trainer scores the untouched code once with `--baseline`, copies every table
 | `POST /api/control` | `{"speed": 60}`, `{"paused": true}` or `{"jump": "01:10"}` | Playback state |
 | `GET /api/state` | | Clock, stores, cases, alarms |
 | `GET /api/history?case=ZF-118/F-12` | | One case's readings |
-| `GET /api/discard?store=ZF-118` | | the store assistant's draft discard list |
+| `GET /api/discard?store=ZF-118` | | The store assistant's draft discard list |
 | `GET /api/nights` | | Available nights |
 | `POST /api/commands` | `{"action": "setpoint", "target": "ZF-121/C-20", "value": 4}` or `{"action": "defrost", "target": "*", "kind": "freezer", "minutes": 20}` | Cases changed |
 | `POST /api/ask` | `{"case": "ZF-118/F-12", "question": "Is this case safe?"}` | Answer and the context the assistant read |
