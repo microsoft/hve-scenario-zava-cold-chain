@@ -186,8 +186,8 @@ class World:
             warm = [c.id for c in self.cases.values() if c.store == sid and c.temp > c.limit]
             if warm:
                 alarmed = all(cid in self.alarmed for cid in warm)
-                self._incident(sid, warm, "store staff", "open", f"{len(warm)} case(s) found warm at opening check", alarmed)
-                self.emit("incident", f"Staff report: {len(warm)} case(s) warm at {sid}. "
+                self._incident(sid, warm, "store staff", "open", f"{len(warm)} case{'' if len(warm) == 1 else 's'} found warm at opening check", alarmed)
+                self.emit("incident", f"Staff report: {len(warm)} case{'' if len(warm) == 1 else 's'} warm at {sid}. "
                           + ("Alarm was raised." if alarmed else "No alarm received overnight."), "alert", sid,
                           source="staff app")
 

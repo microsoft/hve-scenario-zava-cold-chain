@@ -1,6 +1,6 @@
 {
   "name": "silent-night",
-  "description": "The big one. A door alarm, an early vendor session, a firmware package, then two fleet commands a minute apart and a note through the vendor portal. Work out what happened, what it cost and what to fund.",
+  "description": "Several things go wrong at once: a door left open, a vendor session that starts early, a firmware package, two fleet commands a minute apart and a note through the vendor portal.",
   "note": "Synthetic night for training. Invented events and times. See docs/synthetic-data.md.",
   "events": [
     {

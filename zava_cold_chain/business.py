@@ -145,13 +145,13 @@ def night_cost(world, overrides: Optional[dict] = None) -> dict:
          "explain": f"{a['lost_margin_factor']:g} × written-off value while shelves are restocked"},
         {"key": "response", "label": "Response and late discovery",
          "eur": len(world.alarm_list) * a["callout_eur"] + len(late_stores) * a["late_discovery_eur"],
-         "explain": f"{len(world.alarm_list)} alarm callout(s) and {len(late_stores)} store(s) found warm at opening"},
+         "explain": f"{_n(len(world.alarm_list), 'alarm callout')} and {_n(len(late_stores), 'store')} found warm at opening"},
         {"key": "side_effects", "label": "Side effects of controls",
          "eur": len(fp) * a["false_page_eur"] + len(blocked) * a["blocked_work_eur"],
-         "explain": f"{len(fp)} false page(s) and {len(blocked)} blocked planned command(s)"},
+         "explain": f"{_n(len(fp), 'false page')} and {_n(len(blocked), 'blocked planned command')}"},
         {"key": "trust", "label": "Recall and brand exposure (expected)",
          "eur": a["recall_cost_eur"] * (len(undetected) * a["p_recall_undetected"] + len(false_safe) * a["p_recall_false_safe"]),
-         "explain": f"{len(undetected)} warm case(s) nobody was alerted to and {len(false_safe)} reassuring assistant answer(s) about warm cases"},
+         "explain": f"{_n(len(undetected), 'warm case')} nobody was alerted to and {_n(len(false_safe), 'reassuring assistant answer')} about warm cases"},
     ]
     for c in components:
         c["eur"] = round(c["eur"], 2)
@@ -175,6 +175,10 @@ def projection(total_eur: float, a: dict) -> dict:
             "annual_eur": round(chain_night * a["nights_per_year"], 2)}
 
 
+def _n(count: int, word: str) -> str:
+    return f"{count} {word}{'' if count == 1 else 's'}"
+
+
 def _eur(n: float) -> str:
     if n >= 1_000_000:
         return f"€{n / 1_000_000:.1f} million"
@@ -189,7 +193,7 @@ def headline(world, cost: Optional[dict] = None) -> dict:
     stores = len({d["case"].split("/")[0] for d in cost["detection"]})
     if not affected:
         title, tone = "Quiet night at Zava: every display case within its limits", "quiet"
-        sub = ["Scheduled defrosts ran and ended on time. Nothing to report."]
+        sub = ["Scheduled defrosts ran and ended on time."]
     elif comp["written_off"] and late:
         title, tone = f"Zava bins {_eur(comp['written_off'])} of food after freezers fail silently in {stores} store{'s' if stores > 1 else ''}", "bad"
         n = len(world.alarm_list)
@@ -206,6 +210,6 @@ def headline(world, cost: Optional[dict] = None) -> dict:
         tone = "bad"
     p = cost["projection"]
     if cost["total_eur"]:
-        sub.append(f"Analysts estimate the same night across all {p['chain_stores']} Zava stores would cost about {_eur(p['chain_night_eur'])}.")
+        sub.append(f"At the same rate, a night like this across all {p['chain_stores']} Zava stores would cost about {_eur(p['chain_night_eur'])}.")
     return {"masthead": "The Morning Brief", "kicker": "Fictitious local business news · " + ("08:00" if cost["done"] else "draft as of " + cost["time"]),
             "title": title, "sub": sub, "tone": tone}

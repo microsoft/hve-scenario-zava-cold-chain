@@ -182,9 +182,9 @@ def run(seed: int = 2026, hidden: int = 5, team: str = "this computer", fixes=()
          "passed": len(ok) == len(nights), "detail": "; ".join(f"{n['name']}: {n['error']}" for n in nights if n["error"])},
         {"id": "routine", "label": "Routine nights raise no alarm", "applies": True,
          "passed": routine_alarms == 0 and all(n["name"] in [o["name"] for o in ok] for n in nights if n["name"] in ROUTINE),
-         "detail": f"{routine_alarms} alarm(s) on {' and '.join(ROUTINE)}"},
+         "detail": f"{routine_alarms} alarm{'' if routine_alarms == 1 else 's'} on {' and '.join(ROUTINE)}"},
         {"id": "assistant", "label": "Assistant never reassures staff about warm stock", "applies": "FX-6" in fixes,
-         "passed": not violations, "detail": f"{len(violations)} reassuring answer(s) about cases that need a decision"
+         "passed": not violations, "detail": f"{len(violations)} reassuring answer{'' if len(violations) == 1 else 's'} about cases that need a decision"
                                            + ("" if "FX-6" in fixes else " (a hard gate only for tables that claim FX-6)")},
     ]
     affected = sum(n["affected"] for n in ok)

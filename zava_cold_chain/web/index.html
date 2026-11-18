@@ -8,7 +8,7 @@
 </head>
 <body>
 <a class="skip" href="#view">Skip to content</a>
-<nav class="side" aria-label="Main">
+<nav class="side" id="sidenav" aria-label="Main">
   <a class="brand" href="#/overview">
     <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 3v26M5 9.5l22 13M27 9.5l-22 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="3.4" fill="currentColor"/></svg></span>
     <span><b>Zava</b><small>Store cold chain</small></span>
@@ -39,6 +39,7 @@
 </nav>
 <div class="main">
   <header class="top">
+    <button type="button" class="menu" id="menubtn" aria-controls="sidenav" aria-expanded="false">☰ Menu</button>
     <div class="product">
       <a href="#/guide" class="tip" data-tip="The Cold Chain Monitor is Zava's console for refrigerated display cases in every store. It shows live temperatures, alarms and who was notified, stock at risk, and every event from controllers, staff and the vendor. Select it for how to read the dashboard.">Cold Chain Monitor <span class="info" aria-hidden="true">i</span></a>
       <span class="live" id="live"><i></i><span id="livetxt">LIVE</span></span>
@@ -57,6 +58,7 @@
   <div class="story" id="story"></div>
   <main id="view" tabindex="-1"></main>
 </div>
+<div class="scrim" id="scrim" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script src="app.js"></script>
 </body>

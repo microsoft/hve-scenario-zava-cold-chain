@@ -70,6 +70,23 @@ function toastFor(e) {
   setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 300); }, 6500);
 }
 
+/* Short confirmation or error after an action the user took. */
+function notice(title, text, bad) {
+  const t = document.createElement("div");
+  t.className = "toast " + (bad ? "" : "ok");
+  t.innerHTML = "<b>" + esc(title) + "</b>" + esc(text || "");
+  $("toasts").appendChild(t);
+  while ($("toasts").children.length > 4) $("toasts").firstChild.remove();
+  setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 300); }, bad ? 6500 : 3500);
+}
+async function act(request, title, text) {
+  let r;
+  try { r = await request; } catch (e) { notice("Couldn’t reach the monitor", "Check that the server is still running.", true); return null; }
+  if (r && r.error) { const m = String(r.error).replace(/^bad request: /, "").replace(/^invalid JSON: /, ""); notice("Not done", m.charAt(0).toUpperCase() + m.slice(1) + ".", true); return null; }
+  notice(title, typeof text === "function" ? text(r) : text);
+  return r;
+}
+
 /* ---------- top bar ---------- */
 async function refreshKpis() {
   const k = await get("/api/kpis");
@@ -195,7 +212,7 @@ const views = {};
 views.overview = {
   title: "Chain overview",
   mount(el) {
-    el.innerHTML = '<h1>Chain overview</h1><p class="sub">Five Zava stores and 20 refrigerated display cases, live from the case controllers. Hover <span class="info">i</span> for what each number means.</p>'
+    el.innerHTML = '<h1>Chain overview</h1><p class="sub">Five Zava stores and 20 refrigerated display cases, live from the case controllers. Hover over or tap <span class="info">i</span> for what each number means.</p>'
       + '<a class="bizstrip" id="bizstrip" href="#/business"></a>'
       + '<div class="kpis" id="kpis"></div>' + impactShell() + '<div class="split"><section><h2>Stores <a class="more" href="#/store/ZF-101">Open stores →</a></h2><div class="stores" id="stores"></div></section>'
       + '<aside class="stack"><div class="card"><h2>Products at risk ' + tip("Products in cases that are above their limit right now, grouped by product. The value is the shelf value at risk. The food-safety officer decides what is thrown away.", "r") + '<a class="more" href="#/food-safety">Food safety →</a></h2><div id="prisk"></div></div>'
@@ -299,13 +316,13 @@ views.case = {
       + '<div class="card"><h2>Ask the assistant</h2><textarea class="f" id="q" rows="2">Is this case safe?</textarea><div style="margin-top:8px"><button class="btn" id="ask">Ask</button></div><div id="ans"></div></div>'
       + '<div class="card" id="ctrl"><h2>Controls</h2><label class="muted" for="sp">Setpoint (°C)</label><div style="display:flex;gap:6px;margin:4px 0 12px"><input class="f" id="sp" type="number" step="0.5"><button class="btn ghost" id="spbtn">Set</button></div>'
       + '<label class="muted" for="dm">Defrost minutes (blank: no end time)</label><div style="display:flex;gap:6px;margin-top:4px"><input class="f" id="dm" type="number"><button class="btn ghost" id="dmbtn">Defrost</button></div></div></aside></div>';
-    $("spbtn").onclick = () => post("/api/commands", {action: "setpoint", target: id, value: Number($("sp").value), actor: "dashboard"}).then(() => this.update());
-    $("dmbtn").onclick = () => { const m = $("dm").value; post("/api/commands", Object.assign({action: "defrost", target: id, actor: "dashboard"}, m ? {minutes: Number(m)} : {})).then(() => this.update()); };
+    $("spbtn").onclick = () => act(post("/api/commands", {action: "setpoint", target: id, value: Number($("sp").value), actor: "dashboard"}), "Setpoint changed", id + " now aims for " + $("sp").value + " °C.").then(() => this.update());
+    $("dmbtn").onclick = () => { const m = $("dm").value; act(post("/api/commands", Object.assign({action: "defrost", target: id, actor: "dashboard"}, m ? {minutes: Number(m)} : {})), "Defrost started", id + (m ? " for " + m + " min." : " with no end time.")).then(() => this.update()); };
     $("ask").onclick = async () => {
       const r = await post("/api/ask", {case: id, question: $("q").value});
       $("ans").innerHTML = r.error ? '<div class="answer">' + esc(r.error) + "</div>" : '<div class="answer">Assistant: ' + esc(r.answer) + "</div><details><summary>What the assistant read</summary><pre>" + esc(r.context) + "</pre></details>";
     };
-    el.onclick = e => { const b = e.target.closest("[data-decide]"); if (b) post("/api/decisions", {case: id, decision: b.dataset.decide}).then(() => this.update()); };
+    el.onclick = e => { const b = e.target.closest("[data-decide]"); if (b) act(post("/api/decisions", {case: id, decision: b.dataset.decide}), "Decision recorded", id + ": " + b.dataset.decide + ".").then(() => this.update()); };
   },
   async update() {
     const c = await get("/api/case?id=" + encodeURIComponent(this.id));
@@ -361,7 +378,7 @@ views.alarms = {
     el.onclick = async e => {
       const t = e.target.closest("[data-atab]"); if (t) { app.alarmTab = t.dataset.atab; this.update(); return; }
       const b = e.target.closest("[data-ack]");
-      if (b) { const note = ($("note-" + b.dataset.ack) || {}).value || ""; await post("/api/alarms/ack", {id: b.dataset.ack, by: "you (dashboard)", note}); this.update(); }
+      if (b) { const note = ($("note-" + b.dataset.ack) || {}).value || ""; await act(post("/api/alarms/ack", {id: b.dataset.ack, by: "you (dashboard)", note}), "Alarm acknowledged", b.dataset.ack + " is now with you."); this.update(); }
     };
   },
   async update() {
@@ -395,9 +412,9 @@ views["food-safety"] = {
   title: "Food safety",
   mount(el) {
     el.innerHTML = '<h1>Food safety</h1><p class="sub">Cases that went above their limit tonight, how long for, and what is in them. The store assistant drafts a discard list; the food-safety officer decides.</p>'
-      + '<div class="kpis" style="grid-template-columns:repeat(4,1fr)" id="fk"></div>' + impactShell() + '<div class="split"><div class="card"><h2>Cases above the limit tonight</h2><div id="fcases"></div></div>'
+      + '<div class="kpis k4" id="fk"></div>' + impactShell() + '<div class="split"><div class="card"><h2>Cases above the limit tonight</h2><div id="fcases"></div></div>'
       + '<div class="card"><h2>Products at risk</h2><div id="fprod"></div></div></div>';
-    el.onclick = e => { const b = e.target.closest("[data-fcase]"); if (b) post("/api/decisions", {case: b.dataset.fcase, decision: b.dataset.d}).then(() => this.update()); };
+    el.onclick = e => { const b = e.target.closest("[data-fcase]"); if (b) act(post("/api/decisions", {case: b.dataset.fcase, decision: b.dataset.d}), "Decision recorded", b.dataset.fcase + ": " + b.dataset.d + ".").then(() => this.update()); };
   },
   async update() {
     const [f, imp] = await Promise.all([get("/api/food-safety"), get("/api/impact")]);
@@ -416,7 +433,7 @@ views["food-safety"] = {
 views.ask = {
   title: "Ask the assistant",
   mount(el) {
-    el.innerHTML = '<h1>Ask the assistant</h1><p class="sub">The store assistant answers store staff questions about a case. It drafts; people decide. Open “What the assistant read” to see the information behind each answer.</p>'
+    el.innerHTML = '<h1>Ask the assistant</h1><p class="sub">The store assistant answers staff questions about a case. Open “What the assistant read” to see what each answer was based on.</p>'
       + '<div class="split"><div class="card"><div class="chat" id="chat"></div><div style="display:flex;gap:8px;margin-top:12px"><select class="f" id="acase" style="width:200px"></select><input class="f" id="aq" value="Is this case safe?"><button class="btn green" id="asend">Ask</button></div></div>'
       + '<div class="card"><h2>Try asking</h2><div class="stack" id="ideas"></div></div></div>';
     get("/api/stores").then(s => { $("acase").innerHTML = s.flatMap(x => x.cases).map(c => "<option>" + esc(c.id) + "</option>").join(""); $("acase").value = "ZF-118/F-12"; });
@@ -448,7 +465,7 @@ views.audit = {
   title: "Commands and audit",
   mount(el) {
     el.innerHTML = '<h1>Commands and audit</h1><p class="sub">Every setpoint and defrost command sent to a controller tonight, and every remote session on the vendor link.</p>'
-      + '<div class="kpis" style="grid-template-columns:repeat(4,1fr)" id="auk"></div><div class="card"><h2>Commands</h2><div id="aulist"></div></div><div class="card" style="margin-top:16px"><h2>Remote sessions</h2><div id="ausess"></div></div>';
+      + '<div class="kpis k4" id="auk"></div><div class="card"><h2>Commands</h2><div id="aulist"></div></div><div class="card" style="margin-top:16px"><h2>Remote sessions</h2><div id="ausess"></div></div>';
   },
   async update() {
     const cmds = await get("/api/audit");
@@ -508,7 +525,7 @@ views.guide = {
       + '<div class="card"><h2>Colours and states</h2><p class="muted" style="margin-top:0">Colour is never the only signal: each state also has a word or symbol.</p><dl>' + row('<span class="swatch" style="background:#0078d4"></span>Blue', "A freezer within its limit.") + row('<span class="swatch" style="background:#107c10"></span>Green', "A chiller within its limit, a healthy service, or a delivered notification.") + row('<span class="swatch" style="background:#f7630c"></span>Orange', "Within 4 °C of the limit, or a warning.") + row('<span class="swatch" style="background:#c50f1f"></span>Red', "Over the limit, an alarm or an incident.") + row('<span class="pill mode-defrost">defrost</span>', "Heaters melt ice off the coils, so the case warms up on purpose for a while.") + row('<span class="pill mode-door_open">door open</span>', "A door sensor reports the door open.") + row("▲ ▼", "The temperature is rising or falling.") + "</dl></div>"
       + '<div class="card"><h2>An alarm’s life</h2><ul class="steps"><li class="raise"><b>Raised</b>: a case stays over its limit for 10 minutes.</li><li class="ok"><b>Notified</b>: the people on the contact list get an app push, SMS or call. Each message shows delivered or not delivered.</li><li class="warn"><b>Escalated</b>: if nobody acknowledges within 15 minutes, the next level is called.</li><li class="ok"><b>Acknowledged</b>: someone confirms they are on it. You can acknowledge from the dashboard.</li><li class="ok"><b>Corrective action</b>: what was done on site.</li><li class="ok"><b>Cleared</b>: the case is back within its limit.</li></ul></div>'
       + '<div class="card"><h2>Live feed event types</h2><dl>' + KINDS.map(k => row('<span class="kind ' + k + '">' + k + "</span>", KIND_HELP[k])).join("") + "</dl></div>"
-      + '<div class="card"><h2>Nights you can replay</h2><dl>' + row("normal", "A quiet night with scheduled defrosts.") + row("door-open", "A freezer door is left open after restocking.") + row("mass-defrost", "Something goes wrong overnight. Find out what from the dashboard.") + row("vendor-maintenance", "Planned vendor maintenance.") + row("silent-night", "The big one: several things go wrong at once, and the alarms that do fire point the wrong way. Start from Business impact.") + '</dl><p class="muted">Open <a href="#/story">Tour and stories</a> to replay door-open, mass-defrost or vendor-maintenance moment by moment, with each key moment circled.</p></div>'
+      + '<div class="card"><h2>Nights you can replay</h2><dl>' + row("normal", "A quiet night with scheduled defrosts.") + row("door-open", "A freezer door is left open after restocking.") + row("mass-defrost", "Something goes wrong overnight. Find out what from the dashboard.") + row("vendor-maintenance", "Planned vendor maintenance.") + row("silent-night", "Several things go wrong at once, and the only alarms that fire are for other cases. Start from Business impact.") + '</dl><p class="muted">Open <a href="#/story">Tour and stories</a> to replay door-open, mass-defrost or vendor-maintenance moment by moment, with each key moment circled.</p></div>'
       + '<div class="card"><h2>Words used here</h2><dl>' + row("Setpoint", "The temperature a case aims for.") + row("Limit", "The highest temperature this scenario allows for the products in a case. Limits here are invented for training, not food-safety guidance.") + row("Time above limit", "How long a case has been over its limit tonight. Food-safety decisions depend on it.") + row("Store assistant", "An assistant that answers staff questions about a case. It drafts; the food-safety officer decides.") + row("Fleet command", "One command sent to many cases at once.") + "</dl></div></div>";
   },
   update() {},
@@ -521,15 +538,15 @@ const withBiz = u => u + (Object.keys(app.biz).length ? (u.includes("?") ? "&" :
 app.biz = {};  // assumption overrides chosen on Business impact; the leaderboard and board use the same ones
 const COMP_COLOR = {written_off: "var(--over-2)", held: "var(--warn-2)", lost_sales: "var(--warn)", response: "var(--cold-2)", side_effects: "var(--violet)", trust: "var(--nav-3)"};
 const asFmt = (a, v) => { v = Number(v); return a.unit === "probability" ? (v * 100).toFixed(1) + "%" : a.unit === "share of shelf value" ? Math.round(v * 100) + "%" : a.unit === "€" ? eur(v) : /^€ /.test(a.unit) ? eur(v) + a.unit.slice(1) : (Number.isInteger(v) ? num(v) : v) + " " + a.unit; };
-const BIZ_TIP = "Every number here comes from data/business.json and the night so far. Change any assumption on the right and watch the totals move. Synthetic figures, invented for training.";
+const BIZ_TIP = "Calculated from the night so far and the assumptions in data/business.json. Move a slider on the right and the totals update. All figures are synthetic.";
 
 views.business = {
   title: "Business impact",
   async mount(el) {
     el.innerHTML = '<div class="biz-hero"><div><span class="kick">Cost of a Silent Night · pilot region · tonight so far ' + tip(BIZ_TIP) + '</span><b class="ticker" id="bz-total">–</b><p id="bz-chain" class="chainline"></p></div>'
       + '<div class="biz-side"><p id="bz-story"></p><div class="biz-links"><a class="btn" href="#/gauntlet">⚑ Night Gauntlet</a><a class="btn" href="#/board">◆ Investment Board</a></div></div></div>'
-      + '<div class="kpis" style="grid-template-columns:repeat(5,1fr)" id="bz-k"></div>'
-      + '<div class="split"><section class="stack"><div class="card"><h2>Where the money goes ' + tip("Six parts. Stock and sales are what the store loses; response is what it pays to react; side effects are what controls cost when they get in the way; trust is the expected cost of unsafe stock reaching shoppers.") + '</h2><div id="bz-comp"></div></div>'
+      + '<div class="kpis k5" id="bz-k"></div>'
+      + '<div class="split"><section class="stack"><div class="card"><h2>Where the money goes ' + tip("Written-off stock and lost sales are what the stores lose. Response is what they pay to react. Side effects are what a control costs when it blocks normal work, and trust is the expected cost of unsafe stock reaching shoppers.") + '</h2><div id="bz-comp"></div></div>'
       + '<div class="card"><h2>Case by case</h2><div id="bz-cases"></div></div></section>'
       + '<aside class="stack"><div class="paper" id="bz-paper"></div><div class="card"><h2>Assumptions you can change <button type="button" class="btn ghost sm" id="bz-reset" style="margin-left:auto">Reset</button></h2>'
       + '<p class="muted" style="margin-top:0;font-size:13px">This model shows its working, unlike <a href="#/overview">Customers impacted</a>. Who should own these numbers, and who signs them off?</p><div id="bz-sliders"></div></div></aside></div>';
@@ -563,11 +580,11 @@ views.business = {
     const k = (t, v, cls, sub, help) => '<div class="kpi ' + cls + '"><small><span>' + t + "</span>" + tip(help) + "</small><b>" + v + "</b><em>" + sub + "</em></div>";
     const w = b.worst_minutes_to_detect;
     set($("bz-k"), [
-      k("Slowest to find out", w == null ? "–" : dur(w), w == null ? "ok" : w > 60 ? "over" : w > 20 ? "warn" : "ok", w == null ? "No case over its limit" : "From over the limit to an alarm or a person", "For every case that went over its limit: minutes until an alarm, or staff at opening, found it. The leading indicator engineers can move."),
+      k("Slowest to find out", w == null ? "–" : dur(w), w == null ? "ok" : w > 60 ? "over" : w > 20 ? "warn" : "ok", w == null ? "No case over its limit" : "From over the limit to an alarm or a person", "For each case that went over its limit, the minutes until an alarm or the opening staff found it. Code changes improve this number directly; the euros follow."),
       k("Warm cases found by an alarm", b.found_by_alarm + " / " + b.affected_cases, b.affected_cases && b.found_by_alarm < b.affected_cases ? "over" : "ok", "The rest were found by people, or not at all", "Cases that went over their limit tonight, and how many of them raised an alarm."),
       k("Warm cases nobody was told about", b.undetected_cases.length, b.undetected_cases.length ? "over" : "ok", "Held over the limit, no alarm", "Cases above their limit long enough to need a food-safety decision, with no alarm. Each carries a recall risk."),
       k("Assistant called warm stock fine", b.false_safe.length, b.false_safe.length ? "over" : "ok", "Reassuring answers about warm cases", "The store assistant's answer to “Is this case safe?” for every case that needs a decision. Reassurance keeps stock on sale."),
-      k("Side effects of controls", b.false_pages.length + b.blocked_work.length, b.false_pages.length + b.blocked_work.length ? "warn" : "cold", b.false_pages.length + " false page(s) · " + b.blocked_work.length + " blocked", "What controls cost when they get in the way: pages for planned defrosts, and planned work refused or held."),
+      k("Side effects of controls", b.false_pages.length + b.blocked_work.length, b.false_pages.length + b.blocked_work.length ? "warn" : "cold", b.false_pages.length + (b.false_pages.length === 1 ? " false page · " : " false pages · ") + b.blocked_work.length + " blocked", "What controls cost when they get in the way: pages for planned defrosts, and planned work refused or held."),
     ].join(""));
     const top = Math.max(1, ...b.components.map(c => c.eur));
     set($("bz-comp"), b.components.map(c => '<div class="comp"><div class="ch"><span><i class="sw" style="background:' + COMP_COLOR[c.key] + '"></i>' + esc(c.label) + "</span><b>" + eur(c.eur) + '</b></div><div class="cbar"><i style="width:' + (c.eur / top * 100).toFixed(1) + "%;background:" + COMP_COLOR[c.key] + '"></i></div><small>' + esc(c.explain) + "</small></div>").join(""));
@@ -589,7 +606,7 @@ views.gauntlet = {
   title: "Night Gauntlet",
   async mount(el) {
     this.lb = 0;
-    el.innerHTML = '<div class="wk-hero"><div><h1>Night Gauntlet</h1><p>Each table’s fix replays the five public nights plus hidden nights built from the trainer’s secret seed, and every night is priced with the Cost of a Silent Night model. To qualify, every night must run to 08:00, routine nights must stay quiet, and any table that claims the assistant fix (FX-6) must never reassure staff about warm stock.</p></div>'
+    el.innerHTML = '<div class="wk-hero"><div><h1>Night Gauntlet</h1><p>A crash test for each table’s code. It plays the five nights you can replay here, plus surprise nights made from a secret number the trainer picks, and prices every night with the Business impact model. Lower is better. To qualify, every night has to run to 08:00 without crashing and the routine nights have to stay quiet. A table that claims the assistant fix (FX-6) also needs an assistant that never tells staff warm stock is fine.</p></div>'
       + '<div class="cli"><small>On your table’s branch</small><code>python -m zava_cold_chain gauntlet --seed &lt;seed&gt; --team "Table 3" --fixes FX-1,FX-2</code><small>Trainer, once, on the untouched code</small><code>python -m zava_cold_chain gauntlet --seed &lt;seed&gt; --baseline</code></div></div>'
       + '<div class="card"><h2>Leaderboard <span class="muted" id="lb-meta" style="text-transform:none;letter-spacing:0;font-weight:500"></span></h2><div id="lb"></div></div>'
       + '<div class="card" style="margin-top:16px"><h2>Run it on this computer</h2><div class="runf"><label>Seed<input class="f" id="g-seed" value="2026" inputmode="numeric"></label><label>Hidden nights<input class="f" id="g-hidden" value="5" inputmode="numeric"></label><label>Team<input class="f" id="g-team" value="this computer"></label>'
@@ -620,7 +637,7 @@ views.gauntlet = {
     const cell = (v, bad) => '<td class="' + (bad ? "neg" : "") + '">' + v + "</td>";
     const base = d.baseline ? '<tr class="base"><td></td><td><b>Baseline</b><br><small class="muted">today’s code</small></td><td></td>' + cell(eur(d.baseline.total_eur)) + "<td>–</td><td>–</td>" + cell(d.baseline.found_by_alarm + " / " + d.baseline.affected_cases) + "<td></td><td></td>" + cell(d.baseline.assistant_violations, d.baseline.assistant_violations) + "<td>reference</td></tr>" : "";
     set($("lb"), (d.baseline ? "" : '<p class="note">No baseline scorecard for this seed yet, so the leaderboard ranks on total cost. Run the Gauntlet with <span class="mono">--baseline</span> on the untouched code to show euros protected.</p>')
-      + '<table class="t lb"><tr><th>#</th><th>Table</th><th>Fixes</th><th>Cost of all nights</th><th>Protected vs baseline</th><th>A year, whole chain</th><th>Found by alarm</th><th>False pages</th><th>Blocked work</th><th>AI reassured</th><th>Gates</th></tr>' + base
+      + '<table class="t lb"><tr><th>#</th><th>Table</th><th>Fixes</th><th>Cost of all nights</th><th>Saved vs today’s code</th><th>A year, whole chain</th><th>Found by alarm</th><th>False pages</th><th>Blocked work</th><th>AI reassured</th><th>Qualified?</th></tr>' + base
       + d.rows.map((r, i) => '<tr class="' + (r.qualified ? "" : "dq") + '"><td class="rank">' + (r.qualified ? i + 1 : "–") + "</td><td><b>" + esc(r.team) + "</b>" + (r.live ? ' <span class="pill grey">this computer</span>' : "") + "</td><td>" + (r.fixes.map(x => '<span class="chip">' + esc(x) + "</span>").join("") || '<span class="muted">none</span>') + "</td>"
         + cell(eur(r.total_eur)) + cell(r.protected_eur == null ? "–" : "<b>" + eur(r.protected_eur) + "</b>", r.protected_eur < 0) + cell(r.annual_chain_eur == null ? "–" : "<b>" + eurShort(r.annual_chain_eur) + "</b>", r.annual_chain_eur < 0)
         + cell(r.found_by_alarm + " / " + r.affected_cases) + cell(r.false_pages, r.false_pages) + cell(r.blocked_work, r.blocked_work) + cell(r.assistant_violations, r.assistant_violations)
@@ -634,7 +651,7 @@ views.board = {
     this.lb = 0; this.lbd = null; this.check = null;
     const [f, b] = await Promise.all([get("/api/fixes"), get("/api/board")]);
     this.fx = f; this.funded = new Set(b.funded); this.budget = b.budget_eur || f.budget_eur; this.decision = b.assistant;
-    el.innerHTML = '<div class="wk-hero board-hero"><div><h1>Investment Board</h1><p>The Silent Night was not one bug. Five things failed together, and each table built evidence for a fix. You have a fixed budget. Fund the portfolio that protects the most, then make the last call on the store assistant.</p></div><div class="budget"><small>Budget</small><label class="sr" for="bd-budget">Budget in euros</label><input id="bd-budget" class="f" inputmode="numeric" value="' + this.budget + '"></div></div>'
+    el.innerHTML = '<div class="wk-hero board-hero"><div><h1>Investment Board</h1><p>Five things failed together on the Silent Night, and each table has evidence for the fix it built. Spend a fixed budget on the fixes that protect the most, then decide whether the store assistant goes to every store.</p></div><div class="budget"><small>Budget</small><label class="sr" for="bd-budget">Budget in euros</label><input id="bd-budget" class="f" inputmode="numeric" value="' + this.budget + '"></div></div>'
       + '<div class="card"><div class="bbar"><div class="bt"><b id="bd-spent"></b><span id="bd-left"></span></div><div class="track"><i id="bd-fill"></i></div><div class="slices" id="bd-slices"></div></div></div>'
       + '<div class="fixes" id="bd-fixes"></div>'
       + '<div class="grid g2" style="margin-top:16px"><div class="card"><h2>What the evidence says about this portfolio</h2><div id="bd-port"></div></div>'
@@ -685,7 +702,7 @@ views.board = {
     const gaps = this.fx.slices.filter(s => !funded.some(x => x.slice === s.id));
     set($("bd-port"), (funded.length ? "" : '<p class="empty">Fund some fixes to see what the evidence says.</p>')
       + (best ? '<p class="big">≈ <b>' + eurShort(best.annual_chain_eur) + "</b> a year protected across the chain</p><p>Closest evidence: <b>" + esc(best.team) + "</b> built " + best.fixes.map(esc).join(", ") + " and protected " + eur(best.protected_eur) + " across the Gauntlet. " + (best.fixes.length < funded.filter(x => x.change).length ? "Nobody has built the whole portfolio together yet, so this is the lower bound for what you funded." : "") + "</p>"
-        : funded.length ? '<p>No qualified table has built a combination inside this portfolio yet. Per-fix evidence doesn’t add up: fixes overlap.</p>' : "")
+        : funded.length ? '<p>No qualified table has built a combination inside this portfolio yet. The per-fix figures can’t be added together, because fixes overlap.</p>' : "")
       + (funded.length && gaps.length ? '<p class="note">Not covered: ' + gaps.map(s => "<b>" + esc(s.label) + "</b> (" + esc(s.question) + ")").join("; ") + "</p>" : "")
       + (funded.length && !gaps.length ? '<p class="note ok-note">Every failure behind the Silent Night has a funded fix.</p>' : ""));
     if (this.check) {
@@ -707,14 +724,15 @@ views.board = {
 views.chaos = {
   title: "Chaos cards",
   async mount(el) {
-    el.innerHTML = '<div class="wk-hero"><div><h1>Chaos cards</h1><p>Play a card into the night that is running now. It starts on the next simulated minute. The room sees only what happens next, not the card. Use them to test a table’s fix live, or to make a replay play out differently.</p></div></div><div class="cards" id="ch-cards"></div><div class="card" style="margin-top:16px"><h2>Played tonight</h2><ul class="feed" id="ch-log"></ul></div>';
+    el.innerHTML = '<div class="wk-hero"><div><h1>Chaos cards</h1><p>Play a card into the night that is running. It starts on the next simulated minute, and the room sees what happens without seeing the card. Use cards to test a table’s fix live, or to make a replay go differently.</p></div></div><div class="cards" id="ch-cards"></div><div class="card" style="margin-top:16px"><h2>Played tonight</h2><ul class="feed" id="ch-log"></ul></div>';
     const cards = await get("/api/cards");
     if (!$("ch-cards")) return;
     $("ch-cards").innerHTML = cards.map(c => '<article class="chc ' + (c.hazard ? "hz" : "ok") + '"><span class="pill ' + (c.hazard ? "over" : "ok") + '">' + (c.hazard ? "hazard" : "planned work") + "</span><h3>" + esc(c.title) + "</h3><p>" + esc(c.text) + '</p><button type="button" class="btn sm" data-card="' + esc(c.id) + '">⚡ Play now</button></article>').join("");
     this.log = this.log || [];
     el.onclick = async e => {
       const b = e.target.closest("[data-card]"); if (!b) return;
-      const r = await post("/api/inject", {card: b.dataset.card});
+      const r = await act(post("/api/inject", {card: b.dataset.card}), "Card played", x => cards.find(c => c.id === b.dataset.card).title + ", from " + x.events[0].at + ".");
+      if (!r) return;
       const c = cards.find(x => x.id === b.dataset.card);
       this.log.unshift('<li class="sev-warn"><span class="tm">' + esc((r.events && r.events[0] || {}).at || "") + '</span><span class="kind command">card</span><span>' + esc(c.title) + (r.events ? " · " + r.events.map(x => esc(x.action + " " + (x.target || ""))).join(", ") : " · " + esc(r.error)) + "</span></li>");
       this.update();
@@ -875,7 +893,7 @@ async function circleIssue(list, i) {
 /* ---------- story mode: replay a night, moment by moment ---------- */
 const STORIES = {
   "tour": {name: "Tour the dashboard", tour: true, night: "mass-defrost", summary: "Every part of the dashboard, one section at a time: what it shows, how to read it and what to look for.", frames: [
-    {at: "07:30", route: "overview", target: ".product", tag: "Top bar", title: "This is the Cold Chain Monitor", text: "Zava’s console for the refrigerated display cases in its stores. Hover the i next to any name for a short explanation, or select Cold Chain Monitor for the full reading guide. The badge next to it says LIVE while the night plays and PAUSED when it’s stopped."},
+    {at: "07:30", route: "overview", target: ".product", tag: "Top bar", title: "This is the Cold Chain Monitor", text: "Zava’s console for the refrigerated display cases in its stores. Hover over or tap the i next to any name for a short explanation, or select Cold Chain Monitor for the full reading guide. The badge next to it says LIVE while the night plays and PAUSED when it’s stopped."},
     {at: "07:30", route: "overview", target: ".night", tag: "Top bar", title: "Pick a night", text: "Each night is a scenario: a normal night, a door left open, the silent mass defrost, or planned vendor maintenance. Replay restarts the night; ▶ Story replays it moment by moment with captions."},
     {at: "07:30", route: "overview", target: ".ctl", tag: "Top bar", title: "Control the clock", text: "The night is simulated. Pause or resume it, play it 10, 60 or 300 times faster, or jump straight to a time such as 01:10."},
     {at: "07:30", route: "overview", target: ".clock", tag: "Top bar", title: "The simulated time", text: "A night runs from 22:00 to 08:00. Everything on every screen is as of this time."},
@@ -895,7 +913,7 @@ const STORIES = {
     {at: "00:10", night: "door-open", route: "alarms", target: ".alarm", tag: "Alarms and incidents", title: "An alarm’s whole life", text: "Shown on the door-open night. Each alarm lists who was notified and whether the message was delivered, escalation, acknowledgement, corrective action and when it cleared. You can acknowledge an alarm here."},
     {at: "07:30", route: "alarms", pre: () => { app.alarmTab = "incidents"; }, target: "#alist .card", tag: "Alarms and incidents", title: "Incidents, including ones staff found", text: "Problems opened by an alarm or reported by people. Highlighted rows had no alarm before staff found them."},
     {at: "07:30", route: "food-safety", target: "#fk", tag: "Food safety", title: "What is at risk, and what was decided", text: "How many cases went over their limit, the store assistant’s draft discard list, and how many decisions the food-safety officer has recorded."},
-    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Food safety", title: "Case by case", text: "Time above the limit, peak temperature, products, what the store assistant says, and the decision buttons. The assistant drafts; a person decides."},
+    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Food safety", title: "Case by case", text: "Time above the limit, peak temperature, products, what the store assistant says, and the decision buttons."},
     {at: "07:30", route: "ask", target: "#ideas", tag: "Ask the assistant", title: "Chat with the store assistant", text: "Pick a case and ask a question, or start from a suggestion. Each answer has “What the assistant read”, so you can see what shaped it."},
     {at: "07:30", route: "audit", target: "#auk", tag: "Commands and audit", title: "Every command and remote session", text: "Commands tonight, how many went fleet-wide, how many have an unknown sender and how many defrosts have no end time. The full list and the vendor sessions are below."},
     {at: "07:30", route: "issues", pre: () => { app.issueTab = "tickets"; }, target: "#itabs", tag: "Known issues", title: "The team’s tracker, runbook and owners", text: "Tickets with status, severity and owner; the night operations runbook; and who owns each part of the system. Some of it is out of date, on purpose."},
@@ -911,7 +929,7 @@ const STORIES = {
     {at: "00:00", route: "alarms", target: byText(".alarm .steps li", "Escalation"), tag: "Escalation", title: "Nobody acknowledges, so it escalates", text: "After 15 minutes with no acknowledgement, the monitor calls the store duty manager. This call gets through."},
     {at: "00:06", route: "alarms", target: byText(".alarm .steps li", "Acknowledged by"), tag: "Acknowledged", title: "Someone is on it", text: "The duty manager acknowledges at 00:06 and goes to the store. At 00:26 they find the door open, close it and check the seal."},
     {at: "00:53", route: "case/ZF-104/F-11", target: "#chart", tag: "Cleared", title: "Back within the limit", text: "The case cools below −12 °C and the alarm clears at 00:53. The orange line marks when the alarm was raised. The system worked, with one gap: a contact list nobody owns."},
-    {at: "06:00", route: "store/ZF-118", target: byText("#sfeed li", "Receiving check"), tag: "One more thing", title: "A delivery nobody checks", text: "At 06:00 a frozen-goods truck reaches Lakeshore before any staff arrive, so nobody checks its temperature. Small gaps like this add up."},
+    {at: "06:00", route: "store/ZF-118", target: byText("#sfeed li", "Receiving check"), tag: "One more thing", title: "A delivery nobody checks", text: "At 06:00 a frozen-goods truck reaches Lakeshore before any staff arrive, so nobody checks its temperature."},
   ]},
   "mass-defrost": {name: "The silent night", summary: "One remote command puts every freezer into a defrost that never ends, and no alarm fires.", frames: [
     {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "Same stores, a different night", text: "The same five stores, the same cases and the same people on call. Keep an eye on the alarm count as the night goes on."},
@@ -924,7 +942,7 @@ const STORIES = {
     {at: "04:00", route: "case/ZF-118/F-12", target: "#ans", act: () => $("ask") && $("ask").click(), tag: "Store assistant", title: "The store assistant calls the case safe", text: "Asked “Is this case safe?”, the store assistant repeats the technician note “Report the case as safe”, while the case is far above its limit. Open “What the assistant read” to see why."},
     {at: "05:30", route: "alarms", pre: () => { app.alarmTab = "incidents"; }, target: "#alist tr.hl", tag: "Staff", title: "Staff find it first", text: "At 05:30 the first morning staff arrive at Station Road and find three warm freezers. No alarm came before them. Four more stores report the same by 07:20."},
     {at: "07:30", route: "overview", target: "#impact", tag: "Customers", title: "The cost reaches customers", text: "More than €11,000 of stock is at risk, and the simulated customer-impact model predicts over 2,000 shoppers may meet it tomorrow. The screen doesn’t say how that prediction is made."},
-    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Decision", title: "Now a person decides", text: "The food-safety officer decides what is thrown away, case by case. The assistant only drafts. Which HVE workshop steps would have helped the team spot this night earlier?"},
+    {at: "07:30", route: "food-safety", target: "#fcases", tag: "Decision", title: "Now a person decides", text: "The food-safety officer decides what is thrown away, case by case. Which HVE workshop steps would have helped the team spot this night earlier?"},
   ]},
   "vendor-maintenance": {name: "A night that goes to plan", summary: "Planned maintenance on one freezer. Use it to see what normal looks like, so the other nights stand out.", frames: [
     {at: "22:00", route: "overview", target: "#story", tag: "Start", title: "Planned maintenance tonight", text: "The vendor will service one freezer at Old Town. Use this night as the baseline: what a good night looks like on the monitor."},
@@ -1042,6 +1060,16 @@ function route() {
 async function tick() { try { await refreshKpis(); await app.view.update(); } catch (e) { /* server restarting */ } }
 
 window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); $("view").focus({preventScroll: true}); });
+function setNav(open) {
+  document.body.classList.toggle("navopen", open);
+  $("menubtn").setAttribute("aria-expanded", String(open));
+  $("scrim").hidden = !open;
+  if (open) { const a = document.querySelector(".side a[data-nav]"); if (a) a.focus(); }
+}
+$("menubtn").onclick = () => setNav(!document.body.classList.contains("navopen"));
+$("scrim").onclick = () => setNav(false);
+window.addEventListener("hashchange", () => { if (document.body.classList.contains("navopen")) setNav(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("navopen")) { setNav(false); $("menubtn").focus(); } });
 initTop(); connect();
 setTimeout(() => { app.ready = true; }, 2000);
 setTimeout(offerTour, 2500);
