@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Cost of a Silent Night: what one night costs the business, and what it would cost across the chain.
 
 Every number comes from `data/business.json`, and every assumption can be changed. That is deliberate: unlike the

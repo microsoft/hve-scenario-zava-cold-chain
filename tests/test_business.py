@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Tests for the Cost of a Silent Night model, the systemic night and the Night Gauntlet.
 
 Run: python -m unittest

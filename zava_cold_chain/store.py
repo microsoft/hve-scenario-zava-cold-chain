@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Storage for readings, alarms and technician notes. In-memory SQLite: every run starts clean."""
 from __future__ import annotations
 

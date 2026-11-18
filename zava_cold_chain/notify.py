@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Alarm handling: notifications, escalation, acknowledgement, corrective action and clearing.
 
 An alarm follows the usual life cycle: raised (unacknowledged) -> acknowledged -> cleared. If nobody acknowledges it

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Read models for the dashboard: headline numbers, store and case views, food safety, health and issues."""
 from __future__ import annotations
 

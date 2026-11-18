@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Web server: the operations dashboard, a JSON API and a live event stream.
 
 Binds to 127.0.0.1 only. There is no sign-in: being local is the only access control.

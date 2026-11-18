@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Case simulator: simulated stores, display cases and night operations on an accelerated clock.
 
 Nothing here talks to real equipment. A "night" runs from 22:00 to 08:00, one tick per simulated minute.

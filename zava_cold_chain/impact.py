@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Predicted customer impact: how many shoppers tomorrow may meet stock that is at risk tonight.
 
 The dashboard presents this as a model prediction and does not say how it is made. In this prototype it is

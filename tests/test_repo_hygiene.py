@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Repository hygiene: no hidden or direction-changing Unicode characters, and every data file labelled synthetic.
 
 These characters can make code or text read differently from what runs (for example "Trojan Source"),

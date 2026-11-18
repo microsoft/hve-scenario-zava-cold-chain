@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Alarm rules for the cold-chain monitor.
 
 ALM-01 (2012): a case above its limit for HOLD_MINUTES raises an alarm.

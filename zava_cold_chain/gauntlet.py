@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Night Gauntlet: score the code on this computer in euros.
 
 The Gauntlet replays every public night plus hidden nights generated from a trainer's secret seed, then prices each

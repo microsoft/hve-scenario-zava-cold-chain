@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Command line: python -m zava_cold_chain serve | replay <night> | nights | gauntlet"""
 from __future__ import annotations
 

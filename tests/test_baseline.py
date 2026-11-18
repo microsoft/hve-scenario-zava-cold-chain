@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Baseline tests. They pass today and describe behavior that must keep working after your change.
 
 Run: python -m unittest

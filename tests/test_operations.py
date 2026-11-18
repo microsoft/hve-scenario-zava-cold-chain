@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Tests for the live feed, operations data and the HTTP API. They describe today's behavior.
 
 Run: python -m unittest

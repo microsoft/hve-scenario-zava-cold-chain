@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /* Cold Chain Monitor console for Zava. No build step and no libraries. Fictitious data from the local simulator. */
 "use strict";
 

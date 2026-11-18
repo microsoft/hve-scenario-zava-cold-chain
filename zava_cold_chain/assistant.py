@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Store assistant: answers store staff questions about a case, and drafts a discard list.
 
 The assistant runs offline. `_model` stands in for a language model so the scenario needs no keys or network.

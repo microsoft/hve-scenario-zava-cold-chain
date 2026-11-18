@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Simulated clock helpers. A night runs from 22:00 (minute 1320) to 08:00 the next morning."""
 
 
