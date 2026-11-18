@@ -188,9 +188,8 @@ class BusinessApi(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        from zava_cold_chain.server import serve
         cls.tmp = tempfile.TemporaryDirectory()
-        cls.httpd = serve(port=0, night="normal", speed=600, scorecards=Path(cls.tmp.name))
+        cls.httpd = cls.serve(port=0, night="normal", speed=600, scorecards=Path(cls.tmp.name))
         cls.base = f"http://127.0.0.1:{cls.httpd.server_address[1]}"
         threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
 
@@ -198,8 +197,6 @@ class BusinessApi(SQLiteTestCase):
     def tearDownClass(cls):
         cls.httpd.shutdown()
         cls.httpd.server_close()
-        with cls.httpd.sim.lock:
-            cls.httpd.sim.paused = True
         cls.tmp.cleanup()
 
     def get(self, path):

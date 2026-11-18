@@ -202,8 +202,7 @@ class Routes(SQLiteTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        from zava_cold_chain.server import serve
-        cls.httpd = serve(port=0, night="normal", speed=600)
+        cls.httpd = cls.serve(port=0, night="normal", speed=600)
         cls.base = f"http://127.0.0.1:{cls.httpd.server_address[1]}"
         threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
 
@@ -211,8 +210,6 @@ class Routes(SQLiteTestCase):
     def tearDownClass(cls):
         cls.httpd.shutdown()
         cls.httpd.server_close()
-        with cls.httpd.sim.lock:
-            cls.httpd.sim.paused = True
 
     def get(self, path, **headers):
         with urllib.request.urlopen(urllib.request.Request(self.base + path, headers=headers), timeout=5) as r:
