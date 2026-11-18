@@ -36,16 +36,16 @@
   "attendee": {
     "steps": [
       "Open [Investment Board](/#/board) and read the fix catalogue: FX-1 to FX-8, what each costs and what it risks.",
-      "Pick Functional Planner and send the prompt below.",
+      {
+        "text": "Pick Functional Planner and send this prompt.",
+        "prompt": {
+          "label": "Plan the work items",
+          "text": "Plan a GitHub issue hierarchy for zava-silent-night from `docs/project-planning/zava-silent-night-prd.md`. Also read the backlog handoffs in `.copilot-tracking/security-plans/zava-silent-night/` and `.copilot-tracking/rai-plans/zava-silent-night/`. Map each work item to one fix from `data/fixes.json` (FX-1 to FX-8) and carry its acceptance cases. FX-7 and FX-8 are policy and process work. Write the handoff under `.copilot-tracking/github-issues/prds/` and don't create anything in GitHub."
+        }
+      },
       "Check that every acceptance case in your PRD lands on a work item, and that every work item names one fix.",
       "Check that each control from your security or RAI backlog handoff sits on the work item it constrains.",
       "Mark FX-7 and FX-8 as policy and process items with an owner outside the code. Keep the plan as a file: nothing is created in GitHub today."
-    ],
-    "prompts": [
-      {
-        "label": "Plan the work items",
-        "text": "Plan a GitHub issue hierarchy for zava-silent-night from `docs/project-planning/zava-silent-night-prd.md`. Also read the backlog handoffs in `.copilot-tracking/security-plans/zava-silent-night/` and `.copilot-tracking/rai-plans/zava-silent-night/`. Map each work item to one fix from `data/fixes.json` (FX-1 to FX-8) and carry its acceptance cases. FX-7 and FX-8 are policy and process work. Write the handoff under `.copilot-tracking/github-issues/prds/` and don't create anything in GitHub."
-      }
     ]
   },
   "coach": {

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -190,7 +191,7 @@ def make_handler(sim: Simulation):
                     self.wfile.write(f"event: clock\ndata: {json.dumps(tick)}\n\n".encode("utf-8"))
                     self.wfile.flush()
                     time.sleep(0.5)
-            except (BrokenPipeError, ConnectionResetError):
+            except ConnectionError:  # the browser closed the page; Windows reports this as ConnectionAbortedError
                 return
 
         def do_GET(self) -> None:
@@ -329,9 +330,17 @@ def make_handler(sim: Simulation):
     return Handler
 
 
+class _Server(ThreadingHTTPServer):
+    def handle_error(self, request, client_address) -> None:
+        # A browser that closes a tab or reloads drops its connection mid-reply. That is normal, so stay quiet;
+        # anything else still prints its traceback.
+        if not isinstance(sys.exc_info()[1], ConnectionError):
+            super().handle_error(request, client_address)
+
+
 def serve(port: int = 8740, night: str = "normal", speed: float = 10.0, scorecards: Path = Path("scorecards")) -> ThreadingHTTPServer:
     sim = Simulation(night, speed, scorecards)
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), make_handler(sim))
+    httpd = _Server(("127.0.0.1", port), make_handler(sim))
     httpd.daemon_threads = True
     httpd.sim = sim
     return httpd

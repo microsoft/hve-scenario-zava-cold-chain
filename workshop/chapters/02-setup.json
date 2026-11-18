@@ -80,19 +80,21 @@
     "steps": [
       "Clone the repo and open its folder in VS Code. Run every command from the repo root: the package isn't installed, so `python -m zava_cold_chain` only works there.",
       "Run `python -m unittest` and check that every test passes. If `python` isn't found, use `python3` on macOS and Linux or `py` on Windows.",
-      "Start the monitor with `python -m zava_cold_chain serve` and open [System health](/#/health).",
-      "Install HVE Core: install the hve-core plugin, or type `/hve-core-installer` in Copilot Chat. Then open the agent picker and check that DT Coach and RPI Agent are listed.",
-      "Open a new chat and check that the Session Target button below the chat input says Copilot.",
-      "Run `/git-setup`, then create and switch to your table's branch, for example `zava-silent-night/table-3`."
-    ],
-    "prompts": [
+      "Start the dashboard with `python -m zava_cold_chain serve`. The terminal prints two links: open the Workshop Journey, then open [System health](/#/health) in the dashboard. Keep the terminal open while you work.",
       {
-        "label": "Install HVE Core",
-        "text": "/hve-core-installer Install HVE Core for this workspace. We use the project slug zava-silent-night, so later agents write under `.copilot-tracking/` and `docs/project-planning/`. Don't change any files under `zava_cold_chain/`, `data/` or `nights/`."
+        "text": "Install HVE Core: install the hve-core plugin, or paste this prompt into Copilot Chat. Then open the agent picker and check that DT Coach and RPI Agent are listed.",
+        "prompt": {
+          "label": "Install HVE Core",
+          "text": "/hve-core-installer Install HVE Core for this workspace. We use the project slug zava-silent-night, so later agents write under `.copilot-tracking/` and `docs/project-planning/`. Don't change any files under `zava_cold_chain/`, `data/` or `nights/`."
+        }
       },
+      "Open a new chat and check that the Session Target button below the chat input says Copilot.",
       {
-        "label": "Set up git and the branch",
-        "text": "/git-setup Check my git identity and settings for this repo. Then create the branch `zava-silent-night/table-3` from `main` and switch to it. Our table's work for zava-silent-night goes on that branch."
+        "text": "Create a branch for your table's work, for example `table-3`. You each have your own clone, so the branch isn't there to keep tables apart: it keeps `main` as the untouched baseline you compare your fix against, and chapter 10 opens its pull request from it. This prompt checks your git name and email, then makes the branch.",
+        "prompt": {
+          "label": "Set up git and the branch",
+          "text": "/git-setup Check my git name and email for this repo. Then create the branch `table-3` from `main` (use our table's number) and switch to it. Our table's work for zava-silent-night goes on that branch."
+        }
       }
     ]
   },
@@ -114,7 +116,7 @@
   "facilitator": {
     "before": [
       "Send the pre-work a week ahead: clone the repo, run `python -m unittest`, install HVE Core.",
-      "Decide table numbers and the branch pattern, for example `zava-silent-night/table-3`."
+      "Decide table numbers and the branch pattern, for example `table-3`."
     ],
     "run": [
       {

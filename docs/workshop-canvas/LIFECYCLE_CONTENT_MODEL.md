@@ -40,6 +40,7 @@ workshop/
 | `version` | integer | Content schema version, starts at 1 |
 | `hve_core_checked` | date string | When the agent and skill names were last checked against HVE Core's docs |
 | `hve_core_sources` | list of URLs | The pages they were checked against |
+| `abbreviations` | object | Abbreviation to meaning, for example `BRD`. The first use on each page shows the meaning on hover, focus or tap |
 | `project_slug` | string | `zava-silent-night`. Prompts use it so tools write where the page looks |
 | `delivery_start` | date string or null | First day of a delivery. When today is one of the three days, the rail marks the chapter scheduled now |
 | `outcome` | object | `statement`, `measure`, `must_not_change`, `figures` (pilot, chain-wide, Gauntlet baseline at seed 2026) |
@@ -79,7 +80,7 @@ An artifact:
 | `produces` | list of ids | Artifacts made here |
 | `monitor` | list | `{label, route}`, screens in the monitor this chapter uses |
 | `tools` | list | `{name, open, for}`: "BRD Builder", "agent picker", "runs Discover, Define, Govern" |
-| `attendee` | object | `steps` (ordered strings), `prompts` (`{label, text}`) |
+| `attendee` | object | `steps`: ordered. Each is a string, or `{text, prompt: {label, text}}` when the step asks the attendee to send a prompt, so the prompt sits inside the step that needs it |
 | `coach` | object | `ask` (questions), `character` (role id from the cards, chapter 03 only), `mistakes`, `step_in` |
 | `facilitator` | object | `before` (prep), `run` (`{at, minutes, do}`), `good_answer`, `watch_for`, `demo` (what to show on screen) |
 | `done_when` | list of strings | Exit criteria, shown as manual checkboxes |
@@ -121,11 +122,10 @@ How roles use the same file:
   "attendee": {
     "steps": [
       "Open GitHub Copilot Chat and pick BRD Builder in the agent picker.",
-      "Start with the prompt below.",
+      {"text": "Start with this prompt.", "prompt": {"label": "Start the BRD", "text": "Create a BRD for zava-silent-night. Start from `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. The outcome is the Cost of a Silent Night on the Business impact screen. Save the BRD to `docs/project-planning/zava-silent-night-brd.md`."}},
       "Answer its Discover questions from [Business impact](/#/business). Move the sliders before you agree a target, and write down who owns each one.",
       "Before Govern, check that the BRD names what must not change."
-    ],
-    "prompts": [{"label": "Start the BRD", "text": "Create a BRD for zava-silent-night. Start from `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. The outcome is the Cost of a Silent Night on the Business impact screen. Save the BRD to `docs/project-planning/zava-silent-night-brd.md`."}]
+    ]
   },
   "coach": {
     "ask": ["Which of these figures would the CFO sign?", "Who owns the shelf-value assumption?", "What would make this goal look met when it isn't?"],

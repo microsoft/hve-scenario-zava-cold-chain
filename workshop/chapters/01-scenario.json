@@ -35,15 +35,15 @@
     "steps": [
       "Watch the trainer's screen as silent-night replays at ×60. If the monitor already runs on your laptop, follow along on [Business impact](/#/business).",
       "Note each alarm as it fires: the time, the case and the store. Write down anything that surprises you.",
-      "At 08:00, read the newspaper headline and the Cost of a Silent Night by component.",
+      {
+        "text": "At 08:00, read the newspaper headline and the Cost of a Silent Night by component. To see how that figure is worked out, paste this prompt into Copilot Chat.",
+        "prompt": {
+          "label": "Explain the cost model",
+          "text": "For project zava-silent-night, explain how `data/business.json` and `zava_cold_chain/business.py` price one night. List each cost component and the assumption behind it, and say which assumptions are shown as sliders on Business impact. Don't change any files."
+        }
+      },
       "Move one assumption slider, for example how many stores the chain has, and watch the chain-wide figure change. Put it back afterwards.",
       "Write one sentence on what must not change: a scheduled defrost that ends on time raises no alarm."
-    ],
-    "prompts": [
-      {
-        "label": "Explain the cost model",
-        "text": "For project zava-silent-night, explain how `data/business.json` and `zava_cold_chain/business.py` price one night. List each cost component and the assumption behind it, and say which assumptions are shown as sliders on Business impact. Don't change any files."
-      }
     ]
   },
   "coach": {

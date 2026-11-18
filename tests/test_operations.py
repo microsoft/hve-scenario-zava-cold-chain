@@ -238,6 +238,18 @@ class Api(unittest.TestCase):
                 self.assertEqual(got, "application/json")
                 self.assertNotIn(b"import", body)
 
+    def test_dropped_connections_are_quiet(self):
+        import contextlib
+        import io
+        for error, quiet in ((ConnectionAbortedError(10053, "aborted by the host"), True), (BrokenPipeError(), True), (ValueError("bug"), False)):
+            err = io.StringIO()
+            with self.subTest(error=type(error).__name__), contextlib.redirect_stderr(err):
+                try:
+                    raise error
+                except Exception:
+                    self.httpd.handle_error(None, ("127.0.0.1", 1))
+                self.assertEqual(err.getvalue() == "", quiet, err.getvalue())
+
     def test_stream_sends_events(self):
         with urllib.request.urlopen(self.base + "/api/stream", timeout=5) as r:
             first = r.readline().decode()

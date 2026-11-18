@@ -393,7 +393,7 @@ body.landing main { margin-left: 0; }
 .nums, .wl { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; }
 .nums li, .wl li { display: flex; flex-direction: column; gap: 6px; padding: 24px 0 28px; border-top: 1px solid var(--line); max-width: none; }
 .big { font: 700 clamp(30px, 3.6vw, 44px)/1.1 var(--serif); color: var(--ink); letter-spacing: -.015em; }
-.goal { color: var(--accent); font-size: 14px; font-weight: 600; }
+.ngoal { color: var(--accent); font-size: 14px; font-weight: 600; }
 .wl p { margin: 0; font-size: 16px; }
 .src { font-size: 13px; color: var(--slate); margin-top: auto; padding-top: 6px; }
 .world .big { color: var(--risk); }
@@ -424,3 +424,11 @@ body.landing main { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .reveal, .cost { opacity: 1 !important; transform: none !important; } .bl.reveal { transform: rotate(180deg) !important; } }
 @media print { .night { background: none; color: inherit; min-height: 0; } .reveal, .cost { opacity: 1; transform: none; } .scrollcue, .lhead { display: none; } }
+
+/* ---------- abbreviations: meaning on hover, focus or tap ---------- */
+.ab { text-decoration: underline dotted; text-decoration-color: var(--slate); text-underline-offset: 3px; cursor: help; position: relative; border-radius: 2px; }
+.ab::after { content: attr(data-tip); display: none; position: absolute; left: 0; top: calc(100% + 8px); z-index: 40; width: max-content; max-width: min(300px, 72vw);
+  padding: 8px 11px; border-radius: 6px; background: var(--ink); color: var(--page); font: 400 13px/1.45 var(--sans); white-space: normal; text-align: left;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .18); pointer-events: none; }
+.ab:hover::after, .ab:focus::after { display: block; }
+@media print { .ab::after { display: none !important; } }

@@ -42,17 +42,17 @@
   ],
   "attendee": {
     "steps": [
-      "Pick Backlog Manager and send the prompt below.",
+      {
+        "text": "Pick Backlog Manager and send this prompt.",
+        "prompt": {
+          "label": "Plan the sprint",
+          "text": "Plan a one-day sprint for zava-silent-night from the work-item handoff under `.copilot-tracking/github-issues/prds/`. We are Table 3 and commit to one fix: FX-2 (change this to yours). List its work items and acceptance cases in priority order, the tests we'll write first, and what we'll drop if time runs out. Write the sprint plan under `.copilot-tracking/github-issues/sprint/` and don't create or change anything in GitHub."
+        }
+      },
       "Choose one fix your table can research, plan, build and test by 12:00 on Day 3. Agree it with the facilitator so two tables don't take the same one.",
       "Write down the acceptance cases you will be checked against in chapter 09.",
       "Agree which table speaks for FX-7 and FX-8 at the Investment Board. The Gauntlet can't measure them, so build the argument from your interview notes and [Known issues](/#/issues).",
       "Check you are on your table's branch with `git branch --show-current`."
-    ],
-    "prompts": [
-      {
-        "label": "Plan the sprint",
-        "text": "Plan a one-day sprint for zava-silent-night from the work-item handoff under `.copilot-tracking/github-issues/prds/`. We are Table 3 and commit to one fix: FX-2 (change this to yours). List its work items and acceptance cases in priority order, the tests we'll write first, and what we'll drop if time runs out. Write the sprint plan under `.copilot-tracking/github-issues/sprint/` and don't create or change anything in GitHub."
-      }
     ]
   },
   "coach": {

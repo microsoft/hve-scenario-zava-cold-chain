@@ -15,9 +15,12 @@ def cmd_serve(args) -> None:
     from .server import serve
     httpd = serve(args.port, args.night, args.speed, args.scorecards)
     url = f"http://127.0.0.1:{args.port}/"
-    print(f"Zava Cold Chain Monitor running at {url}  (night: {args.night}; Ctrl+C to stop)")
-    if not args.no_browser:
-        webbrowser.open(url)
+    print("Zava Cold Chain Monitor is running. Open these links in any browser:\n"
+          f"  Workshop Journey  {url}journey\n"
+          f"  Dashboard         {url}\n"
+          f"Night: {args.night}. Keep this window open while you work; press Ctrl+C to stop.", flush=True)
+    if args.open:
+        webbrowser.open(url + "journey")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -55,7 +58,8 @@ def main() -> None:
     s.add_argument("--port", type=int, default=8740)
     s.add_argument("--night", default="normal", choices=available_nights())
     s.add_argument("--speed", type=float, default=10.0, help="simulated minutes per second (default 10)")
-    s.add_argument("--no-browser", action="store_true")
+    s.add_argument("--open", action="store_true", help="also open the Workshop Journey in your default browser")
+    s.add_argument("--no-browser", action="store_true", help=argparse.SUPPRESS)  # the default now; kept so older commands still work
     s.add_argument("--scorecards", type=Path, default=Path("scorecards"), help="folder the leaderboard reads scorecards from")
     s.set_defaults(func=cmd_serve)
     r = sub.add_parser("replay", help="run a whole night instantly and print a summary")
