@@ -33,7 +33,7 @@
     },
     {
       "name": "rpi-research",
-      "open": "/rpi-research",
+      "open": "/hve-core:rpi-research",
       "for": "Only when a claim in the handoff needs checking against the code"
     }
   ],

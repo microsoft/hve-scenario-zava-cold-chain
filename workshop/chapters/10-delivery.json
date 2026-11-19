@@ -33,34 +33,34 @@
   "tools": [
     {
       "name": "git-commit",
-      "open": "/git-commit",
+      "open": "/hve-core:git-commit",
       "for": "Writes a commit message from your staged changes"
     },
     {
       "name": "pull-request",
-      "open": "/pull-request",
+      "open": "/hve-core:pull-request",
       "for": "Writes the pull request description from your branch and its records"
     },
     {
       "name": "git-merge",
-      "open": "/git-merge",
+      "open": "/hve-core:git-merge",
       "for": "Used by the facilitator to merge the funded branches for chapter 11"
     }
   ],
   "attendee": {
     "steps": [
       {
-        "text": "Commit your work with `/git-commit` and this prompt. Leave `scorecards/` out: git ignores it.",
+        "text": "Commit your work with `/hve-core:git-commit` and this prompt. Leave `scorecards/` out: git ignores it.",
         "prompt": {
           "label": "Commit",
-          "text": "/git-commit Commit the zava-silent-night changes on this branch: the code, the tests and the records under `.copilot-tracking/`. Don't add anything under `scorecards/`."
+          "text": "/hve-core:git-commit Commit the zava-silent-night changes on this branch: the code, the tests and the records under `.copilot-tracking/`. Don't add anything under `scorecards/`."
         }
       },
       {
-        "text": "Run `/pull-request` with this prompt and check the description quotes your scorecard and links your review record. Opening it on GitHub needs a fork, or a repository your table can push to. Without one, use the description it writes when you present.",
+        "text": "Run `/hve-core:pull-request` with this prompt and check the description quotes your scorecard and links your review record. Opening it on GitHub needs a fork, or a repository your table can push to. Without one, use the description it writes when you present.",
         "prompt": {
           "label": "Open the pull request",
-          "text": "/pull-request Create a pull request from this branch into `main` for zava-silent-night. Summarise the fix, link the review record under `.copilot-tracking/reviews/logs/`, and quote the euros protected, false pages and blocked commands from `scorecards/table-3.json`. List the acceptance cases from `docs/project-planning/zava-silent-night-prd.md` and how each was checked."
+          "text": "/hve-core:pull-request Create a pull request from this branch into `main` for zava-silent-night. Summarise the fix, link the review record under `.copilot-tracking/reviews/logs/`, and quote the euros protected, false pages and blocked commands from `scorecards/table-3.json`. List the acceptance cases from `docs/project-planning/zava-silent-night-prd.md` and how each was checked."
         }
       },
       "Prepare three minutes: the failure, the fix, the scorecard and its side effects. Quote the leaderboard on the trainer's screen, not your own estimate.",
@@ -126,7 +126,7 @@
   ],
   "stuck": [
     {
-      "if": "`/pull-request` can't reach GitHub",
+      "if": "`/hve-core:pull-request` can't reach GitHub",
       "then": "Ask it to print the description in chat, and show that with your scorecard at the board."
     },
     {

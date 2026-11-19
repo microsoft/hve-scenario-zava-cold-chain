@@ -57,7 +57,7 @@
     "mistakes": [
       "Splitting one fix into work items so small nobody can test them",
       "Dropping the security and RAI items because they aren't code",
-      "Running `/backlog-execute` and creating real issues"
+      "Running `/hve-core:backlog-execute` and creating real issues"
     ],
     "step_in": [
       "When a table's plan has several work items per acceptance case"
