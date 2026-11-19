@@ -51,9 +51,13 @@ a { color: inherit; } button, select, input, textarea { font: inherit; color: in
 
 /* ---------- tooltips ---------- */
 .tip { position: relative; }
-.tip[data-tip]:hover::after, .tip[data-tip]:focus::after { content: attr(data-tip); position: absolute; top: calc(100% + 10px); left: 0; z-index: 50; width: max-content; max-width: 340px; padding: 10px 12px; border-radius: 10px; background: #242424; color: #ffffff; font: 400 12.5px/1.45 "Segoe UI", system-ui, sans-serif; -webkit-text-fill-color: #ffffff; letter-spacing: 0; text-transform: none; white-space: normal; box-shadow: 0 10px 30px rgba(0,0,0,.25); animation: fadein .15s; pointer-events: none; }
-.tip[data-tip]:hover::before { content: ""; position: absolute; top: calc(100% + 4px); left: 16px; border: 6px solid transparent; border-bottom-color: #242424; z-index: 51; }
+.tip[data-tip]:hover::after, .tip[data-tip]:focus::after { content: attr(data-tip); position: absolute; top: calc(100% + 10px); left: 0; z-index: 200; width: max-content; max-width: min(340px, calc(100vw - 32px)); padding: 10px 12px; border-radius: 10px; background: #242424; color: #ffffff; font: 400 12.5px/1.45 "Segoe UI", system-ui, sans-serif; -webkit-text-fill-color: #ffffff; letter-spacing: 0; text-transform: none; white-space: normal; box-shadow: 0 10px 30px rgba(0,0,0,.25); animation: fadein .15s; pointer-events: none; }
+.tip[data-tip]:hover::before, .tip[data-tip]:focus::before { content: ""; position: absolute; top: calc(100% + 4px); left: 16px; border: 6px solid transparent; border-bottom-color: #242424; z-index: 201; }
 .tip.r[data-tip]:hover::after { left: auto; right: 0; }
+.tip.r[data-tip]:focus::after { left: auto; right: 0; }
+.tip.r[data-tip]:hover::before, .tip.r[data-tip]:focus::before { left: auto; right: 4px; }
+.astats .kpi:nth-last-child(-n + 2) .tip::after { left: auto; right: 0; }
+.astats .kpi:nth-last-child(-n + 2) .tip::before { left: auto; right: 4px; }
 
 /* ---------- building blocks ---------- */
 h1 { font-size: 24px; letter-spacing: -.01em; margin: 0 0 4px; } .sub { margin: 0 0 18px; color: var(--muted); max-width: 95ch; }
@@ -86,7 +90,8 @@ input.f, textarea.f, select.f { width: 100%; padding: 8px 10px; border: 1px soli
 
 /* ---------- KPI tiles ---------- */
 .kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 18px; }
-.kpi { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); overflow: hidden; transition: transform .15s; }
+.kpi { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); overflow: visible; transition: transform .15s; }
+.kpi:hover, .kpi:focus-within { z-index: 202; }
 .kpi:hover { transform: translateY(-2px); }
 .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--line); }
 .kpi.ok::before { background: linear-gradient(90deg, #54b054, var(--ok-2)); } .kpi.warn::before { background: linear-gradient(90deg, #fdcfb4, var(--warn-2)); }
@@ -411,7 +416,12 @@ table.t td > a[href^="#/case/"] { white-space: nowrap; }
   .clock span { font-size: 20px; }
   .story { padding: 8px 14px; align-items: flex-start; }
   #view { padding: 16px 14px 40px; }
-  .kpis, .kpis.k4, .kpis.k5, .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis, .kpis.k4, .kpis.k5, .astats, .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi .tip::after { max-width: min(340px, calc((100vw - 44px) / 2)); }
+  .kpis .kpi:nth-child(odd) .tip::after, .astats .kpi:nth-child(odd) .tip::after { left: 0; right: auto; }
+  .kpis .kpi:nth-child(even) .tip::after, .astats .kpi:nth-child(even) .tip::after { left: auto; right: 0; }
+  .kpis .kpi:nth-child(odd) .tip::before, .astats .kpi:nth-child(odd) .tip::before { left: 4px; right: auto; }
+  .kpis .kpi:nth-child(even) .tip::before, .astats .kpi:nth-child(even) .tip::before { left: auto; right: 4px; }
   .impact { grid-template-columns: 1fr; }
   .split > *, .stack > *, .card { min-width: 0; }
   table.t { display: block; overflow-x: auto; }
