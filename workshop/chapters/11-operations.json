@@ -32,7 +32,7 @@
   "tools": [
     {
       "name": "incident-response",
-      "open": "/incident-response",
+      "open": "/hve-core:incident-response",
       "for": "Structures triage, diagnosis, mitigation and root cause. It's written for Azure, so use its structure and skip its Azure tooling"
     },
     {
@@ -51,10 +51,10 @@
       "Watch the trainer's screen while an event plays into the running night. You see only its consequences.",
       "Triage from [Alarms and incidents](/#/alarms) and the case charts: what is warm, who was told, and what night cover should do now.",
       {
-        "text": "Run `/incident-response` with this prompt. Fill in triage, diagnosis, mitigation and root cause, and skip its Azure steps: this app runs on your laptop.",
+        "text": "Run `/hve-core:incident-response` with this prompt. Fill in triage, diagnosis, mitigation and root cause, and skip its Azure steps: this app runs on your laptop.",
         "prompt": {
           "label": "Write the incident record",
-          "text": "/incident-response For zava-silent-night: during tonight's run of the Board portfolio branch, (describe what you saw, with times from Alarms and incidents). Phase is triage. This is a local training app, so skip the Azure tooling and use only the triage, diagnosis, mitigation and root-cause structure. Write the incident record to `docs/incident-response/zava-silent-night-chaos-1.md`."
+          "text": "/hve-core:incident-response For zava-silent-night: during tonight's run of the Board portfolio branch, (describe what you saw, with times from Alarms and incidents). Phase is triage. This is a local training app, so skip the Azure tooling and use only the triage, diagnosis, mitigation and root-cause structure. Write the incident record to `docs/incident-response/zava-silent-night-chaos-1.md`."
         }
       },
       {
@@ -91,7 +91,7 @@
   },
   "facilitator": {
     "before": [
-      "During the 14:45 break, merge the funded branches into one branch, for example `board-portfolio`, with `/git-merge`. Run `python -m zava_cold_chain gauntlet --seed 2026 --team \"Board portfolio\" --fixes FX-1,FX-2` with your secret seed and the funded fixes, and copy the scorecard into `scorecards/`.",
+      "During the 14:45 break, merge the funded branches into one branch, for example `board-portfolio`, with `/hve-core:git-merge`. Run `python -m zava_cold_chain gauntlet --seed 2026 --team \"Board portfolio\" --fixes FX-1,FX-2` with your secret seed and the funded fixes, and copy the scorecard into `scorecards/`.",
       "Start `python -m zava_cold_chain serve --scorecards scorecards` on that branch and replay `normal`, ready for a card.",
       "Choose the card. Fleet defrost with no end time shows a funded alarm or guardrail fix working. Planned 40-minute vendor defrost tests that planned work still goes through without a page. A note that tells the assistant what to say tests the assistant decision. Door left open shows the original alarm still works."
     ],
@@ -142,7 +142,7 @@
       "then": "Work from consequences: list everything that changed on Alarms and incidents and the case charts after the time the trainer played the card."
     },
     {
-      "if": "`/incident-response` asks for Azure resources",
+      "if": "`/hve-core:incident-response` asks for Azure resources",
       "then": "Tell it this is a local training app and to use only its triage, diagnosis, mitigation and root-cause structure."
     },
     {

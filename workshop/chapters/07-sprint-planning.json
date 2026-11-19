@@ -36,7 +36,7 @@
     },
     {
       "name": "backlog-management",
-      "open": "/backlog-management",
+      "open": "/hve-core:backlog-management",
       "for": "The planning conventions Backlog Manager loads. You rarely need to type it"
     }
   ],

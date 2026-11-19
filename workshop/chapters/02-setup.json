@@ -29,12 +29,12 @@
   "tools": [
     {
       "name": "hve-core-installer",
-      "open": "/hve-core-installer",
+      "open": "/hve-core:hve-core-installer",
       "for": "Installs HVE Core's agents and skills into this workspace if you haven't installed the hve-core plugin"
     },
     {
       "name": "git-setup",
-      "open": "/git-setup",
+      "open": "/hve-core:git-setup",
       "for": "Checks your git identity and settings, and helps you make your table's branch"
     }
   ],
@@ -53,7 +53,7 @@
     },
     {
       "term": "slash command",
-      "meaning": "Text that starts with `/` in the chat box, for example `/rpi-research`. It starts a skill."
+      "meaning": "Text that starts with `/` in the chat box, for example `/hve-core:rpi-research`. It starts a skill."
     },
     {
       "term": "prompt",
@@ -85,7 +85,7 @@
         "text": "Install HVE Core: install the hve-core plugin, or paste this prompt into Copilot Chat. Then open the agent picker and check that DT Coach and RPI Agent are listed.",
         "prompt": {
           "label": "Install HVE Core",
-          "text": "/hve-core-installer Install HVE Core for this workspace. We use the project slug zava-silent-night, so later agents write under `.copilot-tracking/` and `docs/project-planning/`. Don't change any files under `zava_cold_chain/`, `data/` or `nights/`."
+          "text": "/hve-core:hve-core-installer Install HVE Core for this workspace. We use the project slug zava-silent-night, so later agents write under `.copilot-tracking/` and `docs/project-planning/`. Don't change any files under `zava_cold_chain/`, `data/` or `nights/`."
         }
       },
       "Open a new chat and check that the Session Target button below the chat input says Copilot.",
@@ -93,7 +93,7 @@
         "text": "Create a branch for your table's work, for example `table-3`. You each have your own clone, so the branch isn't there to keep tables apart: it keeps `main` as the untouched baseline you compare your fix against, and chapter 10 opens its pull request from it. This prompt checks your git name and email, then makes the branch.",
         "prompt": {
           "label": "Set up git and the branch",
-          "text": "/git-setup Check my git name and email for this repo. Then create the branch `table-3` from `main` (use our table's number) and switch to it. Our table's work for zava-silent-night goes on that branch."
+          "text": "/hve-core:git-setup Check my git name and email for this repo. Then create the branch `table-3` from `main` (use our table's number) and switch to it. Our table's work for zava-silent-night goes on that branch."
         }
       }
     ]
@@ -132,7 +132,7 @@
       {
         "at": "10:30",
         "minutes": 15,
-        "do": "Tables run `/git-setup` and make their branch. Read the Words list aloud."
+        "do": "Tables run `/hve-core:git-setup` and make their branch. Read the Words list aloud."
       }
     ],
     "good_answer": "On every laptop: 61 tests pass, the monitor opens at `http://127.0.0.1:8740`, the agent picker lists DT Coach and RPI Agent, Session Target says Copilot, and `git branch --show-current` shows the table's branch.",

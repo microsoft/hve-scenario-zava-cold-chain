@@ -31,7 +31,7 @@
   "tools": [
     {
       "name": "rpi-review",
-      "open": "/rpi-review",
+      "open": "/hve-core:rpi-review",
       "for": "Checks the changes against the plan and acceptance cases and writes a review record"
     },
     {
@@ -48,10 +48,10 @@
   "attendee": {
     "steps": [
       {
-        "text": "Type `/rpi-review` with this prompt. Fix anything it marks as a defect, or loop back to chapter 08.",
+        "text": "Type `/hve-core:rpi-review` with this prompt. Fix anything it marks as a defect, or loop back to chapter 08.",
         "prompt": {
           "label": "Review the change",
-          "text": "/rpi-review Review the zava-silent-night changes on this branch. Check every acceptance case for our fix in `docs/project-planning/zava-silent-night-prd.md` against the diff and the tests, using the plan under `.copilot-tracking/plans/` and the changes record under `.copilot-tracking/changes/`. Write the review record under `.copilot-tracking/reviews/logs/`."
+          "text": "/hve-core:rpi-review Review the zava-silent-night changes on this branch. Check every acceptance case for our fix in `docs/project-planning/zava-silent-night-prd.md` against the diff and the tests, using the plan under `.copilot-tracking/plans/` and the changes record under `.copilot-tracking/changes/`. Write the review record under `.copilot-tracking/reviews/logs/`."
         }
       },
       {
@@ -97,7 +97,7 @@
       {
         "at": "12:45",
         "minutes": 25,
-        "do": "Tables run `/rpi-review` and Code Review."
+        "do": "Tables run `/hve-core:rpi-review` and Code Review."
       },
       {
         "at": "13:10",

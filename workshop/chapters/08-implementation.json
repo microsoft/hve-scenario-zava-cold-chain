@@ -48,17 +48,17 @@
     },
     {
       "name": "rpi-research",
-      "open": "/rpi-research",
+      "open": "/hve-core:rpi-research",
       "for": "Research on its own, if you run the phases one at a time"
     },
     {
       "name": "rpi-plan",
-      "open": "/rpi-plan",
+      "open": "/hve-core:rpi-plan",
       "for": "Plan and critique on their own"
     },
     {
       "name": "rpi-implement",
-      "open": "/rpi-implement",
+      "open": "/hve-core:rpi-implement",
       "for": "Implement one plan phase at a time on its own"
     }
   ],
@@ -75,7 +75,7 @@
         "text": "Pick RPI Agent, choose Work through each phase with me, and send this prompt. If your host shows canvases, follow the session in HVE Core's [RPI Workflow canvas](https://microsoft.github.io/hve-core/docs/rpi/rpi-workflow-canvas/) beside the chat.",
         "prompt": {
           "label": "Research the fix",
-          "text": "Research FX-2 for zava-silent-night (change this to your table's fix). Start from the sprint plan under `.copilot-tracking/github-issues/sprint/`, the PRD at `docs/project-planning/zava-silent-night-prd.md` and the handoff at `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. Trace the failure through the code, and check every claim the handoff marks assumed or conflicting against the code and tests. Write the research under `.copilot-tracking/research/` and stop for my review."
+          "text": "Research the fix selected in our sprint plan for zava-silent-night. Start from the sprint plan under `.copilot-tracking/github-issues/sprint/`, the PRD at `docs/project-planning/zava-silent-night-prd.md` and the handoff at `.copilot-tracking/dt/zava-silent-night/problem-space-handoff.md`. Trace the failure through the code, and check every claim the handoff marks assumed or conflicting against the code and tests. Write the research under `.copilot-tracking/research/` and stop for my review."
         }
       },
       "Check the claims in your handoff against the code, including the technician's \"a defrost always ends after 30 minutes, I think\". Mark the research ready before 16:30.",
